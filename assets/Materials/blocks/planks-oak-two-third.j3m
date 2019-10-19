@@ -1,0 +1,14 @@
+Material planks oak two third : Common/MatDefs/Light/Lighting.j3md {
+    MaterialParameters {
+        Shininess: 0
+        UseMaterialColors: true
+        DiffuseMap: Flip Textures/blocks/planks-oak-two-third.png
+        NormalMap: Flip Textures/blocks/planks-oak-two-third-normal.png
+        ParallaxMap: Flip Textures/blocks/planks-oak-two-third-parallax.png
+        SteepParallax: true
+        ParallaxHeight: 0.05
+        Ambient: 1.0 1.0 1.0 1.0
+        Diffuse: 1.0 1.0 1.0 1.0
+        Specular: 0 0 0 1.0
+    }
+}

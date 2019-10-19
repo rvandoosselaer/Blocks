@@ -1,0 +1,17 @@
+Material water sprite : MatDefs/AnimatedSprite.j3md {
+
+    MaterialParameters {
+        AniTexMap : Textures/blocks/water_still.png
+        numTilesX : 1
+        numTilesY : 32
+        Speed : 9
+        numTilesOffsetX : 0
+        numTilesOffsetY : 0
+        locationOffset : 0 -0.1 0
+    }
+
+    AdditionalRenderState {
+        Blend Alpha
+    }
+
+}

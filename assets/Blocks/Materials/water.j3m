@@ -1,0 +1,21 @@
+Material water : MatDefs/Water.j3md {
+
+    MaterialParameters {
+        Shininess: 128
+        UseMaterialColors: true
+        Ambient: 1.0 1.0 1.0 1.0
+        Diffuse: 1.0 1.0 1.0 1.0
+        Specular: 0.2 0.2 0.2 1.0
+        WaveSpeed : 1.5
+        WaveHeight : 0.05
+        WaveSize : 5
+        TextureScrollSpeed : 8
+        numTilesX : 1
+        numTilesY : 32
+    }
+
+    AdditionalRenderState {
+        Blend Alpha
+    }
+
+}
