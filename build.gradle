@@ -1,0 +1,98 @@
+plugins {
+    id 'idea'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+// maven publish settings
+//group = "org.randomstack"
+//version = "0.1.0"
+// The artifact ID defaults to the project name configured in settings.gradle, which in turn defaults to the project directory's name.
+
+sourceCompatibility = 1.8
+
+ext {
+    jmeVersion = "[3.2,)"
+    lombokVersion = "[1.18,)"
+    slf4jVersion = "[1.8,)"
+//    jme3UtilsVersion = "[0.1,)"
+    junitVersion = "[5.4.0,)"
+//    caffeineVersion = "[2.7,)"
+}
+
+repositories {
+    jcenter()
+//    mavenLocal()
+//    maven {
+//        url  "https://dl.bintray.com/randomstack/RandomStack"
+//    }
+}
+
+dependencies {
+    // assets
+    api project(':assets')
+
+    // JME
+    implementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
+//    compileOnly "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+
+    // utilities
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//    api "org.randomstack:jme3-utils:${jme3UtilsVersion}"
+//    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+
+    // logging
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+
+    // testing
+//    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+//    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+//    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+}
+
+test {
+//    useJUnitPlatform()
+}
+
+// copy the generated javadocs into the /docs folder for the github pages
+task copyJavadoc(dependsOn: javadoc) {
+    doLast {
+        copy {
+            from "$buildDir/docs"
+            into "$projectDir/docs"
+        }
+    }
+}
+
+build {
+    dependsOn copyJavadoc
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+javadoc {
+    failOnError = false
+}
