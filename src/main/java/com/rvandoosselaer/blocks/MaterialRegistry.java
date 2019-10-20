@@ -7,6 +7,7 @@ import com.jme3.material.Material;
 import com.jme3.texture.Texture;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Paths;
@@ -66,21 +67,12 @@ public class MaterialRegistry {
 
     public Material register(@NonNull String type, @NonNull Material material) {
         Material m = material.clone();
-        //TODO: fetch object holding 3 textures of the same theme
-        // TextureWrapper {
-        // texture diffuse
-        // optional<texture> normal
-        // optional<texture> parallax
-        // }
-        m.setTexture("DiffuseMap", getTextureOrDefault(type, TextureType.DIFFUSE, true));
-        Texture normalMapTexture = getTextureOrDefault(type, TextureType.NORMAL, false);
-        if (normalMapTexture != null) {
-            m.setTexture("NormalMap", normalMapTexture);
-        }
-        Texture parallaxMapTexture = getTextureOrDefault(type, TextureType.PARALLAX, false);
-        if (parallaxMapTexture != null) {
-            m.setTexture("ParallaxMap", parallaxMapTexture);
-        }
+
+        TexturesWrapper textures = getTexturesOrDefault(type);
+        m.setTexture("DiffuseMap", textures.getDiffuseMap());
+        textures.getNormalMap().ifPresent(texture -> m.setTexture("NormalMap", texture));
+        textures.getParallaxMap().ifPresent(texture -> m.setTexture("ParallaxMap", texture));
+
         registry.put(type, m);
         if (log.isTraceEnabled()) {
             log.trace("Registered type {} -> {}", type, material);
@@ -136,29 +128,25 @@ public class MaterialRegistry {
     }
 
     /**
-     * Retrieve the texture for the block in the current theme. When there isn't a theme specified, the default theme
-     * is used. When no texture is found, null is returned.
+     * Retrieves the textures for the block type in the current theme. When a theme isn't specified, the default theme
+     * is used.
      *
-     * @param type          block type (grass, rock, ...)
-     * @param textureType   kind of texture (diffuse, normal, parallax)
-     * @param failOnMissing throw an {@link AssetNotFoundException} when the texture is not found.
-     * @return the texture or null
+     * @param type block type (grass, rock, ...)
+     * @return a TextureWrapper object holding the different textures of the block
      */
-    private Texture getTextureOrDefault(String type, TextureType textureType, boolean failOnMissing) {
-        Optional<Texture> texture;
+    private TexturesWrapper getTexturesOrDefault(String type) {
         if (usingTheme()) {
-            texture = getTexture(type, textureType, theme);
-            if (texture.isPresent()) {
-                return texture.get();
+            Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, theme);
+            if (diffuseMap.isPresent()) {
+                return new TexturesWrapper(diffuseMap.get(), getTexture(type, TextureType.NORMAL, theme), getTexture(type, TextureType.PARALLAX, theme));
             }
         }
 
-        texture = getTexture(type, textureType, defaultTheme);
-        if (failOnMissing && !texture.isPresent()) {
-            throw new AssetNotFoundException("Texture " + getTexturePath(type, textureType, defaultTheme) + " not found!");
+        Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, defaultTheme);
+        if (!diffuseMap.isPresent()) {
+            throw new AssetNotFoundException("Texture " + getTexturePath(type, TextureType.DIFFUSE, defaultTheme) + " not found!");
         }
-
-        return texture.orElse(null);
+        return new TexturesWrapper(diffuseMap.get(), getTexture(type, TextureType.NORMAL, defaultTheme), getTexture(type, TextureType.PARALLAX, defaultTheme));
     }
 
     /**
@@ -172,7 +160,9 @@ public class MaterialRegistry {
         try {
             return Optional.of(assetManager.loadTexture(new TextureKey(texture)));
         } catch (AssetNotFoundException e) {
-            log.warn("Texture {} not found in theme {}", texture, theme);
+            if (log.isDebugEnabled()) {
+                log.debug("Texture {} not found in theme {}", texture, theme);
+            }
         }
 
         return Optional.empty();
@@ -203,6 +193,16 @@ public class MaterialRegistry {
             default:
                 return type + fileExtension;
         }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private class TexturesWrapper {
+
+        private final Texture diffuseMap;
+        private final Optional<Texture> normalMap;
+        private final Optional<Texture> parallaxMap;
+
     }
 
 }
