@@ -3,7 +3,7 @@ package com.rvandoosselaer.blocks;
 import com.simsilica.mathd.Vec3i;
 
 /**
- * @author remy
+ * @author rvandoosselaer
  */
 public interface ChunkGenerator {
 

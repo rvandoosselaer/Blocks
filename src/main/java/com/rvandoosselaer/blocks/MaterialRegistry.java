@@ -20,6 +20,7 @@ import java.util.Optional;
  *
  * @author rvandoosselaer
  */
+//TODO: rename to type registry
 @Slf4j
 public class MaterialRegistry {
 
@@ -34,10 +35,10 @@ public class MaterialRegistry {
     public static final String STONE = "stone";
     public static final String STONEBRICK = "stonebrick";
     public static final String WATER = "water";
-    public static final String CUBE = "cube"; //TODO: remove
-    public static final String PYRAMID = "pyramid"; //TODO: remove
     public static final String PLANKS_OAK_ONE_THIRD = "planks-oak-one-third";
     public static final String PLANKS_OAK_TWO_THIRD = "planks-oak-two-third";
+    public static final String PYRAMID = "pyramid"; //TODO: remove
+    public static final String CUBE = "cube"; //TODO: remove
     public static final String WEDGE = "wedge"; //TODO: remove
 
     public static final String DEFAULT_BLOCK_MATERIAL = "Blocks/Materials/default-block.j3m";

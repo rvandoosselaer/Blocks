@@ -5,6 +5,7 @@ import com.simsilica.mathd.Vec3i;
 /**
  * @author remy
  */
+//TODO: refactor to ChunkRepository, with load and save
 public interface ChunkLoader {
 
     /**

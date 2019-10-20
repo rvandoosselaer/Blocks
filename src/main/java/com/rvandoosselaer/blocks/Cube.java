@@ -11,7 +11,7 @@ import lombok.ToString;
  * to the resulting mesh if the face is visible. eg. When there is a block above this block, the top face will not be
  * added to the mesh.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @ToString
 public class Cube implements Shape {

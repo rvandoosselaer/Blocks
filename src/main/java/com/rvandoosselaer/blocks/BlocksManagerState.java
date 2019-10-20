@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+//TODO
 @Getter
 @RequiredArgsConstructor
 public class BlocksManagerState extends BaseAppState {

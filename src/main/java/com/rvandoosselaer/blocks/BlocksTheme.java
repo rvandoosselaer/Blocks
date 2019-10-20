@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
+ * A Blocks theme
+ *
  * @author rvandoosselaer
  */
 @Getter
@@ -20,7 +22,7 @@ public class BlocksTheme {
     private String name;
 
     /**
-     * The path to the texture folder, relative from a directory the assetmanager can acces.
+     * The path to the texture folder of the theme, starting from an AssetManager accessible folder.
      */
     private String path;
 
