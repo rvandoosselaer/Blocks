@@ -11,15 +11,17 @@ import lombok.ToString;
 @Getter
 @Setter
 @Builder
-@ToString(onlyExplicitlyIncluded = true)
+@ToString
 public class BlocksTheme {
 
-    @ToString.Include
+    /**
+     * The name of the theme
+     */
     private String name;
-    @ToString.Include
+
+    /**
+     * The path to the texture folder, relative from a directory the assetmanager can acces.
+     */
     private String path;
-    private String description;
-    private String author;
-    private String version;
 
 }

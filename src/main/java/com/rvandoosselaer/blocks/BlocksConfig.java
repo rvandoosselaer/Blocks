@@ -6,10 +6,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 /**
  * The main configuration object of Blocks.
  *
@@ -26,7 +22,6 @@ public class BlocksConfig {
     private float blockScale = 1f;
     private Vec3i gridSize = new Vec3i(9, 5, 9);
     private Vec3i physicsGridSize = new Vec3i(3, 1, 3);
-    private String themesFolder;
 
     private BlocksConfig() {
     }
@@ -63,11 +58,4 @@ public class BlocksConfig {
         this.physicsGridSize = physicsGridSize;
     }
 
-    public void setThemesFolder(@NonNull String themesFolder) {
-        Path path = Paths.get(themesFolder).toAbsolutePath();
-        if (Files.notExists(path)) {
-            throw new IllegalArgumentException("The path does not exist: " + path.toString() + ".");
-        }
-        this.themesFolder = themesFolder;
-    }
 }

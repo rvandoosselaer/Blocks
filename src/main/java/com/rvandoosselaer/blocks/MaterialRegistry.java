@@ -3,14 +3,16 @@ package com.rvandoosselaer.blocks;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.TextureKey;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A registry for storing and retrieving materials based on the block type.
@@ -20,8 +22,9 @@ import java.util.Map;
 @Slf4j
 public class MaterialRegistry {
 
-    private static final String THEME_BLOCKS_TEXTURE_FOLDER = "blocks/";
-    private static final String TEXTURE_EXTENSION = ".png";
+    private enum TextureType {
+        DIFFUSE, NORMAL, PARALLAX;
+    }
 
     public static final String GRASS = "grass";
     public static final String DIRT = "dirt";
@@ -41,57 +44,46 @@ public class MaterialRegistry {
 
     private final Map<String, Material> registry = new HashMap<>();
     private final AssetManager assetManager;
-    private final BlocksTheme theme;
-    private final BlocksTheme defaultTheme = BlocksTheme.builder()
-            .name("Default")
-            .description("The default Blocks theme")
-            .author("Remy Van Doosselaer")
-            .version("0.1")
-            .path("Blocks/Themes/default-theme/")
-            .build();
+    @Getter
+    private BlocksTheme theme;
+    @Getter
+    private BlocksTheme defaultTheme = new BlocksTheme("Default", "Blocks/Themes/default/blocks/");
 
-    public MaterialRegistry(AssetManager assetManager) {
+    public MaterialRegistry(@NonNull AssetManager assetManager) {
         this(assetManager, null);
     }
 
-    public MaterialRegistry(AssetManager assetManager, BlocksTheme theme) {
+    public MaterialRegistry(@NonNull AssetManager assetManager, BlocksTheme theme) {
         this.assetManager = assetManager;
         this.theme = theme;
 
         registerDefaultMaterials();
-
-        if (theme == null) {
-            // we are not using a theme, skip the themes folder locator setup
-            return;
-        }
-
-        String themesFolder = BlocksConfig.getInstance().getThemesFolder();
-        if (themesFolder == null) {
-            throw new IllegalArgumentException("Themes folder not specified in BlocksConfig! Unable to load theme: " + theme);
-        } else {
-            log.debug("Registering themes folder {} with the asset manager.", themesFolder);
-            this.assetManager.registerLocator(Paths.get(themesFolder).toAbsolutePath().toString(), FileLocator.class);
-        }
     }
 
-    public Material register(String type, String materialPath) {
+    public Material register(@NonNull String type, @NonNull String materialPath) {
         return register(type, load(materialPath));
     }
 
-    public Material register(String type, Material material) {
+    public Material register(@NonNull String type, @NonNull Material material) {
         Material m = material.clone();
-        m.setTexture("DiffuseMap", getDiffuseMapTexture(type));
-        Texture normalMapTexture = getNormalMapTexture(type);
+        //TODO: fetch object holding 3 textures of the same theme
+        // TextureWrapper {
+        // texture diffuse
+        // optional<texture> normal
+        // optional<texture> parallax
+        // }
+        m.setTexture("DiffuseMap", getTextureOrDefault(type, TextureType.DIFFUSE, true));
+        Texture normalMapTexture = getTextureOrDefault(type, TextureType.NORMAL, false);
         if (normalMapTexture != null) {
             m.setTexture("NormalMap", normalMapTexture);
         }
-        Texture parallaxMapTexture = getParallaxMapTexture(type);
+        Texture parallaxMapTexture = getTextureOrDefault(type, TextureType.PARALLAX, false);
         if (parallaxMapTexture != null) {
             m.setTexture("ParallaxMap", parallaxMapTexture);
         }
         registry.put(type, m);
         if (log.isTraceEnabled()) {
-            log.trace("Registered {} -> {}", type, material);
+            log.trace("Registered type {} -> {}", type, material);
         }
         return material;
     }
@@ -104,11 +96,7 @@ public class MaterialRegistry {
         return material;
     }
 
-    public Material load(String materialPath) {
-        return assetManager.loadMaterial(materialPath);
-    }
-
-    public boolean hasTheme() {
+    public boolean usingTheme() {
         return theme != null;
     }
 
@@ -131,67 +119,90 @@ public class MaterialRegistry {
         register(WEDGE, DEFAULT_BLOCK_MATERIAL);
     }
 
-    private Texture getDiffuseMapTexture(String type) {
-        if (hasTheme()) {
-            String texture = getDiffuseMapTexturePath(theme, type);
-            try {
-                return assetManager.loadTexture(new TextureKey(texture));
-            } catch (AssetNotFoundException e) {
-                log.warn("Texture {} not found in theme {}", texture, theme);
-            }
-        }
-
-        return assetManager.loadTexture(new TextureKey(getDiffuseMapTexturePath(defaultTheme, type)));
+    public void setTheme(BlocksTheme theme) {
+        this.theme = theme;
+        clear();
+        registerDefaultMaterials();
     }
 
-    private Texture getNormalMapTexture(String type) {
-        if (hasTheme()) {
-            String texture = getNormalMapTexturePath(theme, type);
-            try {
-                return assetManager.loadTexture(new TextureKey(texture));
-            } catch (AssetNotFoundException e) {
-                log.warn("Texture {} not found in theme {}", texture, theme);
+    public void setDefaultTheme(@NonNull BlocksTheme defaultTheme) {
+        this.defaultTheme = defaultTheme;
+        clear();
+        registerDefaultMaterials();
+    }
+
+    private Material load(String materialPath) {
+        return assetManager.loadMaterial(materialPath);
+    }
+
+    /**
+     * Retrieve the texture for the block in the current theme. When there isn't a theme specified, the default theme
+     * is used. When no texture is found, null is returned.
+     *
+     * @param type          block type (grass, rock, ...)
+     * @param textureType   kind of texture (diffuse, normal, parallax)
+     * @param failOnMissing throw an {@link AssetNotFoundException} when the texture is not found.
+     * @return the texture or null
+     */
+    private Texture getTextureOrDefault(String type, TextureType textureType, boolean failOnMissing) {
+        Optional<Texture> texture;
+        if (usingTheme()) {
+            texture = getTexture(type, textureType, theme);
+            if (texture.isPresent()) {
+                return texture.get();
             }
         }
 
-        String texture = getNormalMapTexturePath(defaultTheme, type);
+        texture = getTexture(type, textureType, defaultTheme);
+        if (failOnMissing && !texture.isPresent()) {
+            throw new AssetNotFoundException("Texture " + getTexturePath(type, textureType, defaultTheme) + " not found!");
+        }
+
+        return texture.orElse(null);
+    }
+
+    /**
+     * @param type        block type (grass, rock, ...)
+     * @param textureType kind of texture (diffuse, normal, parallax)
+     * @param theme
+     * @return an optional of the texture
+     */
+    private Optional<Texture> getTexture(String type, TextureType textureType, BlocksTheme theme) {
+        String texture = getTexturePath(type, textureType, theme);
         try {
-            return assetManager.loadTexture(new TextureKey(texture));
+            return Optional.of(assetManager.loadTexture(new TextureKey(texture)));
         } catch (AssetNotFoundException e) {
-            log.warn("Texture {} not found in default theme.", texture);
-            return null;
-        }
-    }
-
-    private Texture getParallaxMapTexture(String type) {
-        if (hasTheme()) {
-            String texture = getParallaxMapTexturePath(theme, type);
-            try {
-                return assetManager.loadTexture(new TextureKey(texture));
-            } catch (AssetNotFoundException e) {
-                log.warn("Texture {} not found in theme {}", texture, theme);
-            }
+            log.warn("Texture {} not found in theme {}", texture, theme);
         }
 
-        String texture = getParallaxMapTexturePath(defaultTheme, type);
-        try {
-            return assetManager.loadTexture(new TextureKey(texture));
-        } catch (AssetNotFoundException e) {
-            log.warn("Texture {} not found in default theme.", texture);
-            return null;
+        return Optional.empty();
+    }
+
+    /**
+     * @param type        block type (grass, rock, ...)
+     * @param textureType kind of texture (diffuse, normal, parallax)
+     * @param theme       current theme
+     * @return the full path to the texture, used by the assetmanager to load the texture
+     */
+    private static String getTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return Paths.get(theme.getPath(), getTextureFilename(type, textureType)).toString();
+    }
+
+    /**
+     * @param type        block type (grass, rock, ...)
+     * @param textureType kind of texture (diffuse, normal, parallax)
+     * @return the filename of the texture
+     */
+    private static String getTextureFilename(String type, TextureType textureType) {
+        String fileExtension = ".png";
+        switch (textureType) {
+            case NORMAL:
+                return type + "-normal" + fileExtension;
+            case PARALLAX:
+                return type + "-parallax" + fileExtension;
+            default:
+                return type + fileExtension;
         }
-    }
-
-    private String getDiffuseMapTexturePath(BlocksTheme theme, String type) {
-        return Paths.get(theme.getPath(), THEME_BLOCKS_TEXTURE_FOLDER, type + TEXTURE_EXTENSION).toString();
-    }
-
-    private String getNormalMapTexturePath(BlocksTheme theme, String type) {
-        return Paths.get(theme.getPath(), THEME_BLOCKS_TEXTURE_FOLDER, type + "-normal" + TEXTURE_EXTENSION).toString();
-    }
-
-    private String getParallaxMapTexturePath(BlocksTheme theme, String type) {
-        return Paths.get(theme.getPath(), THEME_BLOCKS_TEXTURE_FOLDER, type + "-parallax" + TEXTURE_EXTENSION).toString();
     }
 
 }

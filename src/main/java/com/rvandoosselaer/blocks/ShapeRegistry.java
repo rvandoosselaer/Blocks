@@ -23,7 +23,7 @@ public class ShapeRegistry {
     public Shape register(String name, Shape shape) {
         shapeRegistry.put(name, shape);
         if (log.isTraceEnabled()) {
-            log.trace("Registered {} -> {}", name, shape);
+            log.trace("Registered shape {} -> {}", name, shape);
         }
         return shape;
     }

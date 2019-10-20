@@ -56,15 +56,4 @@ public class BlocksConfigTest {
         Assertions.assertThrows(NullPointerException.class, () -> BlocksConfig.getInstance().setPhysicsGridSize(null));
     }
 
-    @Test
-    public void testValidThemesFolder() {
-        BlocksConfig.getInstance().setThemesFolder(System.getProperty("user.home"));
-        Assertions.assertEquals(System.getProperty("user.home"), BlocksConfig.getInstance().getThemesFolder());
-    }
-
-    @Test
-    public void testInvalidThemesfolder() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> BlocksConfig.getInstance().setThemesFolder("/a/path"));
-        Assertions.assertThrows(NullPointerException.class, () -> BlocksConfig.getInstance().setThemesFolder(null));
-    }
 }
