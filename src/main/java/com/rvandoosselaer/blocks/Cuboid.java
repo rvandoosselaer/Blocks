@@ -15,6 +15,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ToString
+//TODO: rename to Slab and specify startHeight and endheight
+// * A shape implementation for a slab. A slab is actual a cube shape with controllable y (height) values. If you specify
+// * a starting height of 0 and a total height of 1, you have a unit cube shape.
+// * Only 4 vertices are used per face, 2 vertices are shared.
 public class Cuboid implements Shape {
 
     private final float height;
@@ -24,6 +28,42 @@ public class Cuboid implements Shape {
             log.warn("Invalid height of {} given for cuboid shape. Clamping to a [0-1] value.", height);
         }
         this.height = FastMath.clamp(height, 0, 1);
+
+        /**
+         * top slab [0.5-1.0]; bottom slab [0-0.5] (grass, dirt, rock, sand, ...)
+         */
+        /**
+         * if (startHeight < 0 || startHeight > 1 || endHeight < 0 || endHeight > 1 || startHeight > endHeight) {
+         *             log.warn("Invalid heights specified: {}-{}. Values will be normalized.", startHeight, endHeight);
+         *         }
+         *         this.endHeight = FastMath.clamp(endHeight, 0, 1);
+         *         this.startHeight = Math.min(this.endHeight, FastMath.clamp(startHeight, 0, 1));
+         *
+         *         if (log.isTraceEnabled()) {
+         *             log.trace("Created {}", this);
+         *         }
+         */
+
+        /**
+         * @Test
+         *     public void testValues() {
+         *         Slab slab = new Slab(0, 1);
+         *         Assertions.assertEquals(0, slab.getStartHeight());
+         *         Assertions.assertEquals(1, slab.getEndHeight());
+         *
+         *         slab = new Slab(-0.2f, 0.9f);
+         *         Assertions.assertEquals(0, slab.getStartHeight());
+         *         Assertions.assertEquals(0.9f, slab.getEndHeight());
+         *
+         *         slab = new Slab(-0.2f, 1.3f);
+         *         Assertions.assertEquals(0, slab.getStartHeight());
+         *         Assertions.assertEquals(1, slab.getEndHeight());
+         *
+         *         slab = new Slab(0.5f, 0.2f);
+         *         Assertions.assertEquals(0.2f, slab.getStartHeight());
+         *         Assertions.assertEquals(0.2f, slab.getEndHeight());
+         *     }
+         */
     }
 
     @Override
