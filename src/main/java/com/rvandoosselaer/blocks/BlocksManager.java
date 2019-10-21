@@ -11,33 +11,27 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * A class for managing the loading, generating and mesh constructing of chunk objects in a thread safe way.
- * The chunk manager uses an internal cache to store and retrieve chunks from memory. The size of the cache should at
- * least be the total number of available chunks based on the grid size when the {@link BlocksPager} is used.
- * With a grid size of (9,5,9) the size of the cache should be 9 x 5 x 9 = 405.
- * The chunk manager can be setup to delegate tasks to worker threads when a pool size of &gt; 0 is specified.
+ * Manages the loading, generating and mesh construction of chunk objects in a thread safe way. An internal cache is
+ * used to store and retrieve chunks from memory.
+ * The {@link BlocksManager} can be setup to delegate the loading, generation and mesh creation to worker threads when
+ * a pool size of &gt; 0 is specified for the task.
  * <p>
- * The chunk manager should be initialized before it can be used and should always be cleaned up to properly shutdown
- * the thread pool. It is good practice to handle the lifecycle of the chunkmanager in an {@link com.jme3.app.state.AppState}
- * to properly initialize, update and cleanup the class.
+ * The {@link BlocksManager} needs to be initialized before it can be used and should always be cleaned up to properly
+ * shutdown the worker thread pools. It is a good practice to handle the lifecycle of the {@link BlocksManager} in an
+ * {@link com.jme3.app.state.AppState} to properly initialize, update and cleanup the class.
  * <p>
- * A chunk can be requested from the chunk manager by using the {@link #getChunk(Vector3i)} method. When the chunk
- * isn't available it can be requested with the {@link #requestChunk(Vector3i)} method. The chunk manager will try to
- * load a requested chunk using the supplied {@link ChunkLoader}. The loaded chunk is placed in the cache and can now
- * be retrieved using the {@link #getChunk(Vector3i)} method.
- * When the chunk manager was unable to load the requested chunk using the {@link ChunkLoader} it will generate the
- * chunk using the {@link ChunkGenerator}. The generated chunk is placed in the cache and can be retrieved using the
- * {@link #getChunk(Vector3i)} method.
- * Each chunk that is placed in the cache, through loading or generation, will have it's mesh generated. When the node
- * of a chunk in the cache is not set, the generation of the mesh is still in progress. The node should be fetched at
- * a later time.
+ * A chunk can be retrieved by using the {@link #getChunk(Vec3i)} method. When the chunk isn't available it can be
+ * requested with the {@link #requestChunk(Vec3i)} method.
+ * The {@link BlocksManager} will first try to load the requested chunk using the {@link ChunkRepository}. When this is
+ * not successful it will try to generate the chunk using the {@link ChunkGenerator}. When this also fails an empty
+ * chunk will be created.
  * <p>
- * Applications can register a {@link MeshGenerationListener} to the chunk manager to be notified when the mesh of a
- * chunk changes.
+ * When the node of a chunk in the cache is not set, the generation of the mesh is still in progress. Try to retrieve the
+ * node at a later time. A mesh update can be requested for a chunk using the {@link #requestMeshUpdate(Chunk)} method.
+ * Applications can register a {@link MeshGenerationListener} to be notified when the mesh of a chunk is updated.
  *
- * @author remy
+ * @author rvandoosselaer
  */
-//TODO: refactor
 @Slf4j
 public class BlocksManager {
 
@@ -51,11 +45,29 @@ public class BlocksManager {
     private int meshGenerationPoolSize = 0;
     @Getter
     @Setter(AccessLevel.PRIVATE)
+    private int chunkLoadingPoolSize = 0;
+    @Getter
+    @Setter(AccessLevel.PRIVATE)
+    private int chunkGenerationPoolSize = 0;
+    @Getter
+    @Setter(AccessLevel.PRIVATE)
     private MeshGenerationStrategy meshGenerationStrategy;
+    @Getter
+    @Setter(AccessLevel.PRIVATE)
+    private ChunkRepository chunkRepository;
+    @Getter
+    @Setter(AccessLevel.PRIVATE)
+    private ChunkGenerator chunkGenerator;
     private final Queue<Chunk> meshGenerationQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<Vec3i> chunkLoadingQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<Vec3i> chunkGenerationQueue = new ConcurrentLinkedQueue<>();
     private final List<MeshGenerationListener> meshGenerationListeners = new CopyOnWriteArrayList<>();
     private ExecutorService meshGenerationExecutor;
+    private ExecutorService chunkLoadingExecutor;
+    private ExecutorService chunkGenerationExecutor;
     private List<Future<Chunk>> meshGenerationResults = new ArrayList<>();
+    private List<Future<ChunkLoadResult>> chunkLoadingResults = new ArrayList<>();
+    private List<Future<Chunk>> chunkGenerationResults = new ArrayList<>();
 
     public BlocksManager() {
         this(0);
@@ -84,6 +96,14 @@ public class BlocksManager {
             meshGenerationExecutor = Executors.newFixedThreadPool(meshGenerationPoolSize);
             log.debug("Created mesh generation ThreadPoolExecutor with pool size: {}", meshGenerationPoolSize);
         }
+        if (isChunkLoadingMultiThreaded()) {
+            chunkLoadingExecutor = Executors.newFixedThreadPool(chunkLoadingPoolSize);
+            log.debug("Created chunk loading ThreadPoolExecutor with pool size: {}", chunkLoadingPoolSize);
+        }
+        if (isChunkGenerationMultiThreaded()) {
+            chunkGenerationExecutor = Executors.newFixedThreadPool(chunkGenerationPoolSize);
+            log.debug("Created chunk generation ThreadPoolExecutor with pool size: {}", chunkGenerationPoolSize);
+        }
 
         this.initialized = true;
     }
@@ -96,6 +116,14 @@ public class BlocksManager {
         // mesh generation
         handleNextMeshUpdate();
         handleNextMeshUpdateResult();
+
+        // chunk loading
+        handleNextChunkLoad();
+        handleNextChunkLoadResult();
+
+        // chunk generation
+        handleNextChunkGeneration();
+        handleNextChunkGenerationResult();
     }
 
     public void cleanup() {
@@ -113,9 +141,31 @@ public class BlocksManager {
             log.debug("Mesh generation ThreadPoolExecutor shut down.");
         }
 
+        if (isChunkLoadingMultiThreaded()) {
+            log.debug("Shutting down chunk loading ThreadPoolExecutor...");
+            chunkLoadingExecutor.shutdownNow();
+            log.debug("Chunk loading ThreadPoolExecutor shut down.");
+        }
+
+        if (isChunkGenerationMultiThreaded()) {
+            log.debug("Shutting down chunk generation ThreadPoolExecutor...");
+            chunkGenerationExecutor.shutdownNow();
+            log.debug("Chunk generation ThreadPoolExecutor shut down.");
+        }
+
+        // clear the queues
         meshGenerationQueue.clear();
+        chunkLoadingQueue.clear();
+        chunkGenerationQueue.clear();
+        // clear the listeners
         meshGenerationListeners.clear();
+        // clear the future's
+        meshGenerationResults.clear();
+        chunkLoadingResults.clear();
+        chunkGenerationResults.clear();
+        // clear the cache
         cache.cleanUp();
+
         this.initialized = false;
     }
 
@@ -178,6 +228,21 @@ public class BlocksManager {
     }
 
     /**
+     * Request the chunk to be loaded into the cache.
+     * When the chunk cannot be loaded, it will be added to the generation queue.
+     *
+     * @param location of the chunk
+     * @return true when the chunk is successfully requested, false otherwise
+     */
+    public boolean requestChunk(@NonNull Vec3i location) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        return !hasChunk(location) && addToQueue(chunkLoadingQueue, location);
+    }
+
+    /**
      * Add a listener to the list of listeners that is notified when the mesh of a chunk is updated.
      *
      * @param listener
@@ -212,11 +277,7 @@ public class BlocksManager {
         Vec3i chunkLocation = BlocksManager.getChunkLocation(blockWorldLocation.toVector3f());
         Chunk chunk = getChunk(chunkLocation);
         if (chunk == null) {
-            chunk = Chunk.create(chunkLocation);
-            if (log.isTraceEnabled()) {
-                log.trace("Creating chunk {}", chunk);
-            }
-            addToCache(chunk);
+            chunk = createChunk(chunkLocation);
         }
 
         Vec3i blockLocalLocation = chunk.toLocalLocation(blockWorldLocation);
@@ -254,6 +315,32 @@ public class BlocksManager {
     }
 
     /**
+     * Calculate the picked block location based on the contact point and contact normals of a contact collision. By
+     * setting the pickNeighbour flag, the neighbour of the picked block will be returned.
+     *
+     * @param contactPoint  collision contact point
+     * @param contactNormal collision contact normal
+     * @param pickNeighbour if the neighbour block should be returned
+     * @return the picked block or the neighbour of the picked block
+     */
+    public Vec3i getPickedBlockLocation(@NonNull Vector3f contactPoint, @NonNull Vector3f contactNormal, boolean pickNeighbour) {
+        float blockScale = BlocksConfig.getInstance().getBlockScale();
+
+        // add a small offset to the contact point, so we point a bit more 'inward' into the block
+        contactPoint = contactPoint.add(contactNormal.negate().mult(0.05f * blockScale));
+
+        if (pickNeighbour) {
+            contactPoint.addLocal(contactNormal.mult(0.75f * blockScale));
+        }
+
+        Vec3i blockWorldLocation = new Vec3i((int) Math.floor(contactPoint.x), (int) Math.floor(contactPoint.y), (int) Math.floor(contactPoint.z));
+        if (log.isTraceEnabled()) {
+            log.trace("Calculated block location from contact point {} and contact normal {} : {}", contactPoint, contactNormal, blockWorldLocation);
+        }
+        return blockWorldLocation;
+    }
+
+    /**
      * Calculate the location of the chunk that contains the passed world location.
      *
      * @param worldLocation location in the world
@@ -263,11 +350,11 @@ public class BlocksManager {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         // Math.floor() rounds the decimal part down; 4.13 => 4.0, 4.98 => 4.0, -7.82 => -8.0
         // downcasting double to int removes the decimal part
-        Vec3i chunkLocation = new Vec3i((int) Math.floor(worldLocation.x / chunkSize.x), (int) Math.floor(worldLocation.y / chunkSize.y), (int) Math.floor(worldLocation.z / chunkSize.z));
-        if (log.isTraceEnabled()) {
-            log.trace("Calculated chunk location {} from world location {}", chunkLocation, worldLocation);
-        }
-        return chunkLocation;
+        return new Vec3i((int) Math.floor(worldLocation.x / chunkSize.x), (int) Math.floor(worldLocation.y / chunkSize.y), (int) Math.floor(worldLocation.z / chunkSize.z));
+    }
+
+    public static BlocksManagerBuilder builder() {
+        return new BlocksManagerBuilder();
     }
 
     /**
@@ -293,6 +380,60 @@ public class BlocksManager {
     }
 
     /**
+     * Perform the load operation of the next chunk in the chunk loading queue.
+     */
+    private void handleNextChunkLoad() {
+        if (chunkLoadingQueue.isEmpty()) {
+            return;
+        }
+
+        Vec3i chunkLocation = chunkLoadingQueue.poll();
+
+        if (chunkRepository == null) {
+            log.warn("No ChunkRepository set on BlocksManager.");
+            addToQueue(chunkGenerationQueue, chunkLocation);
+        } else {
+            if (isChunkLoadingMultiThreaded()) {
+                chunkLoadingResults.add(chunkLoadingExecutor.submit(new ChunkLoadCallable(chunkLocation, chunkRepository)));
+            } else {
+                Chunk chunk = chunkRepository.load(chunkLocation);
+                if (chunk != null) {
+                    addToCache(chunk);
+                    addToQueue(meshGenerationQueue, chunk);
+                } else {
+                    addToQueue(chunkGenerationQueue, chunkLocation);
+                }
+            }
+        }
+    }
+
+    /**
+     * Perform the generation of the next chunk in the chunk generation queue.
+     */
+    private void handleNextChunkGeneration() {
+        if (chunkGenerationQueue.isEmpty()) {
+            return;
+        }
+
+        Vec3i chunkLocation = chunkGenerationQueue.poll();
+
+        if (chunkGenerator == null) {
+            log.warn("No ChunkGenerator is set on BlocksManager.");
+            // unable to generate the chunk, just create one
+            createChunk(chunkLocation);
+        } else {
+            if (isChunkGenerationMultiThreaded()) {
+                chunkGenerationResults.add(chunkGenerationExecutor.submit(new ChunkGenerationCallable(chunkLocation, chunkGenerator)));
+            } else {
+                Chunk chunk = chunkGenerator.generate(chunkLocation);
+                chunk.update();
+                addToCache(chunk);
+                addToQueue(meshGenerationQueue, chunk);
+            }
+        }
+    }
+
+    /**
      * Perform the processing of the next finished chunk mesh generation task.
      */
     private void handleNextMeshUpdateResult() {
@@ -300,7 +441,7 @@ public class BlocksManager {
             return;
         }
 
-        // get the first completed future
+        // get the first completed future, process and remove it
         Optional<Future<Chunk>> optionalFuture = meshGenerationResults.stream().filter(Future::isDone).findFirst();
         optionalFuture.ifPresent(future -> {
             try {
@@ -308,14 +449,91 @@ public class BlocksManager {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
+            meshGenerationResults.remove(future);
         });
 
-        // remove cancelled and finished futures
-        meshGenerationResults.removeIf(future -> future.isCancelled() || future.isDone());
+        // remove cancelled futures
+        meshGenerationResults.removeIf(Future::isCancelled);
+    }
+
+    /**
+     * Perform the processing of the next finished loaded chunk task.
+     */
+    private void handleNextChunkLoadResult() {
+        if (!isChunkLoadingMultiThreaded() || chunkLoadingResults.isEmpty()) {
+            return;
+        }
+
+        Optional<Future<ChunkLoadResult>> optionalFuture = chunkLoadingResults.stream().filter(Future::isDone).findFirst();
+        optionalFuture.ifPresent(future -> {
+            try {
+                ChunkLoadResult result = future.get();
+                if (result.hasChunk()) {
+                    addToCache(result.getChunk());
+                    addToQueue(meshGenerationQueue, result.getChunk());
+                } else {
+                    addToQueue(chunkGenerationQueue, result.getLocation());
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            chunkLoadingResults.remove(future);
+        });
+
+        // remove cancelled futures
+        chunkLoadingResults.removeIf(Future::isCancelled);
+    }
+
+    /**
+     * Perform the processing of the next finished chunk generation task.
+     */
+    private void handleNextChunkGenerationResult() {
+        if (!isChunkGenerationMultiThreaded() || chunkGenerationResults.isEmpty()) {
+            return;
+        }
+
+        Optional<Future<Chunk>> optionalFuture = chunkGenerationResults.stream().filter(Future::isDone).findFirst();
+        optionalFuture.ifPresent(future -> {
+            try {
+                Chunk chunk = future.get();
+                chunk.update();
+                addToCache(chunk);
+                addToQueue(meshGenerationQueue, chunk);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            chunkGenerationResults.remove(future);
+        });
+
+        // remove cancelled futures
+        chunkGenerationResults.removeIf(Future::isCancelled);
+    }
+
+    /**
+     * Create a chunk and add it to the cache.
+     *
+     * @param chunkLocation
+     * @return created chunk
+     */
+    private Chunk createChunk(@NonNull Vec3i chunkLocation) {
+        Chunk chunk = Chunk.create(chunkLocation);
+        if (log.isTraceEnabled()) {
+            log.trace("Creating chunk {}", chunk);
+        }
+        addToCache(chunk);
+        return chunk;
     }
 
     private boolean isMeshGenerationMultiThreaded() {
         return meshGenerationPoolSize > 0;
+    }
+
+    private boolean isChunkLoadingMultiThreaded() {
+        return chunkLoadingPoolSize > 0;
+    }
+
+    private boolean isChunkGenerationMultiThreaded() {
+        return chunkGenerationPoolSize > 0;
     }
 
     /**
@@ -333,7 +551,7 @@ public class BlocksManager {
      * @param queue
      * @param element
      * @param <T>
-     * @return true when the element is added to the queue, false otherwise
+     * @return true when the element is added to the queue or when the element was already in the queue, false otherwise
      */
     private <T> boolean addToQueue(@NonNull Queue<T> queue, @NonNull T element) {
         if (!queue.contains(element)) {
@@ -349,40 +567,12 @@ public class BlocksManager {
         }
     }
 
-    public static class Builder {
-
-        private int cacheSize = 0;
-        private int meshGenerationPoolSize = 0;
-        private MeshGenerationStrategy meshGenerationStrategy;
-
-        public Builder cacheSize(int cacheSize) {
-            this.cacheSize = cacheSize;
-            return this;
-        }
-
-        public Builder meshGenerationPoolSize(int meshGenerationPoolSize) {
-            this.meshGenerationPoolSize = meshGenerationPoolSize;
-            return this;
-        }
-
-        public Builder meshGenerationStrategy(MeshGenerationStrategy meshGenerationStrategy) {
-            this.meshGenerationStrategy = meshGenerationStrategy;
-            return this;
-        }
-
-        public BlocksManager build() {
-            BlocksManager blocksManager = new BlocksManager(cacheSize);
-            blocksManager.setMeshGenerationPoolSize(meshGenerationPoolSize);
-            blocksManager.setMeshGenerationStrategy(meshGenerationStrategy);
-            return blocksManager;
-        }
-
-    }
-
     @RequiredArgsConstructor
     private class MeshGenerationCallable implements Callable<Chunk> {
 
+        @NonNull
         private final Chunk chunk;
+        @NonNull
         private final MeshGenerationStrategy meshGenerationStrategy;
 
         @Override
@@ -393,557 +583,106 @@ public class BlocksManager {
 
     }
 
-    //private final int poolSize;
-    //private final int cacheSize;
-    // queue of chunks to load
-    //private final Queue<Vec3i> loadQueue = new ConcurrentLinkedQueue<>();
-    // list of chunk load tasks
-    //private final List<Future<ChunkLoadResult>> loadResultList = new ArrayList<>();
-    // queue of chunks that need to be populated
-    //private final Queue<Vec3i> generationQueue = new ConcurrentLinkedQueue<>();
-    // list of chunk generation tasks
-    //private final List<Future<Chunk>> generationResultList = new ArrayList<>();
-    // queue of chunks to need an updated mesh
-    //private final Queue<Vec3i> meshesGenerationQueue = new ConcurrentLinkedQueue<>();
-    // list of chunks mesh generation tasks
-    //private final List<Future<Vec3i>> meshesGenerationResultList = new ArrayList<>();
-    // a list of listeners to notify when the mesh of a chunk is updated
-    //private final List<MeshGenerationListener> meshListeners = new CopyOnWriteArrayList<>();
+    @RequiredArgsConstructor
+    private class ChunkLoadCallable implements Callable<ChunkLoadResult> {
 
-    //@Getter
-    //@Setter
-    //private ChunkLoader chunkLoader;
-    //@Getter
-    //@Setter
-    //private ChunkGenerator chunkGenerator;
-    //@Getter
-    //@Setter
-    //private MeshGenerationStrategy meshGenerationStrategy;
-    //private ThreadPoolExecutor executor;
-    //private ExecutorService executor;
-    //private Cache<Vec3i, Chunk> chunkCache;
-    //@Getter
-    //@Setter(AccessLevel.PROTECTED)
-    //private boolean initialized = false;
+        @NonNull
+        private final Vec3i chunkLocation;
+        @NonNull
+        private final ChunkRepository chunkRepository;
 
-//    public BlocksManager() {
-//        this(0, 0, null, null, null);
-//    }
+        @Override
+        public ChunkLoadResult call() throws Exception {
+            return new ChunkLoadResult(chunkLocation, chunkRepository.load(chunkLocation));
+        }
 
-//    public BlocksManager(int poolSize) {
-//        this(poolSize, 0, null, null, null);
-//    }
+    }
 
-//    public BlocksManager(int poolSize, int cacheSize) {
-//        this(poolSize, cacheSize, null, null, null);
-//    }
+    @RequiredArgsConstructor
+    private class ChunkGenerationCallable implements Callable<Chunk> {
 
-//    private BlocksManager(int poolSize, int cacheSize, ChunkLoader chunkLoader, ChunkGenerator chunkGenerator, MeshGenerationStrategy meshGenerationStrategy) {
-//        this.poolSize = poolSize;
-//        this.cacheSize = cacheSize;
-//        this.chunkLoader = chunkLoader;
-//        this.chunkGenerator = chunkGenerator;
-//        this.meshGenerationStrategy = meshGenerationStrategy;
-//    }
-//
-//    public void initialize() {
-//        // create the threadpool executor
-//        if (isMultiThreaded()) {
-//            int availableProcessors = Runtime.getRuntime().availableProcessors();
-//            if (poolSize > availableProcessors) {
-//                log.warn("The requested pool size of {} is larger then the number of processors: {}.", poolSize, availableProcessors);
-//            }
-//            //executor = new ScheduledThreadPoolExecutor(poolSize);
-//            executor = Executors.newFixedThreadPool(poolSize);
-//            log.debug("Constructed ThreadPoolExecutor with pool size: {}", poolSize);
-//        }
-//
-//        // create the cache
-//        Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
-//        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
-//        if (cacheSize > 0 && cacheSize < minimumSize) {
-//            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
-//        }
-//        chunkCache = cacheSize > 0 ? Caffeine.newBuilder().maximumSize(cacheSize).build() : Caffeine.newBuilder().maximumSize(minimumSize).build();
-//        log.debug("Constructed cache of size: {}", cacheSize > 0 ? cacheSize : minimumSize);
-//        initialized = true;
-//    }
-//
-//    public void update(float tpf) {
-//        if (!isInitialized()) {
-//            throw new IllegalStateException("BlocksManager was not properly initialized before update() was called!");
-//        }
-//
-//        // 1. generate chunk meshes
-//        handleChunkMeshGeneration();
-//
-//        // 2. load chunks
-//        handleChunkLoading();
-//
-//        // 3. generate chunks
-//        handleChunkGeneration();
-//    }
-//
-//    public void cleanup() {
-//        if (!isInitialized()) {
-//            return;
-//        }
-//
-//        if (isMultiThreaded()) {
-//            log.debug("Shutting down ThreadPoolExecutor...");
-//            executor.shutdownNow();
-//            log.debug("ThreadPoolExecutor shut down.");
-//        }
-//        chunkCache.cleanUp();
-//        log.debug("Cache cleared.");
-//    }
-//
-//    /**
-//     * Returns the chunk at the given location from the cache.
-//     *
-//     * @param chunkLocation of the chunk
-//     * @return chunk or null
-//     */
-//    public Chunk getChunk(Vec3i chunkLocation) {
-//        Chunk chunk = chunkCache.getIfPresent(chunkLocation);
-//        if (log.isTraceEnabled()) {
-//            log.trace("Retrieving chunk {} from cache: {}", chunkLocation, chunk);
-//        }
-//        return chunk;
-//    }
-//
-//    /**
-//     * Checks if the chunk at the given location is available.
-//     *
-//     * @param chunkLocation of the chunk
-//     * @return true when the chunk is available
-//     */
-//    public boolean hasChunk(Vec3i chunkLocation) {
-//        return getChunk(chunkLocation) != null;
-//    }
-//
-//    /**
-//     * Request the BlocksManager to fetch the chunk at the given location.
-//     *
-//     * @param chunkLocation of the chunk
-//     * @return true if the chunk is successfully requested
-//     */
-//    public boolean requestChunk(Vec3i chunkLocation) {
-//        if (chunkLocation == null || hasChunk(chunkLocation)) {
-//            return false;
-//        }
-//
-//        if (log.isTraceEnabled()) {
-//            log.trace("Requesting chunk {}", chunkLocation);
-//        }
-//
-//        return addToQueue(loadQueue, chunkLocation);
-//    }
-//
-//    /**
-//     * Request the BlocksManager to update the meshes of the chunk at the given location.
-//     * @param chunkLocation of the chunk
-//     * @return true if successfully requested
-//     */
-//    public boolean requestChunkMeshUpdate(Vec3i chunkLocation) {
-//        if (chunkLocation == null || !hasChunk(chunkLocation)) {
-//            return false;
-//        }
-//
-//        return addToQueue(meshesGenerationQueue, chunkLocation);
-//    }
-//
-//    /**
-//     * Add a listener to the list of listeners that are notified when the mesh generation of a chunk is finished.
-//     *
-//     * @param listener to add
-//     */
-//    public void addListener(MeshGenerationListener listener) {
-//        meshListeners.add(listener);
-//    }
-//
-//    /**
-//     * Remove a listener from the list of listeners that are notified when the mesh generation of a chunk is finished.
-//     *
-//     * @param listener to remove
-//     */
-//    public void removeListener(MeshGenerationListener listener) {
-//        meshListeners.remove(listener);
-//    }
-//
-//    /**
-//     * Calculate the picked block location based on the contact point and contact normals of a contact collision. By
-//     * setting the pickNeighbour flag, the neighbour of the picked block is returned.
-//     *
-//     * @param contactPoint  collision contact point
-//     * @param contactNormal collision contact normal
-//     * @param pickNeighbour if the neighbour block should be returned
-//     * @return the picked block or the neighbour of the picked block
-//     */
-//    public Vec3i getPickedBlockLocation(Vector3f contactPoint, Vector3f contactNormal, boolean pickNeighbour) {
-//        if (contactPoint == null || contactNormal == null) {
-//            return null;
-//        }
-//
-//        // add a small offset to the contact point, so we point a bit more 'inward' into the block
-//        contactPoint = contactPoint.add(contactNormal.negate().mult(0.05f));
-//
-//        if (pickNeighbour) {
-//            contactPoint.addLocal(contactNormal.mult(0.75f));
-//        }
-//
-//        Vec3i blockWorldLocation = new Vec3i((int) Math.floor(contactPoint.x), (int) Math.floor(contactPoint.y), (int) Math.floor(contactPoint.z));
-//        if (log.isTraceEnabled()) {
-//            log.trace("Calculated block location from contact point {} and contact normal {} : {}", contactPoint, contactNormal, blockWorldLocation);
-//        }
-//        return blockWorldLocation;
-//    }
-//
-//    /**
-//     * Add the block to the given block world location. When the chunk to add the block to could not be found, a new
-//     * one is created.
-//     *
-//     * @param blockWorldLocation location in the world
-//     * @param block              to add
-//     * @return true if the block is successfully added
-//     */
-//    public boolean addBlock(Vec3i blockWorldLocation, Block block) {
-//        if (blockWorldLocation == null || block == null) {
-//            return false;
-//        }
-//
-//        Vec3i chunkLocation = BlocksManager.getChunkLocation(blockWorldLocation.toVector3f());
-//        Chunk chunk = getChunk(chunkLocation);
-//        if (chunk == null) {
-//            chunk = Chunk.create(chunkLocation);
-//            if (log.isTraceEnabled()) {
-//                log.trace("Chunk not found in the cache, created new chunk {}", chunk);
-//            }
-//            addToCache(chunk, false);
-//        }
-//
-//        Vec3i localBlockCoord = chunk.toLocalCoordinate(blockWorldLocation);
-//        chunk.addBlock(localBlockCoord.x, localBlockCoord.y, localBlockCoord.z, block);
-//        addToQueue(meshesGenerationQueue, chunkLocation);
-//        log.debug("Added block {} - {} to chunk {}", block, blockWorldLocation, chunk);
-//        return true;
-//    }
-//
-//    /**
-//     * Removes and returns the block at the given world location.
-//     *
-//     * @param blockWorldLocation location in the world
-//     * @return the block at the given location
-//     */
-//    public Block removeBlock(Vec3i blockWorldLocation) {
-//        if (blockWorldLocation == null) {
-//            return null;
-//        }
-//
-//        Vec3i chunkLocation = BlocksManager.getChunkLocation(blockWorldLocation.toVector3f());
-//        Chunk chunk = getChunk(chunkLocation);
-//        if (chunk == null) {
-//            log.warn("Trying to remove block {} from chunk {} that isn't found in the cache.", blockWorldLocation, chunkLocation);
-//            return null;
-//        }
-//
-//        Vec3i blockLocal = chunk.toLocalCoordinate(blockWorldLocation);
-//        Block block = chunk.removeBlock(blockLocal.x, blockLocal.y, blockLocal.z);
-//        if (block != null) {
-//            addToQueue(meshesGenerationQueue, chunkLocation);
-//        }
-//        log.debug("Removed block {} at {} from chunk {}", block, blockWorldLocation, chunk);
-//        return block;
-//    }
-//
-//    /**
-//     * Calculate the chunk location that contains the given world location.
-//     *
-//     * @param worldLocation location in the world
-//     * @return the chunk location
-//     */
-//    public static Vec3i getChunkLocation(Vector3f worldLocation) {
-//        if (worldLocation == null) {
-//            return null;
-//        }
-//
-//        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
-//        // Math.floor() rounds the decimal part down; 4.13 => 4.0, 4.98 => 4.0, -7.82 => -8.0
-//        // downcasting double to int removes the decimal part
-//        Vec3i chunkLocation = new Vec3i((int) Math.floor(worldLocation.x / chunkSize.x), (int) Math.floor(worldLocation.y / chunkSize.y), (int) Math.floor(worldLocation.z / chunkSize.z));
-//        if (log.isTraceEnabled()) {
-//            log.trace("Calculated chunk location {} from world location {}", chunkLocation, worldLocation);
-//        }
-//        return chunkLocation;
-//    }
-//
-//    /**
-//     * Notify the list of listeners that the mesh of the chunk is generated.
-//     *
-//     * @param chunkLocation of the chunk
-//     */
-//    private void notifyMeshGenerationListeners(Vec3i chunkLocation) {
-//        for (MeshGenerationListener listener : meshListeners) {
-//            listener.generationFinished(chunkLocation);
-//        }
-//    }
-//
-//    /**
-//     * Handles the generation of chunk meshes. All chunks that have new meshes are added to the updatedChunkQueue.
-//     */
-//    private void handleChunkMeshGeneration() {
-//        // check for completed tasks
-//        for (Iterator<Future<Vec3i>> i = meshesGenerationResultList.iterator(); i.hasNext(); ) {
-//            Future<Vec3i> future = i.next();
-//            if (future.isDone()) {
-//                try {
-//                    notifyMeshGenerationListeners(future.get());
-//                } catch (Exception e) {
-//                    log.error(e.getMessage(), e);
-//                } finally {
-//                    i.remove();
-//                }
-//            } else if (future.isCancelled()) {
-//                log.warn("Mesh generation task was cancelled.");
-//                i.remove();
-//            }
-//        }
-//
-//        // check for new tasks
-//        Vec3i chunkLocation = meshesGenerationQueue.poll();
-//        if (chunkLocation != null) {
-//            Chunk chunk = getChunk(chunkLocation);
-//            if (chunk == null) {
-//                log.warn("Requested mesh generation of chunk {} that is not found in the cache, skipping mesh generation!", chunkLocation);
-//            } else {
-//                if (isMultiThreaded()) {
-//                    // check if should notify when the mesh generation is done
-//                    meshesGenerationResultList.add(executor.submit(new MeshGenerationCallable(chunk, meshGenerationStrategy)));
-//                } else {
-//                    // immediately create a new mesh and add it to the updated chunk queue
-//                    meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
-//                    notifyMeshGenerationListeners(chunkLocation);
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Handles the loading of chunks. When a chunk failed to load, it is added to the generationQueue. Otherwise it is
-//     * added to the cache.
-//     */
-//    private void handleChunkLoading() {
-//        // check for completed tasks
-//        for (Iterator<Future<ChunkLoadResult>> i = loadResultList.iterator(); i.hasNext(); ) {
-//            Future<ChunkLoadResult> future = i.next();
-//            if (future.isDone()) {
-//                try {
-//                    ChunkLoadResult result = future.get();
-//                    if (result.hasResult()) {
-//                        addToCache(result.getChunk(), true);
-//                    } else {
-//                        addToQueue(generationQueue, result.chunkLocation);
-//                    }
-//                } catch (Exception e) {
-//                    log.error(e.getMessage(), e);
-//                } finally {
-//                    i.remove();
-//                }
-//            } else if (future.isCancelled()) {
-//                log.warn("Chunk load task was cancelled.");
-//                i.remove();
-//            }
-//        }
-//
-//        // check for new tasks
-//        Vec3i chunkLocation = loadQueue.poll();
-//        if (chunkLocation != null) {
-//            // check if the chunk isn't in the cache
-//            Chunk chunk = getChunk(chunkLocation);
-//            if (chunk == null) {
-//                if (isMultiThreaded()) {
-//                    loadResultList.add(executor.submit(new ChunkLoadCallable(chunkLocation, chunkLoader)));
-//                } else {
-//                    chunk = chunkLoader.load(chunkLocation);
-//                    if (chunk != null) {
-//                        addToCache(chunk, true);
-//                    } else {
-//                        addToQueue(generationQueue, chunkLocation);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Handles the generation of chunks. When a chunk is generated with block data, call the {@link Chunk#update()}
-//     * method and add it to the cache.
-//     */
-//    private void handleChunkGeneration() {
-//        // check for completed tasks
-//        for (Iterator<Future<Chunk>> i = generationResultList.iterator(); i.hasNext(); ) {
-//            Future<Chunk> future = i.next();
-//            if (future.isDone()) {
-//                try {
-//                    Chunk chunk = future.get();
-//                    chunk.update();
-//                    addToCache(chunk, true);
-//                } catch (Exception e) {
-//                    log.error(e.getMessage(), e);
-//                } finally {
-//                    i.remove();
-//                }
-//            } else if (future.isCancelled()) {
-//                log.warn("Chunk generation task was cancelled.");
-//                i.remove();
-//            }
-//        }
-//
-//        // check for new tasks
-//        Vec3i chunkLocation = generationQueue.poll();
-//        if (chunkLocation != null) {
-//            // check if the chunk isn't in the cache
-//            Chunk chunk = getChunk(chunkLocation);
-//            if (chunk == null) {
-//                if (isMultiThreaded()) {
-//                    generationResultList.add(executor.submit(new ChunkGenerationCallable(chunkLocation, chunkGenerator)));
-//                } else {
-//                    chunk = chunkGenerator.generate(chunkLocation);
-//                    chunk.update();
-//                    addToCache(chunk, true);
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Adds the given chunk to cache. When the needMeshGeneration flag is set, the chunk will be added to the mesh
-//     * generation queue but it will not notify the listeners when the mesh generation is finished.
-//     *
-//     * @param chunk              to add
-//     * @param needMeshGeneration true if the meshes of the chunk need to be generated
-//     * @return true if the chunk is successfully added to the cache
-//     */
-//    private boolean addToCache(Chunk chunk, boolean needMeshGeneration) {
-//        if (chunk == null) {
-//            return false;
-//        }
-//
-//        if (needMeshGeneration) {
-//            addToQueue(meshesGenerationQueue, chunk.getLocation());
-//        }
-//
-//        if (log.isTraceEnabled()) {
-//            log.trace("Adding chunk {} to cache", chunk.getLocation());
-//        }
-//
-//        chunkCache.put(chunk.getLocation(), chunk);
-//        return true;
-//    }
-//
-//    private boolean isMultiThreaded() {
-//        return poolSize > 0;
-//    }
-//
-//    /**
-//     * Helper method to add an object to a queue, making sure we don't add the same object multiple times.
-//     *
-//     * @param queue to add the object to
-//     * @param object object to add
-//     * @param <T> type of the queue
-//     * @return true if the object was already in the queue or if the object was successfully added to the queue, false
-//     * otherwise
-//     */
-//    private <T> boolean addToQueue(Queue<T> queue, T object) {
-//        if (!queue.contains(object)) {
-//            return queue.offer(object);
-//        }
-//        return true;
-//    }
-//
-////    public static class Builder {
-////
-////        private int cacheSize = 0;
-////        private ChunkLoader loader;
-////        private ChunkGenerator generator;
-////        private MeshGenerationStrategy meshGenerationStrategy;
-////
-////        public Builder cacheSize(int cacheSize) {
-////            this.cacheSize = cacheSize;
-////            return this;
-////        }
-////
-////        public Builder chunkLoader(ChunkLoader loader) {
-////            this.loader = loader;
-////            return this;
-////        }
-////
-////        public Builder generator(ChunkGenerator generator) {
-////            this.generator = generator;
-////            return this;
-////        }
-////
-////        public Builder meshGenerationStrategy(MeshGenerationStrategy meshGenerationStrategy) {
-////            this.meshGenerationStrategy = meshGenerationStrategy;
-////            return this;
-////        }
-////
-////        public BlocksManager build() {
-////            return new BlocksManager(0, cacheSize, loader, generator, meshGenerationStrategy);
-////        }
-////    }
-//
-//    @RequiredArgsConstructor
-//    private class MeshGenerationCallable implements Callable<Vec3i> {
-//
-//        private final Chunk chunk;
-//        private final MeshGenerationStrategy meshGenerationStrategy;
-//
-//        @Override
-//        public Vec3i call() {
-//            meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
-//            return chunk.getLocation();
-//        }
-//
-//    }
-//
-//    @RequiredArgsConstructor
-//    private class ChunkLoadCallable implements Callable<ChunkLoadResult> {
-//
-//        private final Vec3i chunkLocation;
-//        private final ChunkLoader chunkLoader;
-//
-//        @Override
-//        public ChunkLoadResult call() {
-//            return new ChunkLoadResult(chunkLocation, chunkLoader.load(chunkLocation));
-//        }
-//
-//    }
-//
-//    @RequiredArgsConstructor
-//    private class ChunkGenerationCallable implements Callable<Chunk> {
-//
-//        private final Vec3i chunkLocation;
-//        private final ChunkGenerator chunkGenerator;
-//
-//        @Override
-//        public Chunk call() {
-//            return chunkGenerator.generate(chunkLocation);
-//        }
-//
-//    }
-//
-//    @Getter
-//    @RequiredArgsConstructor
-//    private class ChunkLoadResult {
-//
-//        private final Vec3i chunkLocation;
-//        private final Chunk chunk;
-//
-//        public boolean hasResult() {
-//            return chunk != null;
-//        }
-//
-//    }
+        @NonNull
+        private final Vec3i chunkLocation;
+        @NonNull
+        private final ChunkGenerator chunkGenerator;
+
+        @Override
+        public Chunk call() throws Exception {
+            return chunkGenerator.generate(chunkLocation);
+        }
+
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private class ChunkLoadResult {
+
+        @NonNull
+        private final Vec3i location;
+        private final Chunk chunk;
+
+        public boolean hasChunk() {
+            return chunk != null;
+        }
+
+    }
+
+    public static class BlocksManagerBuilder {
+
+        private int cacheSize = 0;
+        private int meshGenerationPoolSize = 0;
+        private int chunkLoadingPoolSize = 0;
+        private int chunkGenerationPoolSize = 0;
+        private MeshGenerationStrategy meshGenerationStrategy;
+        private ChunkRepository chunkRepository;
+        private ChunkGenerator chunkGenerator;
+
+        public BlocksManagerBuilder cacheSize(int cacheSize) {
+            this.cacheSize = cacheSize;
+            return this;
+        }
+
+        public BlocksManagerBuilder meshGenerationPoolSize(int meshGenerationPoolSize) {
+            this.meshGenerationPoolSize = meshGenerationPoolSize;
+            return this;
+        }
+
+        public BlocksManagerBuilder chunkLoadingPoolSize(int chunkLoadingPoolSize) {
+            this.chunkLoadingPoolSize = chunkLoadingPoolSize;
+            return this;
+        }
+
+        public BlocksManagerBuilder chunkGenerationPoolSize(int chunkGenerationPoolSize) {
+            this.chunkGenerationPoolSize = chunkGenerationPoolSize;
+            return this;
+        }
+
+        public BlocksManagerBuilder meshGenerationStrategy(MeshGenerationStrategy meshGenerationStrategy) {
+            this.meshGenerationStrategy = meshGenerationStrategy;
+            return this;
+        }
+
+        public BlocksManagerBuilder chunkRepository(ChunkRepository chunkRepository) {
+            this.chunkRepository = chunkRepository;
+            return this;
+        }
+
+        public BlocksManagerBuilder chunkGenerator(ChunkGenerator chunkGenerator) {
+            this.chunkGenerator = chunkGenerator;
+            return this;
+        }
+
+        public BlocksManager build() {
+            BlocksManager blocksManager = new BlocksManager(cacheSize);
+            blocksManager.setMeshGenerationPoolSize(meshGenerationPoolSize);
+            blocksManager.setChunkLoadingPoolSize(chunkLoadingPoolSize);
+            blocksManager.setChunkGenerationPoolSize(chunkGenerationPoolSize);
+            blocksManager.setMeshGenerationStrategy(meshGenerationStrategy);
+            blocksManager.setChunkRepository(chunkRepository);
+            blocksManager.setChunkGenerator(chunkGenerator);
+            return blocksManager;
+        }
+
+    }
 
 }

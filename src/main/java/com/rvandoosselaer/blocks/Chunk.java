@@ -48,6 +48,7 @@ public class Chunk {
         chunk.setLocation(location);
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         chunk.setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
+        chunk.update();
 
         return chunk;
     }

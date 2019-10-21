@@ -10,13 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * A base implementation of a 3D pager. Based on the given location ({@link #setLocation(Vector3f)} the pages around
- * this location in the grid are calculated. Each call to {@link #update()} will: detach one page that is outside the
- * grid, if available; attach one new page that is inside the grid, if available; update a page inside the grid, if one
- * is available.
+ * A base implementation of a 3D pager. Based on the given center location ({@link #setLocation(Vector3f)} the pages
+ * around this location in the grid are calculated. Each call to {@link #update()} will:
+ * - detach one page that is outside the grid, if available
+ * - attach one new page that is inside the grid, if available
+ * - update a page inside the grid, if one is available.
  * Implementing classes need to implement the methods to create, attach and detach pages.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @Slf4j
 @Getter

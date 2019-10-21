@@ -1,64 +1,62 @@
 package com.rvandoosselaer.blocks;
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.logging.Level;
-import java.util.logging.LogManager;
+public class BlocksManagerTest {
 
-public class BlocksManagerTest extends SimpleApplication {
+    @Test
+    public void testChunkLocationCalculation() {
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(16, 16, 16));
 
-    private BlocksManager blocksManager;
+        Vector3f location = new Vector3f(0, 0, 0);
+        Vec3i chunkLocation = BlocksManager.getChunkLocation(location);
 
-    public static void main(String[] args) {
-        BlocksManagerTest blocksManagerTest = new BlocksManagerTest();
-        blocksManagerTest.start();
+        Assertions.assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        location = new Vector3f(13, 10, 5);
+        chunkLocation = BlocksManager.getChunkLocation(location);
+
+        Assertions.assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        location = new Vector3f(-5, 3, -9);
+        chunkLocation = BlocksManager.getChunkLocation(location);
+
+        Assertions.assertEquals(new Vec3i(-1, 0, -1), chunkLocation);
+
+        location = new Vector3f(16, 15, 2);
+        chunkLocation = BlocksManager.getChunkLocation(location);
+
+        Assertions.assertEquals(new Vec3i(1, 0, 0), chunkLocation);
     }
 
-    @Override
-    public void simpleInitApp() {
-        LogManager.getLogManager().getLogger("").setLevel(Level.ALL);
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+    @Test
+    public void testPickedBlockLocation() {
+        BlocksConfig.getInstance().setBlockScale(1);
 
-        MeshGenerationStrategy meshGenerationStrategy = new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(assetManager));
+        BlocksManager blocksManager = new BlocksManager();
 
-        blocksManager = new BlocksManager.Builder()
-                .meshGenerationPoolSize(1)
-                .meshGenerationStrategy(meshGenerationStrategy)
-                .build();
+        Vector3f block = new Vector3f(1.3f, 0.99999f, -2.84f);
+        Vec3i blockLocation = blocksManager.getPickedBlockLocation(block, Vector3f.UNIT_Y, false);
 
-        blocksManager.initialize();
+        Assertions.assertEquals(new Vec3i(1, 0, -3), blockLocation);
 
-        blocksManager.addBlock(new Vec3i(0, 0, 0), Blocks.GRASS);
+        block = new Vector3f(-13.140036f, 15.920046f, -15.0f);
+        blockLocation = blocksManager.getPickedBlockLocation(block, new Vector3f(0, 0, -1), false);
 
-        Chunk chunk = blocksManager.getChunk(BlocksManager.getChunkLocation(new Vector3f(0, 0, 0)));
+        Assertions.assertEquals(new Vec3i(-14, 15, -15), blockLocation);
 
-        rootNode.addLight(new AmbientLight(new ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f)));
-        rootNode.addLight(new DirectionalLight(new Vector3f(-0.1f, -1f, -0.1f).normalizeLocal(), ColorRGBA.White));
+        block = new Vector3f(-15.554672f, 15.649327f, -13.999999f);
+        blockLocation = blocksManager.getPickedBlockLocation(block, new Vector3f(0, 0, -1), true);
 
-        viewPort.setBackgroundColor(ColorRGBA.Cyan);
+        Assertions.assertEquals(new Vec3i(-16, 15, -15), blockLocation);
+
+        block = new Vector3f(1.5f, 1.0012f, 0.9997f);
+        blockLocation = blocksManager.getPickedBlockLocation(block, new Vector3f(0, -1, 0), true);
+
+        Assertions.assertEquals(new Vec3i(1, 0, 0), blockLocation);
     }
 
-    @Override
-    public void simpleUpdate(float tpf) {
-        blocksManager.update();
-
-        Chunk chunk = blocksManager.getChunk(BlocksManager.getChunkLocation(new Vec3i(0, 0, 0).toVector3f()));
-        if (chunk != null && chunk.getNode() != null && chunk.getNode().getParent() == null) {
-            rootNode.attachChild(chunk.getNode());
-        }
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        blocksManager.cleanup();
-        System.out.println("Done");
-    }
 }

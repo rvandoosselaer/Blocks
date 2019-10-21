@@ -6,21 +6,17 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-//TODO
+/**
+ * An {@link com.jme3.app.state.AppState} to manage the lifecycle of a {@link BlocksManager}.
+ *
+ * @author rvandoosselaer
+ */
 @Getter
 @RequiredArgsConstructor
 public class BlocksManagerState extends BaseAppState {
 
     @NonNull
     private final BlocksManager blocksManager;
-
-//    public BlocksManagerState(ChunkLoader chunkLoader, ChunkGenerator chunkGenerator, MeshGenerationStrategy meshGenerationStrategy) {
-//        this(0, 0, chunkLoader, chunkGenerator, meshGenerationStrategy);
-//    }
-
-//    public BlocksManagerState(int poolSize, int cacheSize, ChunkLoader chunkLoader, ChunkGenerator chunkGenerator, MeshGenerationStrategy meshGenerationStrategy) {
-//        this(new BlocksManager(poolSize, cacheSize, chunkLoader, chunkGenerator, meshGenerationStrategy));
-//    }
 
     @Override
     protected void initialize(Application app) {

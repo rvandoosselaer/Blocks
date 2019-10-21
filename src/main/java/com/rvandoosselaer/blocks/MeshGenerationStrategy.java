@@ -4,7 +4,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 
 /**
- * @author remy
+ * @author rvandoosselaer
  */
 public interface MeshGenerationStrategy {
 

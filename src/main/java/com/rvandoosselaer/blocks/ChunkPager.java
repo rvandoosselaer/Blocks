@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  * A pager implementation that pages the meshes of the chunks around the given location. Attaching and detaching them
  * from the given node.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @Slf4j
 public class ChunkPager extends Pager<Node> {

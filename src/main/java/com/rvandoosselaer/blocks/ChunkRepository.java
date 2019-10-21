@@ -3,10 +3,11 @@ package com.rvandoosselaer.blocks;
 import com.simsilica.mathd.Vec3i;
 
 /**
- * @author remy
+ * Repository for a chunk
+ *
+ * @author rvandoosselaer
  */
-//TODO: refactor to ChunkRepository, with load and save
-public interface ChunkLoader {
+public interface ChunkRepository {
 
     /**
      * Loads the chunk for the given chunk location.
@@ -15,5 +16,13 @@ public interface ChunkLoader {
      * @return chunk or null if the chunk could not be loaded
      */
     Chunk load(Vec3i location);
+
+    /**
+     * Saves the chunk
+     *
+     * @param chunk to save
+     * @return true when successfully saved, false otherwise
+     */
+    boolean save(Chunk chunk);
 
 }

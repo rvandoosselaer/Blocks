@@ -5,6 +5,7 @@ package com.rvandoosselaer.blocks;
  *
  * @author rvandoosselaer
  */
+//TODO: move to class
 public interface Block {
 
     /**
