@@ -42,7 +42,7 @@ public abstract class Pager<T> implements MeshGenerationListener {
         if (log.isTraceEnabled()) {
             log.trace("{} initialize()", getClass().getSimpleName());
         }
-        blocksManager.addListener(this);
+        blocksManager.addMeshGenerationListener(this);
     }
 
     public void update() {
@@ -74,14 +74,14 @@ public abstract class Pager<T> implements MeshGenerationListener {
         pagesToAttach.clear();
         pagesToDetach.clear();
         updatedPages.clear();
-        blocksManager.removeListener(this);
+        blocksManager.removeMeshGenerationListener(this);
     }
 
     @Override
-    public void generationFinished(Vec3i chunkLocation) {
+    public void generationFinished(Chunk chunk) {
         // we are only interested in updated pages in the grid
-        if (attachedPages.containsKey(chunkLocation)) {
-            updatedPages.offer(chunkLocation);
+        if (attachedPages.containsKey(chunk.getLocation())) {
+            updatedPages.offer(chunk.getLocation());
         }
     }
 
@@ -195,7 +195,7 @@ public abstract class Pager<T> implements MeshGenerationListener {
         Chunk chunk = blocksManager.getChunk(pageLocation);
         if (chunk == null) {
             // chunk was not found, we request it and try again later
-            blocksManager.requestChunk(pageLocation);
+            //blocksManager.requestChunk(pageLocation);
             pagesToAttach.offer(pageLocation);
             return;
         }

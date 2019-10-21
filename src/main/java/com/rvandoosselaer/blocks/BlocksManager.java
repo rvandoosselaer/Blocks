@@ -2,15 +2,13 @@ package com.rvandoosselaer.blocks;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * A class for managing the loading, generating and mesh constructing of chunk objects in a thread safe way.
@@ -54,7 +52,10 @@ public class BlocksManager {
     @Getter
     @Setter(AccessLevel.PRIVATE)
     private MeshGenerationStrategy meshGenerationStrategy;
-    private final Queue<Vec3i> meshGenerationQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<Chunk> meshGenerationQueue = new ConcurrentLinkedQueue<>();
+    private final List<MeshGenerationListener> meshGenerationListeners = new CopyOnWriteArrayList<>();
+    private ExecutorService meshGenerationExecutor;
+    private List<Future<Chunk>> meshGenerationResults = new ArrayList<>();
 
     public BlocksManager() {
         this(0);
@@ -78,6 +79,12 @@ public class BlocksManager {
         cache = cacheSize > 0 ? Caffeine.newBuilder().maximumSize(cacheSize).build() :
                 Caffeine.newBuilder().maximumSize(minimumSize).build();
 
+        // start executors
+        if (isMeshGenerationMultiThreaded()) {
+            meshGenerationExecutor = Executors.newFixedThreadPool(meshGenerationPoolSize);
+            log.debug("Created mesh generation ThreadPoolExecutor with pool size: {}", meshGenerationPoolSize);
+        }
+
         this.initialized = true;
     }
 
@@ -86,7 +93,9 @@ public class BlocksManager {
             throw new IllegalStateException("BlocksManager is not properly initialized when update() is called!");
         }
 
+        // mesh generation
         handleNextMeshUpdate();
+        handleNextMeshUpdateResult();
     }
 
     public void cleanup() {
@@ -97,6 +106,15 @@ public class BlocksManager {
         if (log.isTraceEnabled()) {
             log.trace("{} - cleanup", getClass().getSimpleName());
         }
+
+        if (isMeshGenerationMultiThreaded()) {
+            log.debug("Shutting down mesh generation ThreadPoolExecutor...");
+            meshGenerationExecutor.shutdownNow();
+            log.debug("Mesh generation ThreadPoolExecutor shut down.");
+        }
+
+        meshGenerationQueue.clear();
+        meshGenerationListeners.clear();
         cache.cleanUp();
         this.initialized = false;
     }
@@ -108,6 +126,10 @@ public class BlocksManager {
      * @return chunk or null when not found
      */
     public Chunk getChunk(@NonNull Vec3i location) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
         Chunk chunk = cache.getIfPresent(location);
         if (log.isTraceEnabled()) {
             log.trace("Fetching chunk from cache: {} -> {}", location, chunk);
@@ -120,6 +142,9 @@ public class BlocksManager {
      * @return true when the chunk is in the cache, false otherwise
      */
     public boolean hasChunk(@NonNull Vec3i location) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
         return getChunk(location) != null;
     }
 
@@ -130,70 +155,176 @@ public class BlocksManager {
      * @return true when the update is successfully requested
      */
     public boolean requestMeshUpdate(@NonNull Vec3i location) {
-        return hasChunk(location) && addToQueue(meshGenerationQueue, location);
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        Chunk chunk = getChunk(location);
+        return chunk != null && requestMeshUpdate(chunk);
     }
 
+    /**
+     * Request a chunk mesh update
+     *
+     * @param chunk
+     * @return true when the update is successfully requested
+     */
+    public boolean requestMeshUpdate(@NonNull Chunk chunk) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        return addToQueue(meshGenerationQueue, chunk);
+    }
+
+    /**
+     * Add a listener to the list of listeners that is notified when the mesh of a chunk is updated.
+     *
+     * @param listener
+     */
+    public void addMeshGenerationListener(@NonNull MeshGenerationListener listener) {
+        meshGenerationListeners.add(listener);
+    }
+
+    /**
+     * Remove a listener from the list of listeners that is notified when the mesh of a chunk is updated.
+     *
+     * @param listener
+     */
+    public void removeMeshGenerationListener(@NonNull MeshGenerationListener listener) {
+        meshGenerationListeners.remove(listener);
+    }
+
+    /**
+     * Place a block at the given world location. When the chunk to add the block to doesn't exist, a new one
+     * is created.
+     * If there was already a block on the location it will be replace by the new block.
+     *
+     * @param blockWorldLocation location in the world
+     * @param block              to add
+     * @return the previous block at the location or null
+     */
+    public Block addBlock(@NonNull Vec3i blockWorldLocation, Block block) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        Vec3i chunkLocation = BlocksManager.getChunkLocation(blockWorldLocation.toVector3f());
+        Chunk chunk = getChunk(chunkLocation);
+        if (chunk == null) {
+            chunk = Chunk.create(chunkLocation);
+            if (log.isTraceEnabled()) {
+                log.trace("Creating chunk {}", chunk);
+            }
+            addToCache(chunk);
+        }
+
+        Vec3i blockLocalLocation = chunk.toLocalLocation(blockWorldLocation);
+        Block previousBlock = chunk.addBlock(blockLocalLocation, block);
+        if (!Objects.equals(block, previousBlock)) {
+            addToQueue(meshGenerationQueue, chunk);
+        }
+        return previousBlock;
+    }
+
+    /**
+     * Removes and returns the block at the given world location.
+     *
+     * @param blockWorldLocation location in the world
+     * @return the block at the given location or null
+     */
+    public Block removeBlock(@NonNull Vec3i blockWorldLocation) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        Vec3i chunkLocation = BlocksManager.getChunkLocation(blockWorldLocation.toVector3f());
+        Chunk chunk = getChunk(chunkLocation);
+        if (chunk == null) {
+            log.warn("Trying to remove block at {} from chunk at {} that isn't in the cache.", blockWorldLocation, chunkLocation);
+            return null;
+        }
+
+        Vec3i blockLocalLocation = chunk.toLocalLocation(blockWorldLocation);
+        Block block = chunk.removeBlock(blockLocalLocation);
+        if (block != null) {
+            addToQueue(meshGenerationQueue, chunk);
+        }
+        return block;
+    }
+
+    /**
+     * Calculate the location of the chunk that contains the passed world location.
+     *
+     * @param worldLocation location in the world
+     * @return the chunk location
+     */
+    public static Vec3i getChunkLocation(@NonNull Vector3f worldLocation) {
+        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+        // Math.floor() rounds the decimal part down; 4.13 => 4.0, 4.98 => 4.0, -7.82 => -8.0
+        // downcasting double to int removes the decimal part
+        Vec3i chunkLocation = new Vec3i((int) Math.floor(worldLocation.x / chunkSize.x), (int) Math.floor(worldLocation.y / chunkSize.y), (int) Math.floor(worldLocation.z / chunkSize.z));
+        if (log.isTraceEnabled()) {
+            log.trace("Calculated chunk location {} from world location {}", chunkLocation, worldLocation);
+        }
+        return chunkLocation;
+    }
+
+    /**
+     * Perform a mesh update on the next chunk in the meshes generation queue.
+     */
     private void handleNextMeshUpdate() {
         if (meshGenerationStrategy == null) {
             log.warn("No MeshGenerationStrategy set on BlocksManager.");
             return;
         }
 
-        Vec3i location = meshGenerationQueue.poll();
-        if (location != null) {
-            Chunk chunk = getChunk(location);
-
-            if (chunk == null) {
-                log.warn("Mesh update requested for chunk {} that is not in the cache, skipping.", location);
-                return;
-            }
-
-            if (isMeshGenerationMultiThreaded()) {
-
-            } else {
-                meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
-            }
-
+        if (meshGenerationQueue.isEmpty()) {
+            return;
         }
 
-        //        // check for completed tasks
-//        for (Iterator<Future<Vec3i>> i = meshesGenerationResultList.iterator(); i.hasNext(); ) {
-//            Future<Vec3i> future = i.next();
-//            if (future.isDone()) {
-//                try {
-//                    notifyMeshGenerationListeners(future.get());
-//                } catch (Exception e) {
-//                    log.error(e.getMessage(), e);
-//                } finally {
-//                    i.remove();
-//                }
-//            } else if (future.isCancelled()) {
-//                log.warn("Mesh generation task was cancelled.");
-//                i.remove();
-//            }
-//        }
-//
-//        // check for new tasks
-//        Vec3i chunkLocation = meshesGenerationQueue.poll();
-//        if (chunkLocation != null) {
-//            Chunk chunk = getChunk(chunkLocation);
-//            if (chunk == null) {
-//                log.warn("Requested mesh generation of chunk {} that is not found in the cache, skipping mesh generation!", chunkLocation);
-//            } else {
-//                if (isMultiThreaded()) {
-//                    // check if should notify when the mesh generation is done
-//                    meshesGenerationResultList.add(executor.submit(new MeshGenerationCallable(chunk, meshGenerationStrategy)));
-//                } else {
-//                    // immediately create a new mesh and add it to the updated chunk queue
-//                    meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
-//                    notifyMeshGenerationListeners(chunkLocation);
-//                }
-//            }
-//        }
+        Chunk chunk = meshGenerationQueue.poll();
+        if (isMeshGenerationMultiThreaded()) {
+            meshGenerationResults.add(meshGenerationExecutor.submit(new MeshGenerationCallable(chunk, meshGenerationStrategy)));
+        } else {
+            meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
+            notifyMeshGenerationListeners(chunk);
+        }
+    }
+
+    /**
+     * Perform the processing of the next finished chunk mesh generation task.
+     */
+    private void handleNextMeshUpdateResult() {
+        if (!isMeshGenerationMultiThreaded() || meshGenerationResults.isEmpty()) {
+            return;
+        }
+
+        // get the first completed future
+        Optional<Future<Chunk>> optionalFuture = meshGenerationResults.stream().filter(Future::isDone).findFirst();
+        optionalFuture.ifPresent(future -> {
+            try {
+                notifyMeshGenerationListeners(future.get());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+
+        // remove cancelled and finished futures
+        meshGenerationResults.removeIf(future -> future.isCancelled() || future.isDone());
     }
 
     private boolean isMeshGenerationMultiThreaded() {
         return meshGenerationPoolSize > 0;
+    }
+
+    /**
+     * Notify the list of listeners that the mesh of a chunk is generated/updated.
+     *
+     * @param chunk
+     */
+    private void notifyMeshGenerationListeners(Chunk chunk) {
+        meshGenerationListeners.forEach(listener -> listener.generationFinished(chunk));
     }
 
     /**
@@ -204,11 +335,18 @@ public class BlocksManager {
      * @param <T>
      * @return true when the element is added to the queue, false otherwise
      */
-    private <T> boolean addToQueue(Queue<T> queue, T element) {
+    private <T> boolean addToQueue(@NonNull Queue<T> queue, @NonNull T element) {
         if (!queue.contains(element)) {
             return queue.offer(element);
         }
         return true;
+    }
+
+    private void addToCache(@NonNull Chunk chunk) {
+        cache.put(chunk.getLocation(), chunk);
+        if (log.isTraceEnabled()) {
+            log.trace("Adding {} to cache. Estimated new cache size: {}", chunk, cache.estimatedSize());
+        }
     }
 
     public static class Builder {
@@ -237,6 +375,20 @@ public class BlocksManager {
             blocksManager.setMeshGenerationPoolSize(meshGenerationPoolSize);
             blocksManager.setMeshGenerationStrategy(meshGenerationStrategy);
             return blocksManager;
+        }
+
+    }
+
+    @RequiredArgsConstructor
+    private class MeshGenerationCallable implements Callable<Chunk> {
+
+        private final Chunk chunk;
+        private final MeshGenerationStrategy meshGenerationStrategy;
+
+        @Override
+        public Chunk call() throws Exception {
+            meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
+            return chunk;
         }
 
     }

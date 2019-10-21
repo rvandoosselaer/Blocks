@@ -26,6 +26,7 @@ public class Chunk {
     @Setter(AccessLevel.PRIVATE)
     private Block[] blocks;
     @Setter(AccessLevel.PRIVATE)
+    @ToString.Include
     private Vec3i location;
     private Vector3f worldLocation;
     @ToString.Include
@@ -56,25 +57,33 @@ public class Chunk {
      *
      * @param location local coordinate in the chunk
      * @param block    the block to add
+     * @return the previous block at the location or null
      */
-    public void addBlock(@NonNull Vec3i location, Block block) {
-        addBlock(location.x, location.y, location.z, block);
+    public Block addBlock(@NonNull Vec3i location, Block block) {
+        return addBlock(location.x, location.y, location.z, block);
     }
 
     /**
-     * Add a block to this chunk. If there was already a block at this location, it will be overwritten.
+     * Add a block to this chunk. If there was already a block at this location, it will be replaced.
      *
      * @param x     local x coordinate in the chunk
      * @param y     local y coordinate in the chunk
      * @param z     local z coordinate in the chunk
      * @param block the block to add
+     * @return the previous block at the location or null
      */
-    public void addBlock(int x, int y, int z, Block block) {
+    public Block addBlock(int x, int y, int z, Block block) {
         if (isInsideChunk(x, y, z)) {
-            this.blocks[calculateIndex(x, y, z)] = block;
-        } else {
-            log.warn("Block location ({}, {}, {}) is outside of the chunk boundaries!", x, y, z);
+            int index = calculateIndex(x, y, z);
+            Block previous = blocks[index];
+            blocks[index] = block;
+            if (log.isTraceEnabled()) {
+                log.trace("Added {} to {}", block, this);
+            }
+            return previous;
         }
+        log.warn("Block location ({}, {}, {}) is outside of the chunk boundaries!", x, y, z);
+        return null;
     }
 
     /**
@@ -123,15 +132,22 @@ public class Chunk {
      * @return the removed block or null
      */
     public Block removeBlock(int x, int y, int z) {
-        Block block = getBlock(x, y, z);
-        if (block != null) {
-            addBlock(x, y, z, null);
+        if (isInsideChunk(x, y, z)) {
+            int index = calculateIndex(x, y, z);
+            Block block = blocks[index];
+            blocks[index] = null;
+            if (log.isTraceEnabled()) {
+                log.trace("Removed {} from {}", block, this);
+            }
+            return block;
         }
 
-        return block;
+        log.warn("block location ({}, {}, {}) is outside the chunk boundaries!", x, y, z);
+        return null;
     }
 
     //TODO: remove?
+
     /**
      * Creates the node of the chunk with the given {@link MeshGenerationStrategy}.
      *
@@ -144,6 +160,7 @@ public class Chunk {
     }
 
     //TODO: remove?
+
     /**
      * Creates the collision mesh of the chunk with the given {@link MeshGenerationStrategy}.
      *
@@ -192,7 +209,7 @@ public class Chunk {
      * @param blockWorldLocation block location in the world
      * @return the local block coordinate
      */
-    public Vec3i toLocalCoordinate(@NonNull Vec3i blockWorldLocation) {
+    public Vec3i toLocalLocation(@NonNull Vec3i blockWorldLocation) {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         Vec3i localCoord = new Vec3i(blockWorldLocation.x - (location.x * chunkSize.x), blockWorldLocation.y - (location.y * chunkSize.y), blockWorldLocation.z - (location.z * chunkSize.z));
         if (localCoord.x < 0 || localCoord.x >= chunkSize.x || localCoord.y < 0 || localCoord.y >= chunkSize.y || localCoord.z < 0 || localCoord.z >= chunkSize.z) {

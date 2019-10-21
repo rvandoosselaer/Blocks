@@ -34,7 +34,7 @@ public class BlocksManagerState extends BaseAppState {
 
     @Override
     public void update(float tpf) {
-        blocksManager.update(tpf);
+        blocksManager.update();
     }
 
     @Override
