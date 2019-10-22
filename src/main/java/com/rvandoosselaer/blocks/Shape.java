@@ -12,9 +12,9 @@ public interface Shape {
     String PYRAMID = "pyramid";
     Shape PYRAMID_SHAPE = new Pyramid();
     String CUBOID_ONE_THIRD = "cuboid-one-third";
-    Shape CUBOID_ONE_THIRD_SHAPE = new Cuboid(0.333f);
+    Shape CUBOID_ONE_THIRD_SHAPE = new Slab(0, 0.333f);
     String CUBOID_TWO_THIRD = "cuboid-two-third";
-    Shape CUBOID_TWO_THIRD_SHAPE = new Cuboid(0.666f);
+    Shape CUBOID_TWO_THIRD_SHAPE = new Slab(0, 0.666f);
     String WEDGE_RIGHT = "wedge-right";
     Shape WEDGE_RIGHT_SHAPE = new Wedge(Direction.RIGHT);
     String WEDGE_FRONT = "wedge-front";
