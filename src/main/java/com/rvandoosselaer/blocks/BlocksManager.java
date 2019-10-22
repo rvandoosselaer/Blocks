@@ -24,7 +24,8 @@ import java.util.concurrent.*;
  * requested with the {@link #requestChunk(Vec3i)} method.
  * The {@link BlocksManager} will first try to load the requested chunk using the {@link ChunkRepository}. When this is
  * not successful it will try to generate the chunk using the {@link ChunkGenerator}. When this also fails an empty
- * chunk will be created.
+ * chunk will be created. The requested chunk is placed in the cache and can be retrieved with the {@link #getChunk(Vec3i)}
+ * method.
  * <p>
  * When the node of a chunk in the cache is not set, the generation of the mesh is still in progress. Try to retrieve the
  * node at a later time. A mesh update can be requested for a chunk using the {@link #requestMeshUpdate(Chunk)} method.

@@ -41,9 +41,7 @@ public interface Block {
      * Flag indicating if the block is transparent. Adjacent transparent blocks don't render the shared face between
      * them. When a non-transparent block is next to a transparent block, the face of the non-transparent
      * block next to the transparent block is rendered.
-     * | --- || --- |
-     * |  A  ||  B  |
-     * | --- || --- |
+     * Given blocks A and B are placed next to each other: |  A  ||  B  |
      * If A is transparent and B is transparent, the faces between A and B (right face for A, left face for B) are not
      * rendered.
      * If A is non-transparent and B is transparent, the right face of A is rendered, the left face of B is not rendered.
