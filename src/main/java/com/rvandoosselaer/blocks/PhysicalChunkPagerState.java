@@ -4,7 +4,6 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.Vector3f;
-import com.simsilica.mathd.Vec3i;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -17,14 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class PhysicalChunkPagerState extends BaseAppState {
 
     private final PhysicalChunkPager physicalChunkPager;
-
-    public PhysicalChunkPagerState(BlocksManager blocksManager) {
-        this(new PhysicalChunkPager(blocksManager));
-    }
-
-    public PhysicalChunkPagerState(PhysicsSpace physicsSpace, BlocksManager blocksManager) {
-        this(new PhysicalChunkPager(physicsSpace, blocksManager));
-    }
 
     @Override
     protected void initialize(Application app) {
@@ -55,14 +46,6 @@ public class PhysicalChunkPagerState extends BaseAppState {
 
     public PhysicsSpace getPhysicsSpace() {
         return physicalChunkPager.getPhysicsSpace();
-    }
-
-    public void setGridSize(Vec3i gridSize) {
-        physicalChunkPager.setGridSize(gridSize);
-    }
-
-    public Vec3i getGridSize() {
-        return physicalChunkPager.getGridSize();
     }
 
     public void setLocation(Vector3f location) {

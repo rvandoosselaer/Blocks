@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.material.RenderState;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
@@ -215,6 +216,10 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
         if (log.isTraceEnabled()) {
             log.trace("Total chunk node generation took {}ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         }
+    }
+
+    public static FacesMeshGeneration create(AssetManager assetManager) {
+        return new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(assetManager));
     }
 
     /**

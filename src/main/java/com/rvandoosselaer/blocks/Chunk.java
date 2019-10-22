@@ -79,7 +79,7 @@ public class Chunk {
             Block previous = blocks[index];
             blocks[index] = block;
             if (log.isTraceEnabled()) {
-                log.trace("Added {} to {}", block, this);
+                log.trace("Added {} at ({}, {}, {}) to {}", block, x, y, z, this);
             }
             return previous;
         }
@@ -138,7 +138,7 @@ public class Chunk {
             Block block = blocks[index];
             blocks[index] = null;
             if (log.isTraceEnabled()) {
-                log.trace("Removed {} from {}", block, this);
+                log.trace("Removed {} at ({}, {}, {}) from {}", block, x, y, z, this);
             }
             return block;
         }
@@ -200,7 +200,7 @@ public class Chunk {
         this.full = full;
 
         if (log.isTraceEnabled()) {
-            log.trace("Updating chunk values took {}ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+            log.trace("Updating {}} values took {}ms", this, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         }
     }
 
@@ -281,7 +281,7 @@ public class Chunk {
      */
     private static boolean isInsideChunk(int x, int y, int z) {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
-        return x >= 0 && x < chunkSize.x && y >= 0 && y <= chunkSize.y && z >= 0 && z <= chunkSize.z;
+        return x >= 0 && x < chunkSize.x && y >= 0 && y < chunkSize.y && z >= 0 && z < chunkSize.z;
     }
 
     /**

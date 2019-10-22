@@ -4,8 +4,106 @@ import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class BlocksManagerTest {
+
+    @Test
+    public void testAddBlock() {
+        BlocksManager blocksManager = new BlocksManager();
+        blocksManager.initialize();
+
+        Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNull(chunk);
+
+        blocksManager.addBlock(new Vec3i(0, 0, 0), Blocks.GRASS);
+        chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNotNull(chunk);
+
+        Block block = chunk.getBlock(new Vec3i(0, 0, 0));
+        Assertions.assertNotNull(block);
+    }
+
+    @Test
+    public void testRemoveBlock() {
+        BlocksManager blocksManager = new BlocksManager();
+        blocksManager.initialize();
+
+        blocksManager.addBlock(new Vec3i(0, 0, 0), Blocks.GRASS);
+        Assertions.assertNotNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
+
+        Block previousBlock = blocksManager.removeBlock(new Vec3i(0, 0, 0));
+        Assertions.assertEquals(Blocks.GRASS, previousBlock);
+        Assertions.assertNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
+
+        blocksManager.removeBlock(new Vec3i(0, 0, 0));
+    }
+
+    @Test
+    public void testRequestChunkWithoutLoaderAndGenerator() {
+        BlocksManager blocksManager = new BlocksManager();
+        blocksManager.initialize();
+
+        Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNull(chunk);
+
+        boolean requested = blocksManager.requestChunk(new Vec3i(0, 0, 0));
+        Assertions.assertTrue(requested);
+
+        blocksManager.update(); // load, generation and create step
+
+        chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNotNull(chunk);
+        Assertions.assertTrue(chunk.isEmpty());
+    }
+
+    @Test
+    public void testRequestChunkWithLoader() {
+        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
+        chunk.addBlock(1, 2, 3, Blocks.GRASS);
+        chunk.update();
+
+        ChunkRepository repository = Mockito.mock(ChunkRepository.class);
+        Mockito.when(repository.load(new Vec3i(0, 0, 0))).thenReturn(chunk);
+
+        BlocksManager blocksManager = BlocksManager.builder().chunkRepository(repository).build();
+        blocksManager.initialize();
+
+        Chunk loadedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNull(loadedChunk);
+
+        boolean requested = blocksManager.requestChunk(new Vec3i(0, 0, 0));
+        Assertions.assertTrue(requested);
+
+        blocksManager.update(); // perform load
+
+        loadedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertEquals(chunk, loadedChunk);
+    }
+
+    @Test
+    public void testRequestChunkWithoutLoaderWithGenerator() {
+        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
+        chunk.addBlock(1, 2, 3, Blocks.GRASS);
+        chunk.update();
+
+        ChunkGenerator chunkGenerator = Mockito.mock(ChunkGenerator.class);
+        Mockito.when(chunkGenerator.generate(new Vec3i(0, 0, 0))).thenReturn(chunk);
+
+        BlocksManager blocksManager = BlocksManager.builder().chunkGenerator(chunkGenerator).build();
+        blocksManager.initialize();
+
+        Chunk generatedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNull(generatedChunk);
+
+        boolean requested = blocksManager.requestChunk(new Vec3i(0, 0, 0));
+        Assertions.assertTrue(requested);
+
+        blocksManager.update(); // perform load and generation
+
+        generatedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertEquals(chunk, generatedChunk);
+    }
 
     @Test
     public void testChunkLocationCalculation() {

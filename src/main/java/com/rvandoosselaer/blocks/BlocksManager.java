@@ -106,6 +106,16 @@ public class BlocksManager {
             log.debug("Created chunk generation ThreadPoolExecutor with pool size: {}", chunkGenerationPoolSize);
         }
 
+        if (meshGenerationStrategy == null) {
+            log.warn("No MeshGenerationStrategy set on BlocksManager.");
+        }
+        if (chunkRepository == null) {
+            log.warn("No ChunkRepository set on BlocksManager.");
+        }
+        if (chunkGenerator == null) {
+            log.warn("No ChunkGenerator is set on BlocksManager.");
+        }
+
         this.initialized = true;
     }
 
@@ -284,6 +294,7 @@ public class BlocksManager {
         Vec3i blockLocalLocation = chunk.toLocalLocation(blockWorldLocation);
         Block previousBlock = chunk.addBlock(blockLocalLocation, block);
         if (!Objects.equals(block, previousBlock)) {
+            chunk.update();
             addToQueue(meshGenerationQueue, chunk);
         }
         return previousBlock;
@@ -310,6 +321,7 @@ public class BlocksManager {
         Vec3i blockLocalLocation = chunk.toLocalLocation(blockWorldLocation);
         Block block = chunk.removeBlock(blockLocalLocation);
         if (block != null) {
+            chunk.update();
             addToQueue(meshGenerationQueue, chunk);
         }
         return block;
@@ -363,7 +375,6 @@ public class BlocksManager {
      */
     private void handleNextMeshUpdate() {
         if (meshGenerationStrategy == null) {
-            log.warn("No MeshGenerationStrategy set on BlocksManager.");
             return;
         }
 
@@ -391,7 +402,6 @@ public class BlocksManager {
         Vec3i chunkLocation = chunkLoadingQueue.poll();
 
         if (chunkRepository == null) {
-            log.warn("No ChunkRepository set on BlocksManager.");
             addToQueue(chunkGenerationQueue, chunkLocation);
         } else {
             if (isChunkLoadingMultiThreaded()) {
@@ -419,7 +429,6 @@ public class BlocksManager {
         Vec3i chunkLocation = chunkGenerationQueue.poll();
 
         if (chunkGenerator == null) {
-            log.warn("No ChunkGenerator is set on BlocksManager.");
             // unable to generate the chunk, just create one
             createChunk(chunkLocation);
         } else {
@@ -519,7 +528,7 @@ public class BlocksManager {
     private Chunk createChunk(@NonNull Vec3i chunkLocation) {
         Chunk chunk = Chunk.create(chunkLocation);
         if (log.isTraceEnabled()) {
-            log.trace("Creating chunk {}", chunk);
+            log.trace("Created {}", chunk);
         }
         addToCache(chunk);
         return chunk;

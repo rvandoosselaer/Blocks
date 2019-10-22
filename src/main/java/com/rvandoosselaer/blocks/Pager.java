@@ -37,7 +37,7 @@ public abstract class Pager<T> implements MeshGenerationListener {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     protected Vec3i centerPageLocation;
-    protected Vector3f location;
+    protected Vector3f location = new Vector3f();
 
     public void initialize() {
         if (log.isTraceEnabled()) {
@@ -196,7 +196,7 @@ public abstract class Pager<T> implements MeshGenerationListener {
         Chunk chunk = blocksManager.getChunk(pageLocation);
         if (chunk == null) {
             // chunk was not found, we request it and try again later
-            //blocksManager.requestChunk(pageLocation);
+            blocksManager.requestChunk(pageLocation);
             pagesToAttach.offer(pageLocation);
             return;
         }
