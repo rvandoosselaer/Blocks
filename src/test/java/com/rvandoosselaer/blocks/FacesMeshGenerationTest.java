@@ -78,6 +78,45 @@ public class FacesMeshGenerationTest {
         Assertions.assertEquals(4, mesh.getTriangleCount());
     }
 
+    @Test
+    public void testWedgeShape() {
+        MeshGenerationStrategy meshGenerator = createMeshGenerator();
+
+        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, Blocks.WEDGE_FRONT);
+        chunk.createNode(meshGenerator);
+
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(Blocks.WEDGE_FRONT.getType())).getMesh();
+        // 5 faces, 8 triangles
+        Assertions.assertEquals(8, mesh.getTriangleCount());
+
+        // test other wedge directions
+        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_FRONT);
+        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_RIGHT);
+        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_BACK);
+        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_LEFT);
+    }
+
+    private void testEnclosedWedge(Chunk chunk, MeshGenerationStrategy meshGenerator, Block block) {
+        chunk.addBlock(1, 0, 1, Blocks.CUBE);
+        chunk.addBlock(1, 1, 0, Blocks.CUBE);
+        chunk.addBlock(0, 1, 1, Blocks.CUBE);
+        chunk.addBlock(1, 1, 2, Blocks.CUBE);
+        chunk.addBlock(2, 1, 1, Blocks.CUBE);
+        chunk.addBlock(1, 1, 1, block);
+        chunk.createNode(meshGenerator);
+
+        // cube mesh
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(Blocks.CUBE.getType())).getMesh();
+        // 5 cubes = 5 * (6 faces, 12 triangles)
+        Assertions.assertEquals(5 * 12, mesh.getTriangleCount());
+
+        // wedge mesh
+        mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
+        // 1 face, 2 triangles
+        Assertions.assertEquals(2, mesh.getTriangleCount());
+    }
+
     private MeshGenerationStrategy createMeshGenerator() {
         return new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(createAssetManager()));
     }

@@ -1,0 +1,58 @@
+package com.rvandoosselaer.blocks;
+
+import com.jme3.math.Vector3f;
+import com.simsilica.mathd.Vec3i;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class DirectionTest {
+
+    @Test
+    public void testFront() {
+        Assertions.assertEquals(new Vec3i(0, 0, 1), Direction.FRONT.getVector());
+        Assertions.assertEquals(Direction.FRONT, Direction.fromVector(new Vector3f(0, 0, 1)));
+        Assertions.assertEquals(Direction.FRONT, Direction.fromVector(new Vector3f(0, 0, 0.99f)));
+
+    }
+
+    @Test
+    public void testRight() {
+        Assertions.assertEquals(new Vec3i(1, 0, 0), Direction.RIGHT.getVector());
+        Assertions.assertEquals(Direction.RIGHT, Direction.fromVector(new Vector3f(1, 0, 0)));
+        Assertions.assertEquals(Direction.RIGHT, Direction.fromVector(new Vector3f(1.0001f, 0, 0)));
+    }
+
+    @Test
+    public void testBack() {
+        Assertions.assertEquals(new Vec3i(0, 0, -1), Direction.BACK.getVector());
+        Assertions.assertEquals(Direction.BACK, Direction.fromVector(new Vector3f(0, 0, -1)));
+        Assertions.assertEquals(Direction.BACK, Direction.fromVector(new Vector3f(0, 0, -0.999f)));
+    }
+
+    @Test
+    public void testLeft() {
+        Assertions.assertEquals(new Vec3i(-1, 0, 0), Direction.LEFT.getVector());
+        Assertions.assertEquals(Direction.LEFT, Direction.fromVector(new Vector3f(-1, 0, 0)));
+        Assertions.assertEquals(Direction.LEFT, Direction.fromVector(new Vector3f(-1.001f, 0, 0)));
+    }
+
+    @Test
+    public void testTop() {
+        Assertions.assertEquals(new Vec3i(0, 1, 0), Direction.TOP.getVector());
+        Assertions.assertEquals(Direction.TOP, Direction.fromVector(new Vector3f(0, 1, 0)));
+        Assertions.assertEquals(Direction.TOP, Direction.fromVector(new Vector3f(0, 1.001f, 0)));
+    }
+
+    @Test
+    public void testBottom() {
+        Assertions.assertEquals(new Vec3i(0, -1, 0), Direction.BOTTOM.getVector());
+        Assertions.assertEquals(Direction.BOTTOM, Direction.fromVector(new Vector3f(0, -1, 0)));
+        Assertions.assertEquals(Direction.BOTTOM, Direction.fromVector(new Vector3f(0, -0.999f, 0)));
+    }
+
+    @Test
+    public void testUnknown() {
+        Assertions.assertNull(Direction.fromVector(new Vector3f(1, 1, 1)));
+    }
+
+}

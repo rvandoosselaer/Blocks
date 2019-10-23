@@ -84,6 +84,15 @@ task copyJavadoc(dependsOn: javadoc) {
     }
 }
 
+// remove the generated javadocs in the /docs folder
+task cleanJavadoc(type: Delete) {
+    delete "$projectDir/docs"
+}
+
+clean {
+    dependsOn cleanJavadoc
+}
+
 build {
     dependsOn copyJavadoc
 }

@@ -249,7 +249,7 @@ public class Chunk {
      * @return the neighbouring block or null
      */
     protected Block getNeighbour(@NonNull Vec3i location, @NonNull Direction direction) {
-        Vec3i blockLocation = location.add(direction.getPosition());
+        Vec3i blockLocation = location.add(direction.getVector());
 
         return isInsideChunk(blockLocation.x, blockLocation.y, blockLocation.z) ?
                 getBlock(blockLocation.x, blockLocation.y, blockLocation.z) : null;
