@@ -11,11 +11,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * A base implementation of a 3D pager. Based on the given center location ({@link #setLocation(Vector3f)} the pages
- * around this location in the grid are calculated. Each call to {@link #update()} will:
+ * around this center page in the grid are calculated. Each call to {@link #update()} will:
  * - detach one page that is outside the grid, if available
  * - attach one new page that is inside the grid, if available
  * - update a page inside the grid, if one is available.
  * Implementing classes need to implement the methods to create, attach and detach pages.
+ * The boundaries of the grid can be set by setting {@link #setGridLowerBounds(Vec3i)} and {@link #setGridUpperBounds(Vec3i)}.
  *
  * @author rvandoosselaer
  */
@@ -38,6 +39,8 @@ public abstract class Pager<T> implements MeshGenerationListener {
     @Setter(AccessLevel.NONE)
     protected Vec3i centerPageLocation;
     protected Vector3f location = new Vector3f();
+    protected Vec3i gridLowerBounds = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    protected Vec3i gridUpperBounds = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     public void initialize() {
         if (log.isTraceEnabled()) {
@@ -96,12 +99,12 @@ public abstract class Pager<T> implements MeshGenerationListener {
             return Collections.emptySet();
         }
 
-        int minX = centerPageLocation.x - ((gridSize.x - 1) / 2);
-        int maxX = centerPageLocation.x + ((gridSize.x - 1) / 2);
-        int minY = centerPageLocation.y - ((gridSize.y - 1) / 2);
-        int maxY = centerPageLocation.y + ((gridSize.y - 1) / 2);
-        int minZ = centerPageLocation.z - ((gridSize.z - 1) / 2);
-        int maxZ = centerPageLocation.z + ((gridSize.z - 1) / 2);
+        int minX = Math.max(centerPageLocation.x - ((gridSize.x - 1) / 2), gridLowerBounds.x);
+        int maxX = Math.min(centerPageLocation.x + ((gridSize.x - 1) / 2), gridUpperBounds.x);
+        int minY = Math.max(centerPageLocation.y - ((gridSize.y - 1) / 2), gridLowerBounds.y);
+        int maxY = Math.min(centerPageLocation.y + ((gridSize.y - 1) / 2), gridUpperBounds.y);
+        int minZ = Math.max(centerPageLocation.z - ((gridSize.z - 1) / 2), gridLowerBounds.z);
+        int maxZ = Math.min(centerPageLocation.z + ((gridSize.z - 1) / 2), gridUpperBounds.z);
 
         Set<Vec3i> pages = new HashSet<>();
         for (int x = minX; x <= maxX; x++) {
