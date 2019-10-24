@@ -57,7 +57,7 @@ public enum Blocks implements Block {
     }
 
     @Override
-    public boolean isCollidable() {
+    public boolean isSolid() {
         return collidable;
     }
 

@@ -51,11 +51,10 @@ public interface Block {
     boolean isTransparent();
 
     /**
-     * Flag indicating if the block will be part of the collision mesh of the chunk. Most solid blocks will be
-     * collidable, i.e. you can stand on top of them or bump into them.
+     * Flag indicating if the block will be part of the collision mesh of the chunk.
      *
-     * @return true if block is collidable
+     * @return true if block is solid
      */
-    boolean isCollidable();
+    boolean isSolid();
 
 }

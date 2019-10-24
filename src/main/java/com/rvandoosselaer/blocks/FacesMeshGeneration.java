@@ -116,7 +116,7 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
         Vec3i blockLocation = new Vec3i(0, 0, 0);
 
         for (Block block : chunk.getBlocks()) {
-            if (block != null && block.isCollidable()) {
+            if (block != null && block.isSolid()) {
                 // add the block to the collision mesh
                 Shape shape = shapeRegistry.get(block.getShape());
                 shape.add(blockLocation, chunk, collisionMesh);
@@ -168,7 +168,7 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
                 shape.add(blockLocation, chunk, mesh);
 
                 // add the block to the collision mesh
-                if (block.isCollidable()) {
+                if (block.isSolid()) {
                     shape.add(blockLocation, chunk, collisionMesh);
                 }
             }
