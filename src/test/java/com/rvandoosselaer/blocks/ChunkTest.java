@@ -63,6 +63,7 @@ public class ChunkTest {
     @Test
     public void testUpdate() {
         // default state
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(9, 9, 9));
         Chunk chunk = Chunk.create(new Vec3i());
         Assertions.assertTrue(chunk.isEmpty());
         Assertions.assertFalse(chunk.isFull());

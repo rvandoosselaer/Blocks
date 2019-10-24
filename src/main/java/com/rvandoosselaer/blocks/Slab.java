@@ -47,7 +47,7 @@ public class Slab implements Shape {
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
         // top face; when the end y value is 1 (top slab), check if the top face should be rendered
-        if (endY == 1 && chunk.isFaceVisible(location, Direction.TOP)) {
+        if (endY < 1 || chunk.isFaceVisible(location, Direction.TOP)) {
             // calculate index offset, we use this to connect the triangles
             int offset = chunkMesh.getPositions().size();
             // vertices
@@ -84,7 +84,7 @@ public class Slab implements Shape {
             }
         }
         // bottom face; when the start y value is 0 (bottom slab), check if the bottom face should be rendered
-        if (startY == 0 && chunk.isFaceVisible(location, Direction.BOTTOM)) {
+        if (startY > 0 || chunk.isFaceVisible(location, Direction.BOTTOM)) {
             // calculate index offset, we use this to connect the triangles
             int offset = chunkMesh.getPositions().size();
             // vertices
@@ -145,15 +145,15 @@ public class Slab implements Shape {
                 }
                 // uvs
                 if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
                 } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.6666666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.6666666f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
                 }
             }
         }
@@ -182,15 +182,15 @@ public class Slab implements Shape {
                 }
                 // uvs
                 if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
                 } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.6666666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.6666666f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
                 }
             }
         }
@@ -219,15 +219,15 @@ public class Slab implements Shape {
                 }
                 // uvs
                 if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
                 } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.6666666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.6666666f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
                 }
             }
         }
@@ -256,18 +256,30 @@ public class Slab implements Shape {
                 }
                 // uvs
                 if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
                 } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.6666666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.3333333f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.6666666f));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                    chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
                 }
             }
         }
+    }
+
+    /**
+     * Calculate the value in a range to a value in another range.
+     *
+     * @param value            input value
+     * @param range            input value range
+     * @param destinationRange destination range
+     * @return value in destination range
+     */
+    private static float mapValueToRange(float value, Vector2f range, Vector2f destinationRange) {
+        return (value - range.x) * ((destinationRange.y - destinationRange.x) / (range.y - range.x)) + destinationRange.x;
     }
 
 }
