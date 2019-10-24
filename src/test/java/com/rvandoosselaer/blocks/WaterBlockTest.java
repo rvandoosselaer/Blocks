@@ -22,13 +22,15 @@ public class WaterBlockTest extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        BlockRegistry blockRegistry = new BlockRegistry();
+
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
 
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         for (int x = 0; x < chunkSize.x; x++) {
             for (int y = 0; y < 2; y++) {
                 for (int z = 0; z < chunkSize.z; z++) {
-                    chunk.addBlock(x, y, z, y == 0 ? Blocks.SAND : Blocks.WATER);
+                    chunk.addBlock(x, y, z, y == 0 ? blockRegistry.get("sand") : blockRegistry.get("water"));
                 }
             }
         }

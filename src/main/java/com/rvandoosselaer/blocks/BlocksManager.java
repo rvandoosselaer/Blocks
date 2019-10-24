@@ -526,7 +526,7 @@ public class BlocksManager {
      * @return created chunk
      */
     private Chunk createChunk(@NonNull Vec3i chunkLocation) {
-        Chunk chunk = Chunk.create(chunkLocation);
+        Chunk chunk = Chunk.createAt(chunkLocation);
         if (log.isTraceEnabled()) {
             log.trace("Created {}", chunk);
         }

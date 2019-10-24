@@ -13,10 +13,12 @@ public class BlocksManagerTest {
         BlocksManager blocksManager = new BlocksManager();
         blocksManager.initialize();
 
+        BlockRegistry blockRegistry = new BlockRegistry();
+
         Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
         Assertions.assertNull(chunk);
 
-        blocksManager.addBlock(new Vec3i(0, 0, 0), Blocks.GRASS);
+        blocksManager.addBlock(new Vec3i(0, 0, 0), blockRegistry.get("grass"));
         chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
         Assertions.assertNotNull(chunk);
 
@@ -29,11 +31,13 @@ public class BlocksManagerTest {
         BlocksManager blocksManager = new BlocksManager();
         blocksManager.initialize();
 
-        blocksManager.addBlock(new Vec3i(0, 0, 0), Blocks.GRASS);
+        BlockRegistry blockRegistry = new BlockRegistry();
+
+        blocksManager.addBlock(new Vec3i(0, 0, 0), blockRegistry.get("grass"));
         Assertions.assertNotNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
 
         Block previousBlock = blocksManager.removeBlock(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(Blocks.GRASS, previousBlock);
+        Assertions.assertEquals(blockRegistry.get("grass"), previousBlock);
         Assertions.assertNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
 
         blocksManager.removeBlock(new Vec3i(0, 0, 0));
@@ -59,8 +63,10 @@ public class BlocksManagerTest {
 
     @Test
     public void testRequestChunkWithLoader() {
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
-        chunk.addBlock(1, 2, 3, Blocks.GRASS);
+        BlockRegistry blockRegistry = new BlockRegistry();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(1, 2, 3, blockRegistry.get("grass"));
         chunk.update();
 
         ChunkRepository repository = Mockito.mock(ChunkRepository.class);
@@ -83,8 +89,10 @@ public class BlocksManagerTest {
 
     @Test
     public void testRequestChunkWithoutLoaderWithGenerator() {
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
-        chunk.addBlock(1, 2, 3, Blocks.GRASS);
+        BlockRegistry blockRegistry = new BlockRegistry();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(1, 2, 3, blockRegistry.get("grass"));
         chunk.update();
 
         ChunkGenerator chunkGenerator = Mockito.mock(ChunkGenerator.class);

@@ -1,12 +1,19 @@
 package com.rvandoosselaer.blocks;
 
+import com.rvandoosselaer.blocks.protobuf.BlocksProtos;
 import com.simsilica.mathd.Vec3i;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * when a chunk is empty, don't store the 'block' data.
@@ -24,6 +31,7 @@ import java.nio.file.Path;
  * multipleImages
  * }
  */
+@Slf4j
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +43,31 @@ public class FileRepository implements ChunkRepository {
 
     @Override
     public Chunk load(Vec3i location) {
+        if (path == null || location == null) {
+            return null;
+        }
+
+        String filename = getChunkFilename(location);
+
+        Path chunkFile = Paths.get(path.toAbsolutePath().toString(), filename);
+
+        if (Files.notExists(Paths.get(path.toAbsolutePath().toString(), getChunkFilename(location)))) {
+            if (log.isTraceEnabled()) {
+                log.trace("Chunk {} not found in repository", location);
+            }
+            return null;
+        }
+
+        try (InputStream in = Files.newInputStream(chunkFile)) {
+            BlocksProtos.ChunkProto chunkProto =  BlocksProtos.ChunkProto.newBuilder()
+                    .mergeFrom(in)
+                    .build();
+
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        // convert to chunk
 //        long start = System.nanoTime();
 //
 //        // path doesn't exist
@@ -81,10 +114,21 @@ public class FileRepository implements ChunkRepository {
 
     @Override
     public boolean save(Chunk chunk) {
+        String filename = getChunkFilename(chunk.getLocation());
+
+        Path chunkFile = Paths.get(path.toAbsolutePath().toString(), filename);
+
+        try (OutputStream out = Files.newOutputStream(chunkFile)) {
+            ProtobufHelper.from(chunk).writeTo(out);
+            return true;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+
         return false;
     }
 
-    static String getChunkFilename(@NonNull Vec3i location) {
+    public static String getChunkFilename(@NonNull Vec3i location) {
         return "chunk_" + location.x + "_" + location.y + "_" + location.z + EXTENSION;
     }
 

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class Chunk {
 
     // a one dimensional array is quicker to lookup blocks then a 3n array
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PACKAGE)
     private Block[] blocks;
     @Setter(AccessLevel.PRIVATE)
     @ToString.Include
@@ -43,11 +43,20 @@ public class Chunk {
     private Chunk() {
     }
 
-    public static Chunk create(@NonNull Vec3i location) {
+    public static Chunk createAt(@NonNull Vec3i location) {
         Chunk chunk = new Chunk();
         chunk.setLocation(location);
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         chunk.setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
+        chunk.update();
+
+        return chunk;
+    }
+
+    public static Chunk createFrom(@NonNull Vec3i location, @NonNull Block[] blocks) {
+        Chunk chunk = new Chunk();
+        chunk.setLocation(location);
+        chunk.setBlocks(blocks);
         chunk.update();
 
         return chunk;

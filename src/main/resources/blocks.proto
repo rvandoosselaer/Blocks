@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_package = "com.rvandoosselaer.blocks.protobuf";
+option java_outer_classname = "BlocksProtos";
+
+message ChunkProto {
+    // the location of the chunk, represented as an array of 3 integers. Where location[0] = x, location[1] = y,
+    // location[2] = z.
+    repeated sint32 location = 1;
+    // the size of the chunk, represented as an array of 3 integers. where size[0] = x, size[1] = y, size[2] = z.
+    repeated sint32 size = 2;
+    // the block array
+    repeated BlockProto blocks = 3;
+}
+
+message BlockProto {
+    string name = 1;
+    string shape = 2;
+    string type = 3;
+    bool multipleImages = 4;
+    bool transparent = 5;
+    bool solid = 6;
+}

@@ -15,8 +15,10 @@ public class FacesMeshGenerationTest {
 
     @Test
     public void testMesh() {
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, Blocks.GRASS);
+        BlockRegistry blockRegistry = new BlockRegistry();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
         chunk.createNode(createMeshGenerator());
 
         Mesh mesh = ((Geometry) chunk.getNode().getChild(0)).getMesh();
@@ -26,10 +28,12 @@ public class FacesMeshGenerationTest {
 
     @Test
     public void testDoNotRenderUnwantedTriangles() {
+        BlockRegistry blockRegistry = new BlockRegistry();
+
         MeshGenerationStrategy meshGenerator = createMeshGenerator();
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, Blocks.GRASS);
-        chunk.addBlock(0, 1, 0, Blocks.GRASS);
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
+        chunk.addBlock(0, 1, 0, blockRegistry.get("grass"));
         chunk.createNode(meshGenerator);
 
         Mesh mesh = ((Geometry) chunk.getNode().getChild(0)).getMesh();
@@ -37,77 +41,83 @@ public class FacesMeshGenerationTest {
         Assertions.assertEquals(10 * 2, mesh.getTriangleCount());
 
         // render the shared face of the not transparent block, do not render the shared face of the transparent block
-        Assertions.assertTrue(Blocks.WATER.isTransparent());
-        chunk.addBlock(0, 1, 0, Blocks.WATER);
+        Assertions.assertTrue(blockRegistry.get("water").isTransparent());
+        chunk.addBlock(0, 1, 0, blockRegistry.get("water"));
         chunk.createNode(meshGenerator);
 
         // one geometry per type
         Assertions.assertEquals(2, chunk.getNode().getChildren().size());
 
         // grass
-        mesh = ((Geometry) chunk.getNode().getChild(Blocks.GRASS.getType())).getMesh();
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
         Assertions.assertEquals(6 * 2, mesh.getTriangleCount());
 
         // water
-        mesh = ((Geometry) chunk.getNode().getChild(Blocks.WATER.getType())).getMesh();
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("water").getType())).getMesh();
         Assertions.assertEquals(5 * 2, mesh.getTriangleCount());
     }
 
     @Test
     public void testPyramidShape() {
+        BlockRegistry blockRegistry = new BlockRegistry();
+
         MeshGenerationStrategy meshGenerator = createMeshGenerator();
 
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, Blocks.PYRAMID);
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-merlon"));
         chunk.createNode(meshGenerator);
 
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(Blocks.PYRAMID.getType())).getMesh();
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stonebrick-merlon").getType())).getMesh();
         // 5 faces, 6 triangles
         Assertions.assertEquals(6, mesh.getTriangleCount());
 
-        chunk.addBlock(0, 0, 0, Blocks.GRASS);
-        chunk.addBlock(0, 1, 0, Blocks.PYRAMID);
+        chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
+        chunk.addBlock(0, 1, 0, blockRegistry.get("stonebrick-merlon"));
         chunk.createNode(meshGenerator);
 
-        mesh = ((Geometry) chunk.getNode().getChild(Blocks.GRASS.getType())).getMesh();
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
         // 6 faces, 10 triangles
         Assertions.assertEquals(6 * 2, mesh.getTriangleCount());
 
-        mesh = ((Geometry) chunk.getNode().getChild(Blocks.PYRAMID.getType())).getMesh();
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stonebrick-merlon").getType())).getMesh();
         // 4 faces, 4 triangles
         Assertions.assertEquals(4, mesh.getTriangleCount());
     }
 
     @Test
     public void testWedgeShape() {
+        BlockRegistry blockRegistry = new BlockRegistry();
+
         MeshGenerationStrategy meshGenerator = createMeshGenerator();
 
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, Blocks.WEDGE_FRONT);
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-wedge-front"));
         chunk.createNode(meshGenerator);
 
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(Blocks.WEDGE_FRONT.getType())).getMesh();
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stonebrick-wedge-front").getType())).getMesh();
         // 5 faces, 8 triangles
         Assertions.assertEquals(8, mesh.getTriangleCount());
 
         // test other wedge directions
-        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_FRONT);
-        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_RIGHT);
-        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_BACK);
-        testEnclosedWedge(Chunk.create(new Vec3i(0, 0, 0)), meshGenerator, Blocks.WEDGE_LEFT);
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-front"));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-right"));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-back"));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-left"));
     }
 
     private void testEnclosedWedge(Chunk chunk, MeshGenerationStrategy meshGenerator, Block block) {
-        chunk.addBlock(1, 0, 1, Blocks.CUBE);
-        chunk.addBlock(1, 1, 0, Blocks.CUBE);
-        chunk.addBlock(0, 1, 1, Blocks.CUBE);
-        chunk.addBlock(1, 1, 2, Blocks.CUBE);
-        chunk.addBlock(2, 1, 1, Blocks.CUBE);
+        BlockRegistry blockRegistry = new BlockRegistry();
+
+        chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
+        chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
+        chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
         chunk.addBlock(1, 1, 1, block);
         chunk.createNode(meshGenerator);
 
         // cube mesh
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(Blocks.CUBE.getType())).getMesh();
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
         // 5 cubes = 5 * (6 faces, 12 triangles)
         Assertions.assertEquals(5 * 12, mesh.getTriangleCount());
 

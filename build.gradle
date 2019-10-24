@@ -22,6 +22,7 @@ ext {
     caffeineVersion = "[2.8,)"
     log4j2Version = "[2.11,)"
     jacksonVersion = "[2.9,)"
+    protobufVersion = "[3.10,)"
 }
 
 repositories {
@@ -44,8 +45,8 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     implementation "com.simsilica:sim-math:${simMathVersion}"
-//    api "org.randomstack:jme3-utils:${jme3UtilsVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
 
     // logging
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
@@ -68,6 +69,7 @@ dependencies {
     testImplementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
     testImplementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
     testImplementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+    testImplementation "org.jmonkeyengine:jme3-blender:${jmeVersion}"
 }
 
 test {

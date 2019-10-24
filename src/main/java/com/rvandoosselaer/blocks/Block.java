@@ -1,33 +1,48 @@
 package com.rvandoosselaer.blocks;
 
+import lombok.*;
+
 /**
- * Holds the information of a block element.
- *
  * @author rvandoosselaer
  */
-//TODO: move to class
-public interface Block {
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Block {
+
+    @ToString.Include
+    @EqualsAndHashCode.Include
+    private String name;
+    private String shape;
+    private String type;
+    private boolean usingMultipleImages;
+    private boolean transparent;
+    private boolean solid;
 
     /**
      * The name of the block
      *
      * @return name
      */
-    String getName();
+    //String getName();
 
     /**
      * The shape of the block
      *
      * @return shape
      */
-    String getShape();
+    //String getShape();
 
     /**
      * The type of the block
      *
      * @return type
      */
-    String getType();
+    //String getType();
 
     /**
      * Flag indicating if the shape of the block should use multiple images in the texture.
@@ -35,7 +50,7 @@ public interface Block {
      *
      * @return true when multiple images in the texture are used
      */
-    boolean isUsingMultipleImages();
+    //boolean isUsingMultipleImages();
 
     /**
      * Flag indicating if the block is transparent. Adjacent transparent blocks don't render the shared face between
@@ -48,13 +63,13 @@ public interface Block {
      *
      * @return true if the block is transparent
      */
-    boolean isTransparent();
+    //boolean isTransparent();
 
     /**
      * Flag indicating if the block will be part of the collision mesh of the chunk.
      *
      * @return true if block is solid
      */
-    boolean isSolid();
+    //boolean isSolid();
 
 }

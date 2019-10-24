@@ -24,20 +24,22 @@ public class CollisionMeshTest extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        BlockRegistry blockRegistry = new BlockRegistry();
+
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
 
-        Chunk chunk = Chunk.create(new Vec3i(0, 0, 0));
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         for (int x = 0; x < chunkSize.x; x++) {
             for (int y = 0; y < 2; y++) {
                 for (int z = 0; z < chunkSize.z; z++) {
                     if (y == 1) {
                         if ((x >= 13 && x < 19 && z >= 13 && z < 19) || (x == 0 || x == chunkSize.x - 1 || z == 0 || z == chunkSize.z - 1)) {
-                            chunk.addBlock(x, y, z, Blocks.SAND);
+                            chunk.addBlock(x, y, z, blockRegistry.get("sand"));
                         } else {
-                            chunk.addBlock(x, y, z, Blocks.WATER);
+                            chunk.addBlock(x, y, z, blockRegistry.get("water"));
                         }
                     } else {
-                        chunk.addBlock(x, y, z, Blocks.SAND);
+                        chunk.addBlock(x, y, z, blockRegistry.get("sand"));
                     }
                 }
             }

@@ -32,10 +32,11 @@ public class PhysicalChunkPagerTest extends SimpleApplication {
         Configurator.setLevel("com.rvandoosselaer.blocks", Level.DEBUG);
 
         BlocksConfig.getInstance().setPhysicsGridSize(new Vec3i(3, 1, 3));
+        BlockRegistry blockRegistry = new BlockRegistry();
 
         BlocksManager blocksManager = BlocksManager.builder()
                 .chunkGenerationPoolSize(1)
-                .chunkGenerator(new FlatTerrainGenerator(1, 31))
+                .chunkGenerator(new FlatTerrainGenerator(1, 31, blockRegistry.get("grass")))
                 .meshGenerationPoolSize(1)
                 .meshGenerationStrategy(FacesMeshGeneration.create(assetManager))
                 .build();
@@ -70,10 +71,11 @@ public class PhysicalChunkPagerTest extends SimpleApplication {
 
         private final int minY;
         private final int maxY;
+        private final Block block;
 
         @Override
         public Chunk generate(Vec3i location) {
-            Chunk chunk = Chunk.create(location);
+            Chunk chunk = Chunk.createAt(location);
 
             int randomY = FastMath.nextRandomInt(minY, maxY);
             Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
@@ -81,7 +83,7 @@ public class PhysicalChunkPagerTest extends SimpleApplication {
                 for (int y = 0; y < chunkSize.y; y++) {
                     for (int z = 0; z < chunkSize.z; z++) {
                         if (y <= randomY) {
-                            chunk.addBlock(x, y, z, Blocks.GRASS);
+                            chunk.addBlock(x, y, z, block);
                         }
                     }
                 }

@@ -74,7 +74,9 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
         // create a geometry for each type of block
         meshMap.forEach((type, chunkMesh) -> {
             Mesh mesh = chunkMesh.generateMesh();
-            if (mesh.getBuffer(VertexBuffer.Type.Tangent) == null) {
+            int totalTangents = mesh.getTriangleCount() * 2;
+            int currentTangents = mesh.getBuffer(VertexBuffer.Type.Tangent).getNumElements();
+            if (mesh.getBuffer(VertexBuffer.Type.Tangent) == null || currentTangents < totalTangents) {
                 long tangentGeneratorStart = System.nanoTime();
                 MikktspaceTangentGenerator.genTangSpaceDefault(new MikkTSpaceImpl(mesh));
                 if (log.isTraceEnabled()) {
