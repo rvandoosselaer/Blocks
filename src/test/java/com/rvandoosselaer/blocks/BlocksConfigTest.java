@@ -1,13 +1,20 @@
 package com.rvandoosselaer.blocks;
 
+import com.jme3.asset.DesktopAssetManager;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author rvandoosselaer
  */
 public class BlocksConfigTest {
+
+    @BeforeAll
+    public static void setup() {
+        BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
 
     @Test
     public void testValidChunkSize() {

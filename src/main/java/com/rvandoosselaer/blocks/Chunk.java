@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class Chunk {
 
     // a one dimensional array is quicker to lookup blocks then a 3n array
-    @Setter(AccessLevel.PACKAGE)
+    @Setter
     private Block[] blocks;
     @Setter(AccessLevel.PRIVATE)
     @ToString.Include
@@ -48,15 +48,6 @@ public class Chunk {
         chunk.setLocation(location);
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         chunk.setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
-        chunk.update();
-
-        return chunk;
-    }
-
-    public static Chunk createFrom(@NonNull Vec3i location, @NonNull Block[] blocks) {
-        Chunk chunk = new Chunk();
-        chunk.setLocation(location);
-        chunk.setBlocks(blocks);
         chunk.update();
 
         return chunk;
@@ -156,8 +147,6 @@ public class Chunk {
         return null;
     }
 
-    //TODO: remove?
-
     /**
      * Creates the node of the chunk with the given {@link MeshGenerationStrategy}.
      *
@@ -168,8 +157,6 @@ public class Chunk {
         setNode(strategy.generateNode(this));
         return getNode();
     }
-
-    //TODO: remove?
 
     /**
      * Creates the collision mesh of the chunk with the given {@link MeshGenerationStrategy}.

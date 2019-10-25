@@ -11,51 +11,37 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A registry for storing and retrieving materials based on the block type.
  *
  * @author rvandoosselaer
  */
-//TODO: rename to type registry
 @Slf4j
-public class MaterialRegistry {
+public class TypeRegistry {
+
+    public static final String DEFAULT_BLOCK_MATERIAL = "Blocks/Materials/default-block.j3m";
+    public static final String WATER_MATERIAL = "Blocks/Materials/water.j3m";
 
     private enum TextureType {
         DIFFUSE, NORMAL, PARALLAX;
     }
 
-    public static final String GRASS = "grass";
-    public static final String DIRT = "dirt";
-    public static final String SAND = "sand";
-    public static final String WOOD = "wood";
-    public static final String STONE = "stone";
-    public static final String STONEBRICK = "stonebrick";
-    public static final String WATER = "water";
-    public static final String PLANKS_OAK_ONE_THIRD = "planks-oak-one-third";
-    public static final String PLANKS_OAK_TWO_THIRD = "planks-oak-two-third";
-    public static final String PYRAMID = "pyramid"; //TODO: remove
-    public static final String CUBE = "cube"; //TODO: remove
-    public static final String WEDGE = "wedge"; //TODO: remove
-
-    public static final String DEFAULT_BLOCK_MATERIAL = "Blocks/Materials/default-block.j3m";
-    public static final String WATER_MATERIAL = "Blocks/Materials/water.j3m";
-
-    private final Map<String, Material> registry = new HashMap<>();
+    private final ConcurrentMap<String, Material> registry = new ConcurrentHashMap<>();
     private final AssetManager assetManager;
     @Getter
     private BlocksTheme theme;
     @Getter
     private BlocksTheme defaultTheme = new BlocksTheme("Default", "Blocks/Themes/default/blocks/");
 
-    public MaterialRegistry(@NonNull AssetManager assetManager) {
+    public TypeRegistry(@NonNull AssetManager assetManager) {
         this(assetManager, null);
     }
 
-    public MaterialRegistry(@NonNull AssetManager assetManager, BlocksTheme theme) {
+    public TypeRegistry(@NonNull AssetManager assetManager, BlocksTheme theme) {
         this.assetManager = assetManager;
         this.theme = theme;
 
@@ -67,6 +53,10 @@ public class MaterialRegistry {
     }
 
     public Material register(@NonNull String type, @NonNull Material material) {
+        if (type.isEmpty()) {
+            throw new IllegalArgumentException("Invalid type " + type + " specified.");
+        }
+
         Material m = material.clone();
 
         TexturesWrapper textures = getTexturesOrDefault(type);
@@ -98,18 +88,13 @@ public class MaterialRegistry {
     }
 
     public void registerDefaultMaterials() {
-        register(GRASS, DEFAULT_BLOCK_MATERIAL);
-        register(SAND, DEFAULT_BLOCK_MATERIAL);
-        register(DIRT, DEFAULT_BLOCK_MATERIAL);
-        register(WOOD, DEFAULT_BLOCK_MATERIAL);
-        register(STONE, DEFAULT_BLOCK_MATERIAL);
-        register(STONEBRICK, DEFAULT_BLOCK_MATERIAL);
-        register(WATER, WATER_MATERIAL);
-        register(CUBE, DEFAULT_BLOCK_MATERIAL);
-        register(PYRAMID, DEFAULT_BLOCK_MATERIAL);
-        register(PLANKS_OAK_ONE_THIRD, DEFAULT_BLOCK_MATERIAL);
-        register(PLANKS_OAK_TWO_THIRD, DEFAULT_BLOCK_MATERIAL);
-        register(WEDGE, DEFAULT_BLOCK_MATERIAL);
+        register("grass", DEFAULT_BLOCK_MATERIAL);
+        register("sand", DEFAULT_BLOCK_MATERIAL);
+        register("dirt", DEFAULT_BLOCK_MATERIAL);
+        register("oak", DEFAULT_BLOCK_MATERIAL);
+        register("stone", DEFAULT_BLOCK_MATERIAL);
+        register("stonebrick", DEFAULT_BLOCK_MATERIAL);
+        register("water", WATER_MATERIAL);
     }
 
     public void setTheme(BlocksTheme theme) {

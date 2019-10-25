@@ -22,21 +22,20 @@ public class WaterBlockTest extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        BlockRegistry blockRegistry = new BlockRegistry();
-
-        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+        BlocksConfig.initialize(assetManager);
+        BlocksConfig config = BlocksConfig.getInstance();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        for (int x = 0; x < chunkSize.x; x++) {
+        for (int x = 0; x < config.getChunkSize().x; x++) {
             for (int y = 0; y < 2; y++) {
-                for (int z = 0; z < chunkSize.z; z++) {
-                    chunk.addBlock(x, y, z, y == 0 ? blockRegistry.get("sand") : blockRegistry.get("water"));
+                for (int z = 0; z < config.getChunkSize().z; z++) {
+                    chunk.addBlock(x, y, z, y == 0 ? config.getBlockRegistry().get("sand") : config.getBlockRegistry().get("water"));
                 }
             }
         }
         chunk.update();
 
-        chunk.createNode(new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(assetManager)));
+        chunk.createNode(config.getMeshGenerationStrategy());
 
         rootNode.attachChild(chunk.getNode());
         rootNode.addLight(new AmbientLight(ColorRGBA.White.mult(0.2f)));
@@ -44,7 +43,7 @@ public class WaterBlockTest extends SimpleApplication {
 
         viewPort.setBackgroundColor(ColorRGBA.Cyan);
 
-        cam.setLocation(new Vector3f(chunkSize.x * 0.5f, 4f, chunkSize.z));
+        cam.setLocation(new Vector3f(config.getChunkSize().x * 0.5f, 4f, config.getChunkSize().z));
     }
 
 }

@@ -26,15 +26,16 @@ public class ChunkPagerBoundariesTest extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         Configurator.setLevel("com.rvandoosselaer.blocks", Level.DEBUG);
-        BlockRegistry blockRegistry = new BlockRegistry();
 
-        BlocksConfig.getInstance().setGridSize(new Vec3i(3, 3, 3));
+        BlocksConfig.initialize(assetManager);
+        BlocksConfig config = BlocksConfig.getInstance();
+
+        config.setGridSize(new Vec3i(3, 3, 3));
 
         BlocksManager blocksManager = BlocksManager.builder()
                 .chunkGenerationPoolSize(1)
-                .chunkGenerator(new FlatTerrainGenerator(1, 31, blockRegistry.get("grass")))
+                .chunkGenerator(new FlatTerrainGenerator(1, 31, config.getBlockRegistry().get("grass")))
                 .meshGenerationPoolSize(1)
-                .meshGenerationStrategy(FacesMeshGeneration.create(assetManager))
                 .build();
 
         BlocksManagerState blocksManagerState = new BlocksManagerState(blocksManager);

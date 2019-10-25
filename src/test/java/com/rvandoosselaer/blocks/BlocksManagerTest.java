@@ -1,19 +1,26 @@
 package com.rvandoosselaer.blocks;
 
+import com.jme3.asset.DesktopAssetManager;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class BlocksManagerTest {
+
+    @BeforeAll
+    public static void setup() {
+        BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
 
     @Test
     public void testAddBlock() {
         BlocksManager blocksManager = new BlocksManager();
         blocksManager.initialize();
 
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
         Assertions.assertNull(chunk);
@@ -31,7 +38,7 @@ public class BlocksManagerTest {
         BlocksManager blocksManager = new BlocksManager();
         blocksManager.initialize();
 
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         blocksManager.addBlock(new Vec3i(0, 0, 0), blockRegistry.get("grass"));
         Assertions.assertNotNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
@@ -63,7 +70,7 @@ public class BlocksManagerTest {
 
     @Test
     public void testRequestChunkWithLoader() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(1, 2, 3, blockRegistry.get("grass"));
@@ -89,7 +96,7 @@ public class BlocksManagerTest {
 
     @Test
     public void testRequestChunkWithoutLoaderWithGenerator() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(1, 2, 3, blockRegistry.get("grass"));

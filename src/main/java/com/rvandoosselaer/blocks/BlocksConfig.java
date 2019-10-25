@@ -1,29 +1,54 @@
 package com.rvandoosselaer.blocks;
 
+import com.jme3.asset.AssetManager;
 import com.simsilica.mathd.Vec3i;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The main configuration object of Blocks.
  *
  * @author rvandoosselaer
  */
+@Slf4j
 @Getter
 @Setter
 @ToString
 public class BlocksConfig {
 
-    private static final BlocksConfig instance = new BlocksConfig();
+    private static BlocksConfig instance;
 
-    private Vec3i chunkSize = new Vec3i(32, 32, 32);
-    private float blockScale = 1f;
-    private Vec3i gridSize = new Vec3i(9, 5, 9);
-    private Vec3i physicsGridSize = new Vec3i(3, 1, 3);
+    private final AssetManager assetManager;
 
-    private BlocksConfig() {
+    private Vec3i chunkSize;
+    private float blockScale;
+    private Vec3i gridSize;
+    private Vec3i physicsGridSize;
+    private ShapeRegistry shapeRegistry;
+    private BlockRegistry blockRegistry;
+    private TypeRegistry typeRegistry;
+    private MeshGenerationStrategy meshGenerationStrategy;
+
+    private BlocksConfig(AssetManager assetManager) {
+        this.assetManager = assetManager;
+    }
+
+    public static void initialize(AssetManager assetManager) {
+        if (log.isTraceEnabled()) {
+            log.trace("Initialize {}", BlocksConfig.class.getSimpleName());
+        }
+        instance = new BlocksConfig(assetManager);
+        instance.setChunkSize(new Vec3i(32, 32, 32));
+        instance.setBlockScale(1f);
+        instance.setGridSize(new Vec3i(9, 5, 9));
+        instance.setPhysicsGridSize(new Vec3i(5, 3, 5));
+        instance.setShapeRegistry(new ShapeRegistry());
+        instance.setBlockRegistry(new BlockRegistry());
+        instance.setTypeRegistry(new TypeRegistry(assetManager));
+        instance.setMeshGenerationStrategy(new FacesMeshGeneration(instance.getShapeRegistry(), instance.getTypeRegistry()));
     }
 
     public static BlocksConfig getInstance() {

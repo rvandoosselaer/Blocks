@@ -1,6 +1,5 @@
 package com.rvandoosselaer.blocks;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.material.RenderState;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A mesh generation implementation that creates a mesh for each block type in the chunk. A geometry is created with
- * the generated mesh and the material retrieved from the {@link MaterialRegistry}. The geometry is attached to the
+ * the generated mesh and the material retrieved from the {@link TypeRegistry}. The geometry is attached to the
  * node, and the node is positioned based on the location of the chunk.
  * If lod generation was enabled, an lod level will be created for each supplied reduction value.
  *
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class FacesMeshGeneration implements MeshGenerationStrategy {
 
     private final ShapeRegistry shapeRegistry;
-    private final MaterialRegistry materialRegistry;
+    private final TypeRegistry typeRegistry;
 
     @Override
     public Node generateNode(Chunk chunk) {
@@ -84,7 +83,7 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
                 }
             }
             Geometry geometry = new Geometry(type, mesh);
-            geometry.setMaterial(materialRegistry.get(type));
+            geometry.setMaterial(typeRegistry.get(type));
             geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
             if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
                 if (log.isTraceEnabled()) {
@@ -194,7 +193,7 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
                 }
             }
             Geometry geometry = new Geometry(type, mesh);
-            geometry.setMaterial(materialRegistry.get(type));
+            geometry.setMaterial(typeRegistry.get(type));
             geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
             if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
                 if (log.isTraceEnabled()) {
@@ -218,10 +217,6 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
         if (log.isTraceEnabled()) {
             log.trace("Total chunk node generation took {}ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         }
-    }
-
-    public static FacesMeshGeneration create(AssetManager assetManager) {
-        return new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(assetManager));
     }
 
     /**

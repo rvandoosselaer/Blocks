@@ -2,25 +2,28 @@ package com.rvandoosselaer.blocks;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.rvandoosselaer.blocks.Shape.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A registry for storing and retrieving shapes based on the block shape.
+ *
  * @author remy
  */
 @Slf4j
 public class ShapeRegistry {
 
-    private final Map<String, Shape> shapeRegistry = new HashMap<>();
+    private final ConcurrentMap<String, Shape> shapeRegistry = new ConcurrentHashMap<>();
 
     public ShapeRegistry() {
         registerDefaultShapes();
     }
 
     public Shape register(String name, Shape shape) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("Invalid name " + name + " specified.");
+        }
+
         shapeRegistry.put(name, shape);
         if (log.isTraceEnabled()) {
             log.trace("Registered shape {} -> {}", name, shape);
@@ -41,14 +44,14 @@ public class ShapeRegistry {
     }
 
     public void registerDefaultShapes() {
-        register(CUBE, CUBE_SHAPE);
-        register(PYRAMID, PYRAMID_SHAPE);
-        register(CUBOID_ONE_THIRD, CUBOID_ONE_THIRD_SHAPE);
-        register(CUBOID_TWO_THIRD, CUBOID_TWO_THIRD_SHAPE);
-        register(WEDGE_RIGHT, WEDGE_RIGHT_SHAPE);
-        register(WEDGE_FRONT, WEDGE_FRONT_SHAPE);
-        register(WEDGE_LEFT, WEDGE_LEFT_SHAPE);
-        register(WEDGE_BACK, WEDGE_BACK_SHAPE);
+        register(Shape.CUBE, new Cube());
+        register(Shape.PYRAMID, new Pyramid());
+        register(Shape.WEDGE_FRONT, new Wedge(Direction.FRONT));
+        register(Shape.WEDGE_RIGHT, new Wedge(Direction.RIGHT));
+        register(Shape.WEDGE_BACK, new Wedge(Direction.BACK));
+        register(Shape.WEDGE_LEFT, new Wedge(Direction.LEFT));
+        register(Shape.SLAB, new Slab(0, 1f / 3f));
+        register(Shape.DOUBLE_SLAB, new Slab(0, 2f / 3f));
     }
 
 }

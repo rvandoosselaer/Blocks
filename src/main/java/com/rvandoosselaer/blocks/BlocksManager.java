@@ -52,9 +52,6 @@ public class BlocksManager {
     private int chunkGenerationPoolSize = 0;
     @Getter
     @Setter(AccessLevel.PRIVATE)
-    private MeshGenerationStrategy meshGenerationStrategy;
-    @Getter
-    @Setter(AccessLevel.PRIVATE)
     private ChunkRepository chunkRepository;
     @Getter
     @Setter(AccessLevel.PRIVATE)
@@ -76,6 +73,16 @@ public class BlocksManager {
 
     public BlocksManager(int cacheSize) {
         this.cacheSize = cacheSize;
+    }
+
+    @Builder
+    private BlocksManager(int cacheSize, int meshGenerationPoolSize, int chunkLoadingPoolSize, int chunkGenerationPoolSize, ChunkRepository chunkRepository, ChunkGenerator chunkGenerator) {
+        this.cacheSize = cacheSize;
+        this.meshGenerationPoolSize = meshGenerationPoolSize;
+        this.chunkLoadingPoolSize = chunkLoadingPoolSize;
+        this.chunkGenerationPoolSize = chunkGenerationPoolSize;
+        this.chunkRepository = chunkRepository;
+        this.chunkGenerator = chunkGenerator;
     }
 
     public void initialize() {
@@ -106,9 +113,6 @@ public class BlocksManager {
             log.debug("Created chunk generation ThreadPoolExecutor with pool size: {}", chunkGenerationPoolSize);
         }
 
-        if (meshGenerationStrategy == null) {
-            log.warn("No MeshGenerationStrategy set on BlocksManager.");
-        }
         if (chunkRepository == null) {
             log.warn("No ChunkRepository set on BlocksManager.");
         }
@@ -366,14 +370,11 @@ public class BlocksManager {
         return new Vec3i((int) Math.floor(worldLocation.x / chunkSize.x), (int) Math.floor(worldLocation.y / chunkSize.y), (int) Math.floor(worldLocation.z / chunkSize.z));
     }
 
-    public static BlocksManagerBuilder builder() {
-        return new BlocksManagerBuilder();
-    }
-
     /**
      * Perform a mesh update on the next chunk in the meshes generation queue.
      */
     private void handleNextMeshUpdate() {
+        MeshGenerationStrategy meshGenerationStrategy = BlocksConfig.getInstance().getMeshGenerationStrategy();
         if (meshGenerationStrategy == null) {
             return;
         }
@@ -633,64 +634,6 @@ public class BlocksManager {
 
         public boolean hasChunk() {
             return chunk != null;
-        }
-
-    }
-
-    public static class BlocksManagerBuilder {
-
-        private int cacheSize = 0;
-        private int meshGenerationPoolSize = 0;
-        private int chunkLoadingPoolSize = 0;
-        private int chunkGenerationPoolSize = 0;
-        private MeshGenerationStrategy meshGenerationStrategy;
-        private ChunkRepository chunkRepository;
-        private ChunkGenerator chunkGenerator;
-
-        public BlocksManagerBuilder cacheSize(int cacheSize) {
-            this.cacheSize = cacheSize;
-            return this;
-        }
-
-        public BlocksManagerBuilder meshGenerationPoolSize(int meshGenerationPoolSize) {
-            this.meshGenerationPoolSize = meshGenerationPoolSize;
-            return this;
-        }
-
-        public BlocksManagerBuilder chunkLoadingPoolSize(int chunkLoadingPoolSize) {
-            this.chunkLoadingPoolSize = chunkLoadingPoolSize;
-            return this;
-        }
-
-        public BlocksManagerBuilder chunkGenerationPoolSize(int chunkGenerationPoolSize) {
-            this.chunkGenerationPoolSize = chunkGenerationPoolSize;
-            return this;
-        }
-
-        public BlocksManagerBuilder meshGenerationStrategy(MeshGenerationStrategy meshGenerationStrategy) {
-            this.meshGenerationStrategy = meshGenerationStrategy;
-            return this;
-        }
-
-        public BlocksManagerBuilder chunkRepository(ChunkRepository chunkRepository) {
-            this.chunkRepository = chunkRepository;
-            return this;
-        }
-
-        public BlocksManagerBuilder chunkGenerator(ChunkGenerator chunkGenerator) {
-            this.chunkGenerator = chunkGenerator;
-            return this;
-        }
-
-        public BlocksManager build() {
-            BlocksManager blocksManager = new BlocksManager(cacheSize);
-            blocksManager.setMeshGenerationPoolSize(meshGenerationPoolSize);
-            blocksManager.setChunkLoadingPoolSize(chunkLoadingPoolSize);
-            blocksManager.setChunkGenerationPoolSize(chunkGenerationPoolSize);
-            blocksManager.setMeshGenerationStrategy(meshGenerationStrategy);
-            blocksManager.setChunkRepository(chunkRepository);
-            blocksManager.setChunkGenerator(chunkGenerator);
-            return blocksManager;
         }
 
     }

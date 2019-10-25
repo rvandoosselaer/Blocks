@@ -31,14 +31,15 @@ public class PhysicalChunkPagerTest extends SimpleApplication {
     public void simpleInitApp() {
         Configurator.setLevel("com.rvandoosselaer.blocks", Level.DEBUG);
 
-        BlocksConfig.getInstance().setPhysicsGridSize(new Vec3i(3, 1, 3));
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlocksConfig.initialize(assetManager);
+        BlocksConfig config = BlocksConfig.getInstance();
+
+        config.setPhysicsGridSize(new Vec3i(3, 1, 3));
 
         BlocksManager blocksManager = BlocksManager.builder()
                 .chunkGenerationPoolSize(1)
-                .chunkGenerator(new FlatTerrainGenerator(1, 31, blockRegistry.get("grass")))
+                .chunkGenerator(new FlatTerrainGenerator(1, 31, config.getBlockRegistry().get("grass")))
                 .meshGenerationPoolSize(1)
-                .meshGenerationStrategy(FacesMeshGeneration.create(assetManager))
                 .build();
 
         BlocksManagerState blocksManagerState = new BlocksManagerState(blocksManager);

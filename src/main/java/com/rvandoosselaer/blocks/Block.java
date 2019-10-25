@@ -14,6 +14,8 @@ import lombok.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Block {
 
+    public static final String EMPTY = "";
+
     @ToString.Include
     @EqualsAndHashCode.Include
     private String name;
@@ -22,6 +24,42 @@ public class Block {
     private boolean usingMultipleImages;
     private boolean transparent;
     private boolean solid;
+
+    /**
+     * Creates a cube shape, non transparent, solid block using a single image.
+     *
+     * @param name
+     * @param type
+     * @return block
+     */
+    public static Block create(String name, String type) {
+        return Block.builder()
+                .name(name)
+                .shape("cube")
+                .type(type)
+                .usingMultipleImages(false)
+                .transparent(false)
+                .solid(true)
+                .build();
+    }
+
+    /**
+     * Creates a cube shape, non transparent, solid block.
+     *
+     * @param name
+     * @param type
+     * @return block
+     */
+    public static Block create(String name, String type, boolean multipleImages) {
+        return Block.builder()
+                .name(name)
+                .shape("cube")
+                .type(type)
+                .usingMultipleImages(multipleImages)
+                .transparent(false)
+                .solid(true)
+                .build();
+    }
 
     /**
      * The name of the block

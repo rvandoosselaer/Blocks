@@ -46,9 +46,8 @@ public class Wedge implements Shape {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
                 chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.70710677f, 0.70710677f)));
-                Vector3f rotatedTangent = rotation.mult(new Vector3f(0.0f, -0.7071068f, 0.7071068f));
-                chunkMesh.getTangents().add(new Vector4f(rotatedTangent.x, rotatedTangent.y, rotatedTangent.z, 1.0f));
-                //chunkMesh.getTangents().add(new Vector4f(0.0f, -0.7071068f, 0.7071068f, 1.0f));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, -0.7071068f, 0.7071068f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -81,9 +80,8 @@ public class Wedge implements Shape {
                 // normals and tangents
                 for (int i = 0; i < 3; i++) {
                     chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.0f, 0.0f, 0.0f)));
-                    Vector3f rotatedTangent = rotation.mult(new Vector3f(0.0f, 0.0f, 1.0f));
-                    chunkMesh.getTangents().add(new Vector4f(rotatedTangent.x, rotatedTangent.y, rotatedTangent.z, 1.0f));
-                    //chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
                 }
                 // uvs
                 if (!multipleImages) {
@@ -115,9 +113,8 @@ public class Wedge implements Shape {
                 // normals and tangents
                 for (int i = 0; i < 3; i++) {
                     chunkMesh.getNormals().add(rotation.mult(new Vector3f(1.0f, 0.0f, 0.0f)));
-                    Vector3f rotatedTangent = rotation.mult(new Vector3f(0.0f, 0.0f, 1.0f));
-                    chunkMesh.getTangents().add(new Vector4f(rotatedTangent.x, rotatedTangent.y, rotatedTangent.z, -1.0f));
-                    //chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, 1.0f, -1.0f));
+                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, -1.0f)));
                 }
                 // uvs
                 if (!multipleImages) {
@@ -153,9 +150,8 @@ public class Wedge implements Shape {
                 // normals and tangents
                 for (int i = 0; i < 4; i++) {
                     chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.0f, -1.0f)));
-                    Vector3f rotatedTangent = rotation.mult(new Vector3f(1.0f, 0.0f, 0.0f));
-                    chunkMesh.getTangents().add(new Vector4f(rotatedTangent.x, rotatedTangent.y, rotatedTangent.z, -1.0f));
-                    //chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f));
+                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
                 }
                 // uvs
                 if (!multipleImages) {
@@ -193,9 +189,8 @@ public class Wedge implements Shape {
                 // normals and tangents
                 for (int i = 0; i < 4; i++) {
                     chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, -1.0f, 0.0f)));
-                    Vector3f rotatedTangent = rotation.mult(new Vector3f(1.0f, 0.0f, 0.0f));
-                    chunkMesh.getTangents().add(new Vector4f(rotatedTangent.x, rotatedTangent.y, rotatedTangent.z, -1.0f));
-                    //chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f));
+                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
                 }
                 // uvs
                 if (!multipleImages) {

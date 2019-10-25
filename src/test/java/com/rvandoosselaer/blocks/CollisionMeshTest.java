@@ -24,29 +24,27 @@ public class CollisionMeshTest extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        BlockRegistry blockRegistry = new BlockRegistry();
-
-        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+        BlocksConfig.initialize(assetManager);
+        BlocksConfig config = BlocksConfig.getInstance();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        for (int x = 0; x < chunkSize.x; x++) {
+        for (int x = 0; x < config.getChunkSize().x; x++) {
             for (int y = 0; y < 2; y++) {
-                for (int z = 0; z < chunkSize.z; z++) {
+                for (int z = 0; z < config.getChunkSize().z; z++) {
                     if (y == 1) {
-                        if ((x >= 13 && x < 19 && z >= 13 && z < 19) || (x == 0 || x == chunkSize.x - 1 || z == 0 || z == chunkSize.z - 1)) {
-                            chunk.addBlock(x, y, z, blockRegistry.get("sand"));
+                        if ((x >= 13 && x < 19 && z >= 13 && z < 19) || (x == 0 || x == config.getChunkSize().x - 1 || z == 0 || z == config.getChunkSize().z - 1)) {
+                            chunk.addBlock(x, y, z, config.getBlockRegistry().get("sand"));
                         } else {
-                            chunk.addBlock(x, y, z, blockRegistry.get("water"));
+                            chunk.addBlock(x, y, z, config.getBlockRegistry().get("water"));
                         }
                     } else {
-                        chunk.addBlock(x, y, z, blockRegistry.get("sand"));
+                        chunk.addBlock(x, y, z, config.getBlockRegistry().get("sand"));
                     }
                 }
             }
         }
 
-        MeshGenerationStrategy meshGenerationStrategy = new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(assetManager));
-        meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
+        config.getMeshGenerationStrategy().generateNodeAndCollisionMesh(chunk);
 
         Geometry collision = new Geometry("collision mesh", chunk.getCollisionMesh());
         collision.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
@@ -62,7 +60,7 @@ public class CollisionMeshTest extends SimpleApplication {
 
         viewPort.setBackgroundColor(ColorRGBA.Cyan);
 
-        cam.setLocation(new Vector3f(chunkSize.x * 0.5f, 10f, chunkSize.z));
-        cam.lookAt(new Vector3f(chunkSize.x * 0.5f, 0, chunkSize.z * 0.5f), Vector3f.UNIT_Y);
+        cam.setLocation(new Vector3f(config.getChunkSize().x * 0.5f, 10f, config.getChunkSize().z));
+        cam.lookAt(new Vector3f(config.getChunkSize().x * 0.5f, 0, config.getChunkSize().z * 0.5f), Vector3f.UNIT_Y);
     }
 }

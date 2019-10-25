@@ -1,15 +1,22 @@
 package com.rvandoosselaer.blocks;
 
+import com.jme3.asset.DesktopAssetManager;
 import com.jme3.math.FastMath;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class ChunkTest {
 
+    @BeforeAll
+    public static void setup() {
+        BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
+
     @Test
     public void testIndexLookup() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         BlocksConfig.getInstance().setChunkSize(new Vec3i(3, 3, 3));
 
@@ -64,7 +71,7 @@ public class ChunkTest {
 
     @Test
     public void testUpdate() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         // default state
         BlocksConfig.getInstance().setChunkSize(new Vec3i(9, 9, 9));

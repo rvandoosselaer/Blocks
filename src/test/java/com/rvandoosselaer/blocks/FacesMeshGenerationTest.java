@@ -1,11 +1,11 @@
 package com.rvandoosselaer.blocks;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,13 +13,18 @@ import org.junit.jupiter.api.Test;
  */
 public class FacesMeshGenerationTest {
 
+    @BeforeAll
+    public static void setup() {
+        BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
+
     @Test
     public void testMesh() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
-        chunk.createNode(createMeshGenerator());
+        chunk.createNode(BlocksConfig.getInstance().getMeshGenerationStrategy());
 
         Mesh mesh = ((Geometry) chunk.getNode().getChild(0)).getMesh();
         // 6 faces, 2 triangles per face
@@ -28,9 +33,9 @@ public class FacesMeshGenerationTest {
 
     @Test
     public void testDoNotRenderUnwantedTriangles() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        MeshGenerationStrategy meshGenerator = createMeshGenerator();
+        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
         chunk.addBlock(0, 1, 0, blockRegistry.get("grass"));
@@ -59,9 +64,9 @@ public class FacesMeshGenerationTest {
 
     @Test
     public void testPyramidShape() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        MeshGenerationStrategy meshGenerator = createMeshGenerator();
+        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-merlon"));
@@ -86,9 +91,9 @@ public class FacesMeshGenerationTest {
 
     @Test
     public void testWedgeShape() {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        MeshGenerationStrategy meshGenerator = createMeshGenerator();
+        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-wedge-front"));
@@ -106,7 +111,7 @@ public class FacesMeshGenerationTest {
     }
 
     private void testEnclosedWedge(Chunk chunk, MeshGenerationStrategy meshGenerator, Block block) {
-        BlockRegistry blockRegistry = new BlockRegistry();
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
         chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
@@ -127,11 +132,4 @@ public class FacesMeshGenerationTest {
         Assertions.assertEquals(2, mesh.getTriangleCount());
     }
 
-    private MeshGenerationStrategy createMeshGenerator() {
-        return new FacesMeshGeneration(new ShapeRegistry(), new MaterialRegistry(createAssetManager()));
-    }
-
-    private AssetManager createAssetManager() {
-        return new DesktopAssetManager(true);
-    }
 }
