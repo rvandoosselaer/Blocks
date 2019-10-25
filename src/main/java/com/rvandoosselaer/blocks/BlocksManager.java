@@ -46,7 +46,7 @@ public class BlocksManager {
     private int meshGenerationPoolSize = 0;
     @Getter
     @Setter(AccessLevel.PRIVATE)
-    private int chunkLoadingPoolSize = 0;
+    private int chunkPersistencePoolSize = 0;
     @Getter
     @Setter(AccessLevel.PRIVATE)
     private int chunkGenerationPoolSize = 0;
@@ -59,13 +59,16 @@ public class BlocksManager {
     private final Queue<Chunk> meshGenerationQueue = new ConcurrentLinkedQueue<>();
     private final Queue<Vec3i> chunkLoadingQueue = new ConcurrentLinkedQueue<>();
     private final Queue<Vec3i> chunkGenerationQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<Chunk> chunkStoringQueue = new ConcurrentLinkedQueue<>();
     private final List<MeshGenerationListener> meshGenerationListeners = new CopyOnWriteArrayList<>();
     private ExecutorService meshGenerationExecutor;
-    private ExecutorService chunkLoadingExecutor;
+    private ExecutorService chunkPersistenceExecutor;
     private ExecutorService chunkGenerationExecutor;
     private List<Future<Chunk>> meshGenerationResults = new ArrayList<>();
     private List<Future<ChunkLoadResult>> chunkLoadingResults = new ArrayList<>();
     private List<Future<Chunk>> chunkGenerationResults = new ArrayList<>();
+    private int storeInterval = 10000;
+    private long lastStoredTimestamp = -1;
 
     public BlocksManager() {
         this(0);
@@ -76,13 +79,14 @@ public class BlocksManager {
     }
 
     @Builder
-    private BlocksManager(int cacheSize, int meshGenerationPoolSize, int chunkLoadingPoolSize, int chunkGenerationPoolSize, ChunkRepository chunkRepository, ChunkGenerator chunkGenerator) {
+    private BlocksManager(int cacheSize, int meshGenerationPoolSize, int chunkPersistencePoolSize, int chunkGenerationPoolSize, ChunkRepository chunkRepository, ChunkGenerator chunkGenerator, int storeInterval) {
         this.cacheSize = cacheSize;
         this.meshGenerationPoolSize = meshGenerationPoolSize;
-        this.chunkLoadingPoolSize = chunkLoadingPoolSize;
+        this.chunkPersistencePoolSize = chunkPersistencePoolSize;
         this.chunkGenerationPoolSize = chunkGenerationPoolSize;
         this.chunkRepository = chunkRepository;
         this.chunkGenerator = chunkGenerator;
+        this.storeInterval = storeInterval;
     }
 
     public void initialize() {
@@ -104,9 +108,9 @@ public class BlocksManager {
             meshGenerationExecutor = Executors.newFixedThreadPool(meshGenerationPoolSize);
             log.debug("Created mesh generation ThreadPoolExecutor with pool size: {}", meshGenerationPoolSize);
         }
-        if (isChunkLoadingMultiThreaded()) {
-            chunkLoadingExecutor = Executors.newFixedThreadPool(chunkLoadingPoolSize);
-            log.debug("Created chunk loading ThreadPoolExecutor with pool size: {}", chunkLoadingPoolSize);
+        if (isChunkPersistenceMultiThreaded()) {
+            chunkPersistenceExecutor = Executors.newFixedThreadPool(chunkPersistencePoolSize);
+            log.debug("Created chunk persistence ThreadPoolExecutor with pool size: {}", chunkPersistencePoolSize);
         }
         if (isChunkGenerationMultiThreaded()) {
             chunkGenerationExecutor = Executors.newFixedThreadPool(chunkGenerationPoolSize);
@@ -139,6 +143,12 @@ public class BlocksManager {
         // chunk generation
         handleNextChunkGeneration();
         handleNextChunkGenerationResult();
+
+        // chunk storing
+        if (System.currentTimeMillis() >= lastStoredTimestamp + storeInterval) {
+            storeChunks();
+            lastStoredTimestamp = System.currentTimeMillis();
+        }
     }
 
     public void cleanup() {
@@ -150,16 +160,12 @@ public class BlocksManager {
             log.trace("{} - cleanup", getClass().getSimpleName());
         }
 
+        storeChunks();
+
         if (isMeshGenerationMultiThreaded()) {
             log.debug("Shutting down mesh generation ThreadPoolExecutor...");
             meshGenerationExecutor.shutdownNow();
             log.debug("Mesh generation ThreadPoolExecutor shut down.");
-        }
-
-        if (isChunkLoadingMultiThreaded()) {
-            log.debug("Shutting down chunk loading ThreadPoolExecutor...");
-            chunkLoadingExecutor.shutdownNow();
-            log.debug("Chunk loading ThreadPoolExecutor shut down.");
         }
 
         if (isChunkGenerationMultiThreaded()) {
@@ -167,6 +173,13 @@ public class BlocksManager {
             chunkGenerationExecutor.shutdownNow();
             log.debug("Chunk generation ThreadPoolExecutor shut down.");
         }
+
+        if (isChunkPersistenceMultiThreaded()) {
+            log.debug("Shutting down chunk persistence ThreadPoolExecutor...");
+            chunkPersistenceExecutor.shutdown();
+            log.debug("Chunk persistence ThreadPoolExecutor shut down.");
+        }
+
 
         // clear the queues
         meshGenerationQueue.clear();
@@ -300,6 +313,7 @@ public class BlocksManager {
         if (!Objects.equals(block, previousBlock)) {
             chunk.update();
             addToQueue(meshGenerationQueue, chunk);
+            addToQueue(chunkStoringQueue, chunk);
         }
         return previousBlock;
     }
@@ -327,6 +341,7 @@ public class BlocksManager {
         if (block != null) {
             chunk.update();
             addToQueue(meshGenerationQueue, chunk);
+            addToQueue(chunkStoringQueue, chunk);
         }
         return block;
     }
@@ -405,8 +420,8 @@ public class BlocksManager {
         if (chunkRepository == null) {
             addToQueue(chunkGenerationQueue, chunkLocation);
         } else {
-            if (isChunkLoadingMultiThreaded()) {
-                chunkLoadingResults.add(chunkLoadingExecutor.submit(new ChunkLoadCallable(chunkLocation, chunkRepository)));
+            if (isChunkPersistenceMultiThreaded()) {
+                chunkLoadingResults.add(chunkPersistenceExecutor.submit(new ChunkLoadCallable(chunkLocation, chunkRepository)));
             } else {
                 Chunk chunk = chunkRepository.load(chunkLocation);
                 if (chunk != null) {
@@ -440,6 +455,7 @@ public class BlocksManager {
                 chunk.update();
                 addToCache(chunk);
                 addToQueue(meshGenerationQueue, chunk);
+                addToQueue(chunkStoringQueue, chunk);
             }
         }
     }
@@ -471,7 +487,7 @@ public class BlocksManager {
      * Perform the processing of the next finished loaded chunk task.
      */
     private void handleNextChunkLoadResult() {
-        if (!isChunkLoadingMultiThreaded() || chunkLoadingResults.isEmpty()) {
+        if (!isChunkPersistenceMultiThreaded() || chunkLoadingResults.isEmpty()) {
             return;
         }
 
@@ -510,6 +526,7 @@ public class BlocksManager {
                 chunk.update();
                 addToCache(chunk);
                 addToQueue(meshGenerationQueue, chunk);
+                addToQueue(chunkStoringQueue, chunk);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
@@ -518,6 +535,24 @@ public class BlocksManager {
 
         // remove cancelled futures
         chunkGenerationResults.removeIf(Future::isCancelled);
+    }
+
+    private void storeChunks() {
+        if (chunkStoringQueue.isEmpty()) {
+            return;
+        }
+
+        Set<Chunk> chunks = new HashSet<>();
+        while (chunkStoringQueue.peek() != null) {
+            chunks.add(chunkStoringQueue.poll());
+        }
+
+        if (isChunkPersistenceMultiThreaded()) {
+            chunkPersistenceExecutor.submit(new ChunkStoringRunnable(chunks, chunkRepository));
+        } else {
+            chunks.forEach(chunkRepository::save);
+            chunks.clear();
+        }
     }
 
     /**
@@ -539,8 +574,8 @@ public class BlocksManager {
         return meshGenerationPoolSize > 0;
     }
 
-    private boolean isChunkLoadingMultiThreaded() {
-        return chunkLoadingPoolSize > 0;
+    private boolean isChunkPersistenceMultiThreaded() {
+        return chunkPersistencePoolSize > 0;
     }
 
     private boolean isChunkGenerationMultiThreaded() {
@@ -620,6 +655,20 @@ public class BlocksManager {
         @Override
         public Chunk call() throws Exception {
             return chunkGenerator.generate(chunkLocation);
+        }
+
+    }
+
+    @RequiredArgsConstructor
+    private class ChunkStoringRunnable implements Runnable {
+
+        private final Collection<Chunk> chunks;
+        private final ChunkRepository repository;
+
+        @Override
+        public void run() {
+            chunks.forEach(repository::save);
+            chunks.clear();
         }
 
     }
