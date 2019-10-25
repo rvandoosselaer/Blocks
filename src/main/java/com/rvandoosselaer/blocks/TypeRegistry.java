@@ -25,6 +25,7 @@ public class TypeRegistry {
 
     public static final String DEFAULT_BLOCK_MATERIAL = "Blocks/Materials/default-block.j3m";
     public static final String WATER_MATERIAL = "Blocks/Materials/water.j3m";
+    public static final String WATER_STILL_MATERIAL = "Blocks/Materials/water-still.j3m";
 
     private enum TextureType {
         DIFFUSE, NORMAL, PARALLAX;
@@ -95,6 +96,7 @@ public class TypeRegistry {
         register("stone", DEFAULT_BLOCK_MATERIAL);
         register("stonebrick", DEFAULT_BLOCK_MATERIAL);
         register("water", WATER_MATERIAL);
+        register("water-still", WATER_STILL_MATERIAL);
     }
 
     public void setTheme(BlocksTheme theme) {

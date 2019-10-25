@@ -172,6 +172,14 @@ public class BlockRegistry {
                 .transparent(true)
                 .solid(false)
                 .build());
+        register(Block.builder()
+                .name("water-still")
+                .shape("cube")
+                .type("water-still")
+                .usingMultipleImages(false)
+                .transparent(true)
+                .solid(false)
+                .build());
         // merlon
         register(Block.builder()
                 .name("stonebrick-merlon")
