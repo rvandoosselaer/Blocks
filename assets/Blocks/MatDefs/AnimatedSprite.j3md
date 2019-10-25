@@ -1,0 +1,43 @@
+MaterialDef AnimatedSprite {
+
+    MaterialParameters {
+        // # tiles on the x-axis of the sprite sheet
+        Int numTilesX
+
+        // # tiles on the y-axis of the sprite sheet
+        Int numTilesY
+
+        // the speed to change images
+        Float Speed
+
+        // an offset on the x-axis
+        Int numTilesOffsetX
+
+        // an offset on the y-axis
+        Int numTilesOffsetY
+
+        // the sprite sheet
+        Texture2D AniTexMap
+
+        // the start time of the animation
+        Float StartTime
+
+        // an offset to the vertices; eg. a water block we want to 'lower' a bit for added effect
+        Vector3 locationOffset
+    }
+
+    Technique {
+        VertexShader GLSL120 :   Blocks/Shaders/AnimatedSprite.vert
+        FragmentShader GLSL120 : Blocks/Shaders/AnimatedSprite.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            Time
+        }
+
+        Defines {
+            LOCATION_OFFSET : locationOffset
+        }
+    }
+
+}

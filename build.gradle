@@ -15,9 +15,14 @@ ext {
     jmeVersion = "[3.2,)"
     lombokVersion = "[1.18,)"
     slf4jVersion = "[1.8,)"
+    simMathVersion = "[1.4,)"
 //    jme3UtilsVersion = "[0.1,)"
     junitVersion = "[5.4.0,)"
-//    caffeineVersion = "[2.7,)"
+    mockitoVersion = "[3.1,)"
+    caffeineVersion = "[2.8,)"
+    log4j2Version = "[2.11,)"
+    jacksonVersion = "[2.9,)"
+    protobufVersion = "[3.10,)"
 }
 
 repositories {
@@ -34,29 +39,41 @@ dependencies {
 
     // JME
     implementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
-//    compileOnly "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+    compileOnly "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
 
     // utilities
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-//    api "org.randomstack:jme3-utils:${jme3UtilsVersion}"
-//    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    implementation "com.simsilica:sim-math:${simMathVersion}"
+    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
 
     // logging
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
 
+    implementation "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+    implementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4j2Version}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
     // testing
-//    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-//    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-//    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-//    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-//    testImplementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
-//    testImplementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
+    testImplementation "org.jmonkeyengine:jme3-desktop:${jmeVersion}"
+    testImplementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
+    testImplementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+    testImplementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+    testImplementation "org.jmonkeyengine:jme3-blender:${jmeVersion}"
 }
 
 test {
-//    useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 // copy the generated javadocs into the /docs folder for the github pages
@@ -67,6 +84,15 @@ task copyJavadoc(dependsOn: javadoc) {
             into "$projectDir/docs"
         }
     }
+}
+
+// remove the generated javadocs in the /docs folder
+task cleanJavadoc(type: Delete) {
+    delete "$projectDir/docs"
+}
+
+clean {
+    dependsOn cleanJavadoc
 }
 
 build {

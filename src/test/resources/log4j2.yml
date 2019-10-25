@@ -1,0 +1,16 @@
+Configuration:
+  appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        Pattern: "%d %-5p [%t] %C:%L - %m%n"
+
+  Loggers:
+    logger:
+      - name: com.rvandoosselaer
+        level: all
+
+    Root:
+      level: info
+      AppenderRef:
+        - ref: STDOUT
