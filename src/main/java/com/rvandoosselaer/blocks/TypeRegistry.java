@@ -36,7 +36,7 @@ public class TypeRegistry {
     @Getter
     private BlocksTheme theme;
     @Getter
-    private BlocksTheme defaultTheme = new BlocksTheme("Default", "Blocks/Themes/default/blocks/");
+    private BlocksTheme defaultTheme = new BlocksTheme("Default", "Blocks/Themes/default/");
 
     public TypeRegistry(@NonNull AssetManager assetManager) {
         this(assetManager, null);

@@ -52,6 +52,10 @@ public class ShapeRegistry {
         register(Shape.WEDGE_LEFT, new Wedge(Direction.LEFT));
         register(Shape.SLAB, new Slab(0, 1f / 3f));
         register(Shape.DOUBLE_SLAB, new Slab(0, 2f / 3f));
+        register(Shape.STAIR_FRONT, new Stair(Direction.FRONT));
+        register(Shape.STAIR_RIGHT, new Stair(Direction.RIGHT));
+        register(Shape.STAIR_BACK, new Stair(Direction.BACK));
+        register(Shape.STAIR_LEFT, new Stair(Direction.LEFT));
     }
 
 }

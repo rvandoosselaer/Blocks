@@ -15,6 +15,10 @@ public interface Shape {
     String WEDGE_LEFT = "wedge-left";
     String SLAB = "slab";
     String DOUBLE_SLAB = "double-slab";
+    String STAIR_FRONT = "stair-front";
+    String STAIR_RIGHT = "stair-right";
+    String STAIR_BACK = "stair-back";
+    String STAIR_LEFT = "stair-left";
 
     /**
      * Adds the shape at the location in the chunk to the chunk mesh.

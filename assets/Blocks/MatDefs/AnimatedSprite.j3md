@@ -27,8 +27,8 @@ MaterialDef AnimatedSprite {
     }
 
     Technique {
-        VertexShader GLSL120 :   Shaders/AnimatedSprite.vert
-        FragmentShader GLSL120 : Shaders/AnimatedSprite.frag
+        VertexShader GLSL120 :   Blocks/Shaders/AnimatedSprite.vert
+        FragmentShader GLSL120 : Blocks/Shaders/AnimatedSprite.frag
 
         WorldParameters {
             WorldViewProjectionMatrix

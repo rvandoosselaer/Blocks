@@ -189,9 +189,9 @@ MaterialDef Phong Lighting {
         LightMode MultiPass
 
         //VertexShader GLSL100 GLSL150:   Shaders/Water.vert
-        VertexShader GLSL120 GLSL150:   Shaders/Water.vert
+        VertexShader GLSL120 GLSL150:   Blocks/Shaders/Water.vert
         //FragmentShader GLSL100 GLSL150: Shaders/Water.frag
-        FragmentShader GLSL120 GLSL150: Shaders/Water.frag
+        FragmentShader GLSL120 GLSL150: Blocks/Shaders/Water.frag
 
         WorldParameters {
             WorldViewProjectionMatrix

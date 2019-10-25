@@ -225,6 +225,39 @@ public class BlockRegistry {
                 .transparent(false)
                 .solid(true)
                 .build());
+        // stair-front
+        register(Block.builder()
+                .name("stone-stair-front")
+                .shape("stair-front")
+                .type("stone")
+                .usingMultipleImages(false)
+                .transparent(false)
+                .solid(true)
+                .build());
+        register(Block.builder()
+                .name("stone-stair-right")
+                .shape("stair-right")
+                .type("stone")
+                .usingMultipleImages(false)
+                .transparent(false)
+                .solid(true)
+                .build());
+        register(Block.builder()
+                .name("stone-stair-back")
+                .shape("stair-back")
+                .type("stone")
+                .usingMultipleImages(false)
+                .transparent(false)
+                .solid(true)
+                .build());
+        register(Block.builder()
+                .name("stone-stair-left")
+                .shape("stair-left")
+                .type("stone")
+                .usingMultipleImages(false)
+                .transparent(false)
+                .solid(true)
+                .build());
     }
 
 }

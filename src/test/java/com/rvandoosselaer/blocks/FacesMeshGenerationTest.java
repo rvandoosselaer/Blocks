@@ -118,18 +118,61 @@ public class FacesMeshGenerationTest {
         chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
         chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
         chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 2, 1, blockRegistry.get("grass"));
         chunk.addBlock(1, 1, 1, block);
         chunk.createNode(meshGenerator);
 
         // cube mesh
         Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
         // 5 cubes = 5 * (6 faces, 12 triangles)
-        Assertions.assertEquals(5 * 12, mesh.getTriangleCount());
+        Assertions.assertEquals(6 * 12, mesh.getTriangleCount());
 
         // wedge mesh
         mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
         // 1 face, 2 triangles
         Assertions.assertEquals(2, mesh.getTriangleCount());
+    }
+
+    @Test
+    public void testStairShape() {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get("stone-stair-front"));
+        chunk.createNode(meshGenerator);
+
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stone-stair-front").getType())).getMesh();
+        // 14 faces
+        Assertions.assertEquals(14 * 2, mesh.getTriangleCount());
+
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-front"));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-right"));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-back"));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-left"));
+    }
+
+    private void testEnclosedStair(Chunk chunk, MeshGenerationStrategy meshGenerator, Block block) {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+
+        chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
+        chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
+        chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 2, 1, blockRegistry.get("grass"));
+        chunk.addBlock(1, 1, 1, block);
+        chunk.createNode(meshGenerator);
+
+        // cube mesh
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
+        // 6 cubes, 6 faces / cube
+        Assertions.assertEquals(6 * 6 * 2, mesh.getTriangleCount());
+
+        // stair mesh
+        mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
+        // 6 faces$
+        Assertions.assertEquals(6 * 2, mesh.getTriangleCount());
     }
 
 }

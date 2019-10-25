@@ -240,4 +240,5 @@ public class Wedge implements Shape {
 
         return Direction.fromVector(correctedDirection);
     }
+
 }

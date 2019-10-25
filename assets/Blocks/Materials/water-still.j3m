@@ -1,4 +1,4 @@
-Material water-still : MatDefs/Water.j3md {
+Material water-still : Blocks/MatDefs/Water.j3md {
 
     MaterialParameters {
         Shininess: 128
