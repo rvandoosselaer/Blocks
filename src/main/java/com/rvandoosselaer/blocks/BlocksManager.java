@@ -538,7 +538,7 @@ public class BlocksManager {
     }
 
     private void storeChunks() {
-        if (chunkStoringQueue.isEmpty()) {
+        if (chunkRepository == null || chunkStoringQueue.isEmpty()) {
             return;
         }
 
