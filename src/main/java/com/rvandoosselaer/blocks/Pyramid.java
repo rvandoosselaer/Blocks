@@ -9,7 +9,7 @@ import lombok.ToString;
 /**
  * A shape implementation for a pyramid.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @ToString
 public class Pyramid implements Shape {

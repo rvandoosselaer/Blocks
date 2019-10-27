@@ -16,6 +16,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * A File repository implementation for loading and storing chunks using the Protocol Buffers method.
+ * Each chunk is stored in a separate file.
+ *
+ * @author rvandoosselaer
+ */
 @Slf4j
 @Getter
 @Setter
@@ -26,6 +32,9 @@ public class FileRepository implements ChunkRepository {
 
     public static final String EXTENSION = ".block";
 
+    /**
+     * The path to save chunks to and load chunks from.
+     */
     private Path path;
 
     @Override

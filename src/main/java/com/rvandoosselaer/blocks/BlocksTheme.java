@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * A Blocks theme
+ * A Blocks theme.
  *
  * @author rvandoosselaer
  */

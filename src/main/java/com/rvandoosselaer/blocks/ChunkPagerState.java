@@ -3,11 +3,12 @@ package com.rvandoosselaer.blocks;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * An {@link com.jme3.app.state.AppState} that manages the lifecycle of a {@link ChunkPager}.
+ * An AppState implementation that manages the lifecycle of a {@link ChunkPager}.
  *
  * @author rvandoosselaer
  */
@@ -16,6 +17,10 @@ import lombok.RequiredArgsConstructor;
 public class ChunkPagerState extends BaseAppState {
 
     private final ChunkPager chunkPager;
+
+    public ChunkPagerState(Node node, BlocksManager blocksManager) {
+        this(new ChunkPager(node, blocksManager));
+    }
 
     @Override
     protected void initialize(Application app) {

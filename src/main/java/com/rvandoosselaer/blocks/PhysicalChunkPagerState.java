@@ -8,14 +8,18 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * An appstate implementation that manages the lifecycle of a {@link PhysicalChunkPager}.
+ * An AppState implementation that manages the lifecycle of a {@link PhysicalChunkPager}.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @RequiredArgsConstructor
 public class PhysicalChunkPagerState extends BaseAppState {
 
     private final PhysicalChunkPager physicalChunkPager;
+
+    public PhysicalChunkPagerState(PhysicsSpace physicsSpace, BlocksManager blocksManager) {
+        this(new PhysicalChunkPager(physicsSpace, blocksManager));
+    }
 
     @Override
     protected void initialize(Application app) {

@@ -13,22 +13,22 @@ import java.util.concurrent.*;
 /**
  * Manages the loading, generating and mesh construction of chunk objects in a thread safe way. An internal cache is
  * used to store and retrieve chunks from memory.
- * The {@link BlocksManager} can be setup to delegate the loading, generation and mesh creation to worker threads when
+ * The BlocksManager can be setup to delegate the loading, generation and mesh creation to worker threads when
  * a pool size of &gt; 0 is specified for the task.
  * <p>
- * The {@link BlocksManager} needs to be initialized before it can be used and should always be cleaned up to properly
- * shutdown the worker thread pools. It is a good practice to handle the lifecycle of the {@link BlocksManager} in an
+ * The BlocksManager needs to be initialized before it can be used and should always be cleaned up to properly
+ * shutdown the worker thread pools. It is a good practice to handle the lifecycle of the BlocksManager in an
  * {@link com.jme3.app.state.AppState} to properly initialize, update and cleanup the class.
  * <p>
  * A chunk can be retrieved by using the {@link #getChunk(Vec3i)} method. When the chunk isn't available it can be
  * requested with the {@link #requestChunk(Vec3i)} method.
- * The {@link BlocksManager} will first try to load the requested chunk using the {@link ChunkRepository}. When this is
- * not successful it will try to generate the chunk using the {@link ChunkGenerator}. When this also fails an empty
+ * The BlocksManager will first try to load the requested chunk using the {@link ChunkRepository}. When this is not
+ * successful it will try to generate the chunk using the {@link ChunkGenerator}. When this also fails, an empty
  * chunk will be created. The requested chunk is placed in the cache and can be retrieved with the {@link #getChunk(Vec3i)}
  * method.
  * <p>
- * When the node of a chunk in the cache is not set, the generation of the mesh is still in progress. Try to retrieve the
- * node at a later time. A mesh update can be requested for a chunk using the {@link #requestMeshUpdate(Chunk)} method.
+ * When the node of a chunk in the cache is not set, the generation of the mesh is still in progress. Try to retrieve
+ * the node at a later time. A mesh update can be requested for a chunk using the {@link #requestMeshUpdate(Chunk)} method.
  * Applications can register a {@link MeshGenerationListener} to be notified when the mesh of a chunk is updated.
  *
  * @author rvandoosselaer
@@ -36,6 +36,9 @@ import java.util.concurrent.*;
 @Slf4j
 public class BlocksManager {
 
+    /**
+     * The size of the cache. Set to increase or decrease the number of chunks to keep in memory.
+     */
     private final int cacheSize;
 
     private Cache<Vec3i, Chunk> cache;

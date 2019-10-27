@@ -8,7 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A thread safe register for blocks.
+ * A thread safe register for blocks. The register is used so only one instance of a block is used throughout the Blocks
+ * framework.
  *
  * @author rvandoosselaer
  */

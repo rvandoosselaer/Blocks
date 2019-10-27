@@ -3,7 +3,10 @@ package com.rvandoosselaer.blocks;
 import com.simsilica.mathd.Vec3i;
 
 /**
- * The shape of a {@link Block} element.
+ * The interface describing the shape of a {@link Block} element. The {@link #add(Vec3i, Chunk, ChunkMesh)} method is
+ * called for each block in the chunk when the mesh is constructed using the {@link MeshGenerationStrategy}.
+ *
+ * @author rvandoosselaer
  */
 public interface Shape {
 

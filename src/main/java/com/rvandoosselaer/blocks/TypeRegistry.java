@@ -16,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A registry for storing and retrieving materials based on the block type.
+ * A thread safe register for block types. The register is used so only one instance of a type is used throughout the
+ * Blocks framework.
  *
  * @author rvandoosselaer
  */
@@ -58,12 +59,7 @@ public class TypeRegistry {
             throw new IllegalArgumentException("Invalid type " + type + " specified.");
         }
 
-        Material m = material.clone();
-
-        TexturesWrapper textures = getTexturesOrDefault(type);
-        m.setTexture("DiffuseMap", textures.getDiffuseMap());
-        textures.getNormalMap().ifPresent(texture -> m.setTexture("NormalMap", texture));
-        textures.getParallaxMap().ifPresent(texture -> m.setTexture("ParallaxMap", texture));
+        Material m = setTextures(type, material.clone());
 
         registry.put(type, m);
         if (log.isTraceEnabled()) {
@@ -101,14 +97,35 @@ public class TypeRegistry {
 
     public void setTheme(BlocksTheme theme) {
         this.theme = theme;
-        clear();
-        registerDefaultMaterials();
+        reload();
     }
 
     public void setDefaultTheme(@NonNull BlocksTheme defaultTheme) {
         this.defaultTheme = defaultTheme;
-        clear();
-        registerDefaultMaterials();
+        reload();
+    }
+
+    /**
+     * Set the textures on the material based on the current theme or default theme.
+     *
+     * @param type     block type
+     * @param material associated with the block type
+     * @return material with updated textures
+     */
+    private Material setTextures(String type, Material material) {
+        TexturesWrapper textures = getTexturesOrDefault(type);
+        material.setTexture("DiffuseMap", textures.getDiffuseMap());
+        material.setTexture("NormalMap", textures.getNormalMap().orElse(null));
+        material.setTexture("ParallaxMap", textures.getParallaxMap().orElse(null));
+
+        return material;
+    }
+
+    /**
+     * Reload all the materials in the registry.
+     */
+    private void reload() {
+        registry.keySet().forEach(type -> setTextures(type, get(type)));
     }
 
     private Material load(String materialPath) {

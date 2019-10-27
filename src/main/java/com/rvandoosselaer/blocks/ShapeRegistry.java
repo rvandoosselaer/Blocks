@@ -6,9 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A registry for storing and retrieving shapes based on the block shape.
+ * A thread safe register for shapes. The register is used so only one instance of a shape is used throughout the Blocks
+ * framework.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @Slf4j
 public class ShapeRegistry {

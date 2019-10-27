@@ -21,9 +21,8 @@ import java.util.concurrent.TimeUnit;
  * A mesh generation implementation that creates a mesh for each block type in the chunk. A geometry is created with
  * the generated mesh and the material retrieved from the {@link TypeRegistry}. The geometry is attached to the
  * node, and the node is positioned based on the location of the chunk.
- * If lod generation was enabled, an lod level will be created for each supplied reduction value.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @Slf4j
 @ToString(onlyExplicitlyIncluded = true)

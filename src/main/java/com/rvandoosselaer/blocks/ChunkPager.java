@@ -6,8 +6,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * A pager implementation that pages the meshes of the chunks around the given location. Attaching and detaching them
- * from the given node.
+ * A pager implementation that pages the meshes of the chunks around the given location. Attaching chunks that are in
+ * range and detaching them when they are out of range, from the given node.
  *
  * @author rvandoosselaer
  */

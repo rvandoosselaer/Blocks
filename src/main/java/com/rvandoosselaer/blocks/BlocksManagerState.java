@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * An {@link com.jme3.app.state.AppState} to manage the lifecycle of a {@link BlocksManager}.
+ * An AppState implementation to manage the lifecycle of a {@link BlocksManager}.
  *
  * @author rvandoosselaer
  */

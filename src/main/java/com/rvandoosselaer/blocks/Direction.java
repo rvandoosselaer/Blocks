@@ -7,6 +7,11 @@ import lombok.NonNull;
 
 import java.util.Arrays;
 
+/**
+ * An enum holding direction information in a right-handed coordinate system, just as OpenGL.
+ *
+ * @author rvandoosselaer
+ */
 @Getter
 public enum Direction {
     TOP(0, 1, 0),

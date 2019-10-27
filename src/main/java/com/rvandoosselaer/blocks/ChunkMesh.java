@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A helper class to create a mesh for a specific block type of a chunk.
+ * A class to help create a mesh for a specific block type of a chunk.
  *
  * @author rvandoosselaer
  */

@@ -70,6 +70,7 @@ dependencies {
     testImplementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
     testImplementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
     testImplementation "org.jmonkeyengine:jme3-blender:${jmeVersion}"
+    testImplementation "com.simsilica:sio2:1.+"
 }
 
 test {

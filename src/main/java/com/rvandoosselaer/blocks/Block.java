@@ -3,6 +3,11 @@ package com.rvandoosselaer.blocks;
 import lombok.*;
 
 /**
+ * The basic building block of the Blocks framework. A block has a name and some properties describing the look and feel
+ * of the block in the resulting chunk node.
+ * The shape of the block defines the form (vertices, normals, tangents, UV coordinates, ...)  of the block, the type
+ * defines the look (material, images, ...).
+ *
  * @author rvandoosselaer
  */
 @Getter

@@ -3,6 +3,8 @@ package com.rvandoosselaer.blocks;
 import com.simsilica.mathd.Vec3i;
 
 /**
+ * The contract of a ChunkGenerator implementation.
+ *
  * @author rvandoosselaer
  */
 public interface ChunkGenerator {

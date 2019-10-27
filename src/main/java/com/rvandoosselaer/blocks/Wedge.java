@@ -8,7 +8,7 @@ import lombok.ToString;
 /**
  * A shape implementation for a wedge.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @ToString
 @RequiredArgsConstructor
@@ -228,7 +228,7 @@ public class Wedge implements Shape {
     }
 
     /**
-     * Calculates the direction of a side of the wedge, based on the rotation. A wedge facing right, is rotated 90°
+     * Calculates the direction of a side of the wedge, based on the rotation. A wedge facing right, is rotated 90 degrees
      * around the y-axis. The original left side of this wedge is now facing to the front.
      *
      * @param direction

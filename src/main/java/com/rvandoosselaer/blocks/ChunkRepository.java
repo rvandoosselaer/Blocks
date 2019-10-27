@@ -3,7 +3,7 @@ package com.rvandoosselaer.blocks;
 import com.simsilica.mathd.Vec3i;
 
 /**
- * Repository for a chunk
+ * The contract of a ChunkRepository implementation.
  *
  * @author rvandoosselaer
  */

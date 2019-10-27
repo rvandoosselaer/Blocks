@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * A pager implementation that attaches and detaches collision meshes to the given physicsSpace based on the location
  * in the grid.
  *
- * @author remy
+ * @author rvandoosselaer
  */
 @Slf4j
 @Getter

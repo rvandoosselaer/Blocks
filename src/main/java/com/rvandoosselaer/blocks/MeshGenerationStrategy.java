@@ -4,6 +4,8 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 
 /**
+ * The contract of MeshGenerationStrategy implementations.
+ *
  * @author rvandoosselaer
  */
 public interface MeshGenerationStrategy {
