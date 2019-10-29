@@ -2,12 +2,12 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
+    id 'com.jfrog.bintray' version "1.8.4"
 }
 
-// maven publish settings
-//group = "org.randomstack"
-//version = "0.1.0"
-// The artifact ID defaults to the project name configured in settings.gradle, which in turn defaults to the project directory's name.
+group = "com.rvandoosselaer"
+version = "1.0.0-SNAPSHOT"
+// The artifact ID defaults to the project name configured in settings.gradle
 
 sourceCompatibility = 1.8
 
@@ -16,7 +16,6 @@ ext {
     lombokVersion = "[1.18,)"
     slf4jVersion = "[1.8,)"
     simMathVersion = "[1.4,)"
-//    jme3UtilsVersion = "[0.1,)"
     junitVersion = "[5.4.0,)"
     mockitoVersion = "[3.1,)"
     caffeineVersion = "[2.8,)"
@@ -27,10 +26,6 @@ ext {
 
 repositories {
     jcenter()
-//    mavenLocal()
-//    maven {
-//        url  "https://dl.bintray.com/randomstack/RandomStack"
-//    }
 }
 
 dependencies {
@@ -122,4 +117,20 @@ publishing {
 
 javadoc {
     failOnError = false
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_APIKEY')
+    publications = ['MyPublication']
+    pkg {
+        repo = 'rvandoosselaer'
+        name = rootProject.getName()
+        licenses = ['BSD 3-Clause']
+        vcsUrl = 'https://github.com/rvandoosselaer/Blocks.git'
+        version {
+            name = '1.0.0-SNAPSHOT'
+            released = new Date()
+        }
+    }
 }
