@@ -20,6 +20,13 @@ import lombok.*;
 public class Block {
 
     public static final String EMPTY = "";
+    public static final String GRASS = "grass";
+    public static final String DIRT = "dirt";
+    public static final String STONE = "stone";
+    public static final String STONEBRICK = "stonebrick";
+    public static final String OAK = "oak";
+    public static final String SAND = "sand";
+    public static final String WATER = "water";
 
     @ToString.Include
     @EqualsAndHashCode.Include

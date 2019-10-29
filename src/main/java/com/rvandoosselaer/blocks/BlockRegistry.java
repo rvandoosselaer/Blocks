@@ -60,12 +60,12 @@ public class BlockRegistry {
 
     public void registerDefaultBlocks() {
         // cubes
-        register(Block.create("grass", "grass", true));
-        register(Block.create("dirt", "dirt"));
-        register(Block.create("stone", "stone"));
-        register(Block.create("stonebrick", "stonebrick"));
-        register(Block.create("oak", "oak", true));
-        register(Block.create("sand", "sand"));
+        register(Block.create(Block.GRASS, "grass", true));
+        register(Block.create(Block.DIRT, "dirt"));
+        register(Block.create(Block.STONE, "stone"));
+        register(Block.create(Block.STONEBRICK, "stonebrick"));
+        register(Block.create(Block.OAK, "oak", true));
+        register(Block.create(Block.SAND, "sand"));
         // slabs
         register(Block.builder()
                 .name("grass-slab")
