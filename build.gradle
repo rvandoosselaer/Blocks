@@ -29,9 +29,6 @@ repositories {
 }
 
 dependencies {
-    // assets
-    api project(':assets')
-
     // JME
     implementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
     compileOnly "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
@@ -89,6 +86,10 @@ task cleanJavadoc(type: Delete) {
 
 clean {
     dependsOn cleanJavadoc
+}
+
+jar {
+    exclude 'blocks.proto'
 }
 
 build {
