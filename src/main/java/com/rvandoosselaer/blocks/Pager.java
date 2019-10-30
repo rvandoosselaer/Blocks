@@ -186,7 +186,10 @@ public abstract class Pager<T> implements MeshGenerationListener {
 
         detachPage(page);
 
-        //blocksManager.invalidate(pageLocation);
+        // the cache eviction mechanism of the BlocksManager isn't always evicting a chunk that isn't used. This can
+        // cause problems when a chunk that is attached to the scenegraph is removed from the cache. By manually
+        // evicting a chunk that is safely detached, we try to counter this behaviour.
+        blocksManager.invalidate(pageLocation);
     }
 
     /**
