@@ -17,15 +17,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 @Setter
-public class PhysicalChunkPager extends Pager<PhysicsRigidBody> {
+public class PhysicsChunkPager extends Pager<PhysicsRigidBody> {
 
     private PhysicsSpace physicsSpace;
 
-    public PhysicalChunkPager(@NonNull BlocksManager blocksManager) {
+    public PhysicsChunkPager(@NonNull BlocksManager blocksManager) {
         this(null, blocksManager);
     }
 
-    public PhysicalChunkPager(PhysicsSpace physicsSpace, @NonNull BlocksManager blocksManager) {
+    public PhysicsChunkPager(PhysicsSpace physicsSpace, @NonNull BlocksManager blocksManager) {
         super(blocksManager);
         this.physicsSpace = physicsSpace;
         this.gridSize = BlocksConfig.getInstance().getPhysicsGridSize();

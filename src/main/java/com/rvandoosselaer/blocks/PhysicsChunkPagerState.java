@@ -8,27 +8,27 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * An AppState implementation that manages the lifecycle of a {@link PhysicalChunkPager}.
+ * An AppState implementation that manages the lifecycle of a {@link PhysicsChunkPager}.
  *
  * @author rvandoosselaer
  */
 @RequiredArgsConstructor
-public class PhysicalChunkPagerState extends BaseAppState {
+public class PhysicsChunkPagerState extends BaseAppState {
 
-    private final PhysicalChunkPager physicalChunkPager;
+    private final PhysicsChunkPager physicsChunkPager;
 
-    public PhysicalChunkPagerState(PhysicsSpace physicsSpace, BlocksManager blocksManager) {
-        this(new PhysicalChunkPager(physicsSpace, blocksManager));
+    public PhysicsChunkPagerState(PhysicsSpace physicsSpace, BlocksManager blocksManager) {
+        this(new PhysicsChunkPager(physicsSpace, blocksManager));
     }
 
     @Override
     protected void initialize(Application app) {
-        physicalChunkPager.initialize();
+        physicsChunkPager.initialize();
     }
 
     @Override
     protected void cleanup(Application app) {
-        physicalChunkPager.cleanup();
+        physicsChunkPager.cleanup();
     }
 
     @Override
@@ -41,22 +41,22 @@ public class PhysicalChunkPagerState extends BaseAppState {
 
     @Override
     public void update(float tpf) {
-        physicalChunkPager.update();
+        physicsChunkPager.update();
     }
 
     public void setPhysicsSpace(@NonNull PhysicsSpace physicsSpace) {
-        physicalChunkPager.setPhysicsSpace(physicsSpace);
+        physicsChunkPager.setPhysicsSpace(physicsSpace);
     }
 
     public PhysicsSpace getPhysicsSpace() {
-        return physicalChunkPager.getPhysicsSpace();
+        return physicsChunkPager.getPhysicsSpace();
     }
 
     public void setLocation(Vector3f location) {
-        physicalChunkPager.setLocation(location);
+        physicsChunkPager.setLocation(location);
     }
 
     public Vector3f getLocation() {
-        return physicalChunkPager.getLocation();
+        return physicsChunkPager.getLocation();
     }
 }

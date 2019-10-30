@@ -2,6 +2,7 @@ package com.rvandoosselaer.blocks;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -42,6 +43,10 @@ public class ShapeRegistry {
 
     public void clear() {
         shapeRegistry.clear();
+    }
+
+    public Collection<String> getAll() {
+        return shapeRegistry.keySet();
     }
 
     public void registerDefaultShapes() {

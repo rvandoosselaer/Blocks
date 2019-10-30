@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -82,6 +83,10 @@ public class TypeRegistry {
 
     public void clear() {
         registry.clear();
+    }
+
+    public Collection<String> getAll() {
+        return registry.keySet();
     }
 
     public void registerDefaultMaterials() {
