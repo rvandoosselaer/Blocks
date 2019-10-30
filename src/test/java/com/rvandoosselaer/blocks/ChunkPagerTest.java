@@ -4,7 +4,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import com.simsilica.sim.AbstractGameSystem;
@@ -37,7 +36,7 @@ public class ChunkPagerTest extends SimpleApplication {
 
         BlocksManager blocksManager = BlocksManager.builder()
                 .chunkGenerationPoolSize(1)
-                .chunkGenerator(new FlatTerrainGenerator(1, 31, config.getBlockRegistry().get("grass")))
+                .chunkGenerator(new FlatTerrainGenerator(31, config.getBlockRegistry().get("grass")))
                 .meshGenerationPoolSize(1)
                 .build();
 
@@ -75,33 +74,6 @@ public class ChunkPagerTest extends SimpleApplication {
             } else {
                 stateManager.attach(chunkPagerState);
             }
-        }
-    }
-
-    @RequiredArgsConstructor
-    public class FlatTerrainGenerator implements ChunkGenerator {
-
-        private final int minY;
-        private final int maxY;
-        private final Block block;
-
-        @Override
-        public Chunk generate(Vec3i location) {
-            Chunk chunk = Chunk.createAt(location);
-
-            int randomY = FastMath.nextRandomInt(minY, maxY);
-            Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
-            for (int x = 0; x < chunkSize.x; x++) {
-                for (int y = 0; y < chunkSize.y; y++) {
-                    for (int z = 0; z < chunkSize.z; z++) {
-                        if (y <= randomY) {
-                            chunk.addBlock(x, y, z, block);
-                        }
-                    }
-                }
-            }
-
-            return chunk;
         }
     }
 
