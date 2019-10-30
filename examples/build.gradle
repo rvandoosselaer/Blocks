@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+}
+
+ext {
+    sio2Version = "[1.3,)"
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    // Blocks
+    implementation rootProject
+
+    // JME
+    implementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-desktop:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+//    compileOnly "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+//
+//    // utilities
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    implementation "com.simsilica:sim-math:${simMathVersion}"
+    implementation "com.simsilica:sio2:${sio2Version}"
+//    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+//    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+//
+//    // logging
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+    implementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4j2Version}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+//
+//    // testing
+//    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+//    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+//    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+//    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-desktop:${jmeVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+//    testImplementation "org.jmonkeyengine:jme3-blender:${jmeVersion}"
+//    testImplementation "com.simsilica:sio2:1.+"
+}

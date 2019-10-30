@@ -1,1 +1,3 @@
 rootProject.name = 'blocks'
+
+include 'examples'

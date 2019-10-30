@@ -8,7 +8,7 @@ Configuration:
   Loggers:
     logger:
       - name: com.rvandoosselaer
-        level: all
+        level: debug
 
     Root:
       level: info

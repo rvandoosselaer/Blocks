@@ -185,6 +185,8 @@ public abstract class Pager<T> implements MeshGenerationListener {
         }
 
         detachPage(page);
+
+        //blocksManager.invalidate(pageLocation);
     }
 
     /**

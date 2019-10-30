@@ -2,10 +2,17 @@ package com.rvandoosselaer.blocks;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.SceneGraphVisitorAdapter;
+import com.jme3.scene.VertexBuffer;
 import com.simsilica.mathd.Vec3i;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -103,8 +110,14 @@ public class BlocksManager {
             log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
         }
 
-        cache = cacheSize > 0 ? Caffeine.newBuilder().maximumSize(cacheSize).build() :
-                Caffeine.newBuilder().maximumSize(minimumSize).build();
+        cache = cacheSize > 0 ? Caffeine.newBuilder()
+                .maximumSize(cacheSize)
+                .removalListener(new CacheRemovalListener())
+                .build() :
+                Caffeine.newBuilder()
+                        .maximumSize(minimumSize)
+                        .removalListener(new CacheRemovalListener())
+                        .build();
 
         // start executors
         if (isMeshGenerationMultiThreaded()) {
@@ -271,6 +284,14 @@ public class BlocksManager {
         }
 
         return !hasChunk(location) && addToQueue(chunkLoadingQueue, location);
+    }
+
+    public void invalidate(@NonNull Vec3i location) {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        cache.invalidate(location);
     }
 
     /**
@@ -688,6 +709,36 @@ public class BlocksManager {
             return chunk != null;
         }
 
+    }
+
+    private class CacheRemovalListener implements RemovalListener {
+
+        @Override
+        public void onRemoval(@Nullable Object key, @Nullable Object value, @org.checkerframework.checker.nullness.qual.NonNull RemovalCause cause) {
+            System.out.println(key + " -> " + value + " was removed. Reason: " + cause);
+            Chunk chunk = (Chunk) value;
+            if (chunk != null && chunk.getNode() != null && chunk.getNode().getParent() != null) {
+                throw new RuntimeException("Chunk was removed from cache, but node is still attached!" + chunk);
+            }
+
+            if (chunk.getNode() != null) {
+                chunk.getNode().depthFirstTraversal(new SceneGraphVisitorAdapter() {
+
+                    @Override
+                    public void visit(Geometry geom) {
+                        Mesh mesh = geom.getMesh();
+                        mesh.clearBuffer(VertexBuffer.Type.Position);
+                        mesh.clearBuffer(VertexBuffer.Type.Index);
+                        mesh.clearBuffer(VertexBuffer.Type.TexCoord);
+                        mesh.clearBuffer(VertexBuffer.Type.Normal);
+                        mesh.clearBuffer(VertexBuffer.Type.Tangent);
+                    }
+
+                });
+            }
+
+            cache.cleanUp();
+        }
     }
 
 }
