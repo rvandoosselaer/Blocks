@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 
 /**
  * A chunk holds an array of {@link Block} elements. Blocks can be retrieved, added or removed using the appropriate
@@ -33,12 +34,12 @@ public class Chunk {
     private boolean empty;
     @ToString.Include
     private boolean full;
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED) //TODO: make public?
     private Node node;
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED) //TODO: make public?
     private Mesh collisionMesh;
+    @Setter
+    private BiFunction<Block, Block, Boolean> faceVisibleFunction = new DefaultFaceVisibleFunction();
 
     private Chunk() {
     }
@@ -263,8 +264,10 @@ public class Chunk {
      * @return true if the face is visible
      */
     protected boolean isFaceVisible(@NonNull Vec3i location, @NonNull Direction direction) {
+        Block block = getBlock(location);
         Block neighbour = getNeighbour(location, direction);
-        return neighbour == null || (neighbour.isTransparent() && !getBlock(location).isTransparent()) || !Shape.CUBE.equals(neighbour.getShape());
+
+        return faceVisibleFunction.apply(block, neighbour);
     }
 
     /**
@@ -291,6 +294,35 @@ public class Chunk {
     private static int calculateIndex(int x, int y, int z) {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         return z + (y * chunkSize.z) + (x * chunkSize.y * chunkSize.z);
+    }
+
+    /**
+     * A function that checks if the shared face between the 2 adjacent blocks should be visible (rendered).
+     * The first block argument is the block that checks if it's face should be rendered, the second block argument is
+     * the neighbouring block on that direction.
+     *
+     * The default behaviour states that the face of a block is visible when:
+     * - the neighbour block is not set
+     * - the neighbour block is transparent and the asking block is not transparent
+     * - neighbour block is not a cube
+     */
+    private static class DefaultFaceVisibleFunction implements BiFunction<Block, Block, Boolean> {
+
+        @Override
+        public Boolean apply(Block block, Block neighbour) {
+            if (neighbour == null) {
+                return true;
+            }
+            if (neighbour.isTransparent() && !block.isTransparent()) {
+                return true;
+            }
+            if (!Shape.CUBE.equals(neighbour.getShape())) {
+                return true;
+            }
+
+            return false;
+        }
+
     }
 
 }
