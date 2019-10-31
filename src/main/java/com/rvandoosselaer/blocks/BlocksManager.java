@@ -70,7 +70,7 @@ public class BlocksManager {
     private List<Future<Chunk>> meshGenerationResults = new ArrayList<>();
     private List<Future<ChunkLoadResult>> chunkLoadingResults = new ArrayList<>();
     private List<Future<Chunk>> chunkGenerationResults = new ArrayList<>();
-    private int storeInterval = 10000;
+    private int storeInterval = -1;
     private long lastStoredTimestamp = -1;
 
     public BlocksManager() {
@@ -147,7 +147,7 @@ public class BlocksManager {
         handleNextChunkGenerationResult();
 
         // chunk storing
-        if (System.currentTimeMillis() >= lastStoredTimestamp + storeInterval) {
+        if (storeInterval > 0 && System.currentTimeMillis() >= lastStoredTimestamp + storeInterval) {
             storeChunks();
             lastStoredTimestamp = System.currentTimeMillis();
         }
@@ -278,7 +278,7 @@ public class BlocksManager {
      *
      * @param location of the chunk
      */
-    public void invalidate(@NonNull Vec3i location) {
+    public void invalidateChunk(@NonNull Vec3i location) {
         if (!isInitialized()) {
             throw new IllegalStateException("BlocksManager is not initialized!");
         }
@@ -298,6 +298,17 @@ public class BlocksManager {
         }
 
         cache.cleanUp();
+    }
+
+    /**
+     * Store all chunks that have changed data using the {@link ChunkRepository}
+     */
+    public void saveChunks() {
+        if (!isInitialized()) {
+            throw new IllegalStateException("BlocksManager is not initialized!");
+        }
+
+        storeChunks();
     }
 
     /**
