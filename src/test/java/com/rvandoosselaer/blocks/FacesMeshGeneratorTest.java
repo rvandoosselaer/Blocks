@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author rvandoosselaer
  */
-public class FacesMeshGenerationTest {
+public class FacesMeshGeneratorTest {
 
     @BeforeAll
     public static void setup() {
@@ -24,7 +24,7 @@ public class FacesMeshGenerationTest {
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
-        chunk.createNode(BlocksConfig.getInstance().getMeshGenerationStrategy());
+        chunk.createNode(BlocksConfig.getInstance().getChunkMeshGenerator());
 
         Mesh mesh = ((Geometry) chunk.getNode().getChild(0)).getMesh();
         // 6 faces, 2 triangles per face
@@ -35,7 +35,7 @@ public class FacesMeshGenerationTest {
     public void testDoNotRenderUnwantedTriangles() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
         chunk.addBlock(0, 1, 0, blockRegistry.get("grass"));
@@ -66,7 +66,7 @@ public class FacesMeshGenerationTest {
     public void testPyramidShape() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-merlon"));
@@ -93,7 +93,7 @@ public class FacesMeshGenerationTest {
     public void testWedgeShape() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-wedge-front"));
@@ -110,7 +110,7 @@ public class FacesMeshGenerationTest {
         testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-left"));
     }
 
-    private void testEnclosedWedge(Chunk chunk, MeshGenerationStrategy meshGenerator, Block block) {
+    private void testEnclosedWedge(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
@@ -136,7 +136,7 @@ public class FacesMeshGenerationTest {
     @Test
     public void testStairShape() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, blockRegistry.get("stone-stair-front"));
@@ -152,7 +152,7 @@ public class FacesMeshGenerationTest {
         testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-left"));
     }
 
-    private void testEnclosedStair(Chunk chunk, MeshGenerationStrategy meshGenerator, Block block) {
+    private void testEnclosedStair(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));

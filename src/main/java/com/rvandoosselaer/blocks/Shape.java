@@ -4,7 +4,7 @@ import com.simsilica.mathd.Vec3i;
 
 /**
  * The interface describing the shape of a {@link Block} element. The {@link #add(Vec3i, Chunk, ChunkMesh)} method is
- * called for each block in the chunk when the mesh is constructed using the {@link MeshGenerationStrategy}.
+ * called for each block in the chunk when the mesh is constructed using the {@link ChunkMeshGenerator}.
  *
  * @author rvandoosselaer
  */

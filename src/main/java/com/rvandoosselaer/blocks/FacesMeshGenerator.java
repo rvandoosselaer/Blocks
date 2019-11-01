@@ -18,22 +18,24 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A mesh generation implementation that creates a mesh for each block type in the chunk. A geometry is created with
- * the generated mesh and the material retrieved from the {@link TypeRegistry}. The geometry is attached to the
- * node, and the node is positioned based on the location of the chunk.
+ * A chunk mesh generator that creates and combines a quad mesh for each of the visible faces of a block of the same
+ * type. In short, the chunk is traversed and all faces that are not visible will not be added to the final mesh. Some
+ * extra bookkeeping is done to scan through the neighbours of each block.
+ * One geometry is created per type of the block in the chunk. The geometry is attached to the node, and the node is
+ * positioned based on the location of the chunk.
  *
  * @author rvandoosselaer
  */
 @Slf4j
 @ToString(onlyExplicitlyIncluded = true)
 @RequiredArgsConstructor
-public class FacesMeshGeneration implements MeshGenerationStrategy {
+public class FacesMeshGenerator implements ChunkMeshGenerator {
 
     private final ShapeRegistry shapeRegistry;
     private final TypeRegistry typeRegistry;
 
     @Override
-    public Node generateNode(Chunk chunk) {
+    public Node createNode(Chunk chunk) {
         long start = System.nanoTime();
 
         // create the node of the chunk
@@ -106,7 +108,7 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
     }
 
     @Override
-    public Mesh generateCollisionMesh(Chunk chunk) {
+    public Mesh createCollisionMesh(Chunk chunk) {
         long start = System.nanoTime();
 
         // create the collision mesh
@@ -139,7 +141,7 @@ public class FacesMeshGeneration implements MeshGenerationStrategy {
     }
 
     @Override
-    public void generateNodeAndCollisionMesh(Chunk chunk) {
+    public void createAndSetNodeAndCollisionMesh(Chunk chunk) {
         long start = System.nanoTime();
 
         // create the node of the chunk

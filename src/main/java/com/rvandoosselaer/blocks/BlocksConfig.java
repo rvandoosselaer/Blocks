@@ -30,7 +30,7 @@ public class BlocksConfig {
     private ShapeRegistry shapeRegistry;
     private BlockRegistry blockRegistry;
     private TypeRegistry typeRegistry;
-    private MeshGenerationStrategy meshGenerationStrategy;
+    private ChunkMeshGenerator chunkMeshGenerator;
 
     private BlocksConfig(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -48,7 +48,7 @@ public class BlocksConfig {
         instance.setShapeRegistry(new ShapeRegistry());
         instance.setBlockRegistry(new BlockRegistry());
         instance.setTypeRegistry(new TypeRegistry(assetManager));
-        instance.setMeshGenerationStrategy(new FacesMeshGeneration(instance.getShapeRegistry(), instance.getTypeRegistry()));
+        instance.setChunkMeshGenerator(new FacesMeshGenerator(instance.getShapeRegistry(), instance.getTypeRegistry()));
     }
 
     public static BlocksConfig getInstance() {

@@ -34,9 +34,9 @@ public class Chunk {
     private boolean empty;
     @ToString.Include
     private boolean full;
-    @Setter(AccessLevel.PROTECTED) //TODO: make public?
+    @Setter
     private Node node;
-    @Setter(AccessLevel.PROTECTED) //TODO: make public?
+    @Setter
     private Mesh collisionMesh;
     @Setter
     private BiFunction<Block, Block, Boolean> faceVisibleFunction = new DefaultFaceVisibleFunction();
@@ -149,24 +149,24 @@ public class Chunk {
     }
 
     /**
-     * Creates the node of the chunk with the given {@link MeshGenerationStrategy}.
+     * Creates the node of the chunk with the given {@link ChunkMeshGenerator}.
      *
      * @param strategy mesh generation strategy to use for constructing the node
      * @return the generated chunk node
      */
-    public Node createNode(MeshGenerationStrategy strategy) {
-        setNode(strategy.generateNode(this));
+    public Node createNode(ChunkMeshGenerator strategy) {
+        setNode(strategy.createNode(this));
         return getNode();
     }
 
     /**
-     * Creates the collision mesh of the chunk with the given {@link MeshGenerationStrategy}.
+     * Creates the collision mesh of the chunk with the given {@link ChunkMeshGenerator}.
      *
      * @param strategy mesh generation strategy to use for creating the collision mesh
      * @return the generated collision mesh
      */
-    public Mesh createCollisionMesh(MeshGenerationStrategy strategy) {
-        setCollisionMesh(strategy.generateCollisionMesh(this));
+    public Mesh createCollisionMesh(ChunkMeshGenerator strategy) {
+        setCollisionMesh(strategy.createCollisionMesh(this));
         return getCollisionMesh();
     }
 

@@ -29,7 +29,7 @@ import java.util.concurrent.*;
  * <p>
  * When the node of a chunk in the cache is not set, the generation of the mesh is still in progress. Try to retrieve
  * the node at a later time. A mesh update can be requested for a chunk using the {@link #requestMeshUpdate(Chunk)} method.
- * Applications can register a {@link MeshGenerationListener} to be notified when the mesh of a chunk is updated.
+ * Applications can register a {@link BlocksManagerListener} to be notified when the mesh of a chunk is updated.
  *
  * @author rvandoosselaer
  */
@@ -63,7 +63,7 @@ public class BlocksManager {
     private final Queue<Vec3i> chunkLoadingQueue = new ConcurrentLinkedQueue<>();
     private final Queue<Vec3i> chunkGenerationQueue = new ConcurrentLinkedQueue<>();
     private final Queue<Chunk> chunkStoringQueue = new ConcurrentLinkedQueue<>();
-    private final List<MeshGenerationListener> meshGenerationListeners = new CopyOnWriteArrayList<>();
+    private final List<BlocksManagerListener> blocksManagerListeners = new CopyOnWriteArrayList<>();
     private ExecutorService meshGenerationExecutor;
     private ExecutorService chunkPersistenceExecutor;
     private ExecutorService chunkGenerationExecutor;
@@ -188,7 +188,7 @@ public class BlocksManager {
         chunkLoadingQueue.clear();
         chunkGenerationQueue.clear();
         // clear the listeners
-        meshGenerationListeners.clear();
+        blocksManagerListeners.clear();
         // clear the future's
         meshGenerationResults.clear();
         chunkLoadingResults.clear();
@@ -312,21 +312,21 @@ public class BlocksManager {
     }
 
     /**
-     * Add a listener to the list of listeners that is notified when the mesh of a chunk is updated.
+     * Add a listener to the list of listeners that gets notified.
      *
      * @param listener
      */
-    public void addMeshGenerationListener(@NonNull MeshGenerationListener listener) {
-        meshGenerationListeners.add(listener);
+    public void registerListener(@NonNull BlocksManagerListener listener) {
+        blocksManagerListeners.add(listener);
     }
 
     /**
-     * Remove a listener from the list of listeners that is notified when the mesh of a chunk is updated.
+     * Remove a listener from the list of listeners that gets notified.
      *
      * @param listener
      */
-    public void removeMeshGenerationListener(@NonNull MeshGenerationListener listener) {
-        meshGenerationListeners.remove(listener);
+    public void removeListener(@NonNull BlocksManagerListener listener) {
+        blocksManagerListeners.remove(listener);
     }
 
     /**
@@ -430,7 +430,7 @@ public class BlocksManager {
      * Perform a mesh update on the next chunk in the meshes generation queue.
      */
     private void handleNextMeshUpdate() {
-        MeshGenerationStrategy meshGenerationStrategy = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerationStrategy = BlocksConfig.getInstance().getChunkMeshGenerator();
         if (meshGenerationStrategy == null) {
             return;
         }
@@ -443,8 +443,8 @@ public class BlocksManager {
         if (isMeshGenerationMultiThreaded()) {
             meshGenerationResults.add(meshGenerationExecutor.submit(new MeshGenerationCallable(chunk, meshGenerationStrategy)));
         } else {
-            meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
-            notifyMeshGenerationListeners(chunk);
+            meshGenerationStrategy.createAndSetNodeAndCollisionMesh(chunk);
+            notifyListenerOnMeshUpdate(chunk);
         }
     }
 
@@ -513,7 +513,7 @@ public class BlocksManager {
         Optional<Future<Chunk>> optionalFuture = meshGenerationResults.stream().filter(Future::isDone).findFirst();
         optionalFuture.ifPresent(future -> {
             try {
-                notifyMeshGenerationListeners(future.get());
+                notifyListenerOnMeshUpdate(future.get());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
@@ -624,12 +624,20 @@ public class BlocksManager {
     }
 
     /**
-     * Notify the list of listeners that the mesh of a chunk is generated/updated.
+     * Notify the list of listeners when the mesh of the chunk is updated.
      *
      * @param chunk
      */
-    private void notifyMeshGenerationListeners(Chunk chunk) {
-        meshGenerationListeners.forEach(listener -> listener.generationFinished(chunk));
+    private void notifyListenerOnMeshUpdate(Chunk chunk) {
+        blocksManagerListeners.forEach(listener -> listener.onChunkMeshAvailable(chunk));
+    }
+
+    /**
+     * Notify the list of listeners when a chunk is available for retrieval.
+     * @param chunk
+     */
+    private void notifyListenerOnChunkAvailable(Chunk chunk) {
+        blocksManagerListeners.forEach(listener -> listener.onChunkAvailable(chunk));
     }
 
     /**
@@ -652,6 +660,7 @@ public class BlocksManager {
         if (log.isTraceEnabled()) {
             log.trace("Adding {} to cache. Estimated new cache size: {}", chunk, cache.estimatedSize());
         }
+        notifyListenerOnChunkAvailable(chunk);
     }
 
     @RequiredArgsConstructor
@@ -660,11 +669,11 @@ public class BlocksManager {
         @NonNull
         private final Chunk chunk;
         @NonNull
-        private final MeshGenerationStrategy meshGenerationStrategy;
+        private final ChunkMeshGenerator meshGenerationStrategy;
 
         @Override
         public Chunk call() throws Exception {
-            meshGenerationStrategy.generateNodeAndCollisionMesh(chunk);
+            meshGenerationStrategy.createAndSetNodeAndCollisionMesh(chunk);
             return chunk;
         }
 

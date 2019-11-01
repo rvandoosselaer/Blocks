@@ -46,7 +46,7 @@ public class DefaultBlocks extends SimpleApplication {
         }
         chunk.update();
 
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(meshGenerator);
 
         rootNode.attachChild(chunk.getNode());

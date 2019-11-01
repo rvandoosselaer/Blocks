@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public abstract class Pager<T> implements MeshGenerationListener {
+public abstract class Pager<T> implements BlocksManagerListener {
 
     @NonNull
     protected final BlocksManager blocksManager;
@@ -46,7 +46,7 @@ public abstract class Pager<T> implements MeshGenerationListener {
         if (log.isTraceEnabled()) {
             log.trace("{} initialize()", getClass().getSimpleName());
         }
-        blocksManager.addMeshGenerationListener(this);
+        blocksManager.registerListener(this);
     }
 
     public void update() {
@@ -78,11 +78,15 @@ public abstract class Pager<T> implements MeshGenerationListener {
         pagesToAttach.clear();
         pagesToDetach.clear();
         updatedPages.clear();
-        blocksManager.removeMeshGenerationListener(this);
+        blocksManager.removeListener(this);
     }
 
     @Override
-    public void generationFinished(Chunk chunk) {
+    public void onChunkAvailable(Chunk chunk) {
+    }
+
+    @Override
+    public void onChunkMeshAvailable(Chunk chunk) {
         // we are only interested in updated pages in the grid
         if (attachedPages.containsKey(chunk.getLocation())) {
             updatedPages.offer(chunk.getLocation());

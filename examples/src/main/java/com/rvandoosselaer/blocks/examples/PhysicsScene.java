@@ -76,7 +76,7 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
         }
         chunk.update();
 
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(meshGenerator);
         chunk.createCollisionMesh(meshGenerator);
 

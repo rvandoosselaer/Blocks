@@ -58,7 +58,7 @@ public class CollisionMesh extends SimpleApplication {
         }
         chunk.update();
 
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(meshGenerator);
         chunk.createCollisionMesh(meshGenerator);
 

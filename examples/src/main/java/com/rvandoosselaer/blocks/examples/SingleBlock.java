@@ -35,7 +35,7 @@ public class SingleBlock extends SimpleApplication {
         BlocksConfig.initialize(assetManager);
 
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-        MeshGenerationStrategy meshGenerator = BlocksConfig.getInstance().getMeshGenerationStrategy();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(new Vec3i(0, 0, 0), blockRegistry.get(Block.GRASS));
