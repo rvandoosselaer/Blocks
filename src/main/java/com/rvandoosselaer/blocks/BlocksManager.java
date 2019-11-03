@@ -393,7 +393,7 @@ public class BlocksManager {
      * @param pickNeighbour if the neighbour block should be returned
      * @return the picked block or the neighbour of the picked block
      */
-    public Vec3i getPickedBlockLocation(@NonNull Vector3f contactPoint, @NonNull Vector3f contactNormal, boolean pickNeighbour) {
+    public static Vec3i getPickedBlockLocation(@NonNull Vector3f contactPoint, @NonNull Vector3f contactNormal, boolean pickNeighbour) {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
 
         // add a small offset to the contact point, so we point a bit more 'inward' into the block
