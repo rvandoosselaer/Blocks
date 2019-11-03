@@ -83,10 +83,6 @@ public abstract class Pager<T> implements BlocksManagerListener {
 
     @Override
     public void onChunkAvailable(Chunk chunk) {
-    }
-
-    @Override
-    public void onChunkMeshAvailable(Chunk chunk) {
         // we are only interested in updated pages in the grid
         if (attachedPages.containsKey(chunk.getLocation())) {
             updatedPages.offer(chunk.getLocation());

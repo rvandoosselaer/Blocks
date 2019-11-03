@@ -2,10 +2,13 @@ package com.rvandoosselaer.blocks;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -96,14 +99,8 @@ public class BlocksManager {
         if (log.isTraceEnabled()) {
             log.trace("{} - initialize", getClass().getSimpleName());
         }
-        // create cache
-        Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
-        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
-        if (cacheSize > 0 && cacheSize < minimumSize) {
-            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
-        }
 
-        cache = cacheSize > 0 ? Caffeine.newBuilder().maximumSize(cacheSize).build() : Caffeine.newBuilder().maximumSize(minimumSize).build();
+        cache = createCache(cacheSize);
 
         // start executors
         if (isMeshGenerationMultiThreaded()) {
@@ -444,7 +441,7 @@ public class BlocksManager {
             meshGenerationResults.add(meshGenerationExecutor.submit(new MeshGenerationCallable(chunk, meshGenerationStrategy)));
         } else {
             meshGenerationStrategy.createAndSetNodeAndCollisionMesh(chunk);
-            notifyListenerOnMeshUpdate(chunk);
+            notifyListenerOnChunkAvailable(chunk);
         }
     }
 
@@ -513,7 +510,7 @@ public class BlocksManager {
         Optional<Future<Chunk>> optionalFuture = meshGenerationResults.stream().filter(Future::isDone).findFirst();
         optionalFuture.ifPresent(future -> {
             try {
-                notifyListenerOnMeshUpdate(future.get());
+                notifyListenerOnChunkAvailable(future.get());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
@@ -624,16 +621,8 @@ public class BlocksManager {
     }
 
     /**
-     * Notify the list of listeners when the mesh of the chunk is updated.
+     * Notify the list of listeners when a chunk or updated version of a chunk is available.
      *
-     * @param chunk
-     */
-    private void notifyListenerOnMeshUpdate(Chunk chunk) {
-        blocksManagerListeners.forEach(listener -> listener.onChunkMeshAvailable(chunk));
-    }
-
-    /**
-     * Notify the list of listeners when a chunk is available for retrieval.
      * @param chunk
      */
     private void notifyListenerOnChunkAvailable(Chunk chunk) {
@@ -660,7 +649,36 @@ public class BlocksManager {
         if (log.isTraceEnabled()) {
             log.trace("Adding {} to cache. Estimated new cache size: {}", chunk, cache.estimatedSize());
         }
-        notifyListenerOnChunkAvailable(chunk);
+    }
+
+    /**
+     * Construct the BlocksManager cache. When a size &lte; 0 of is specified, a minimum value is calculated.
+     *
+     * @param cacheSize
+     * @return cache
+     */
+    private static Cache<Vec3i, Chunk> createCache(int cacheSize) {
+        Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
+        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
+        if (cacheSize > 0 && cacheSize < minimumSize) {
+            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
+        }
+
+        return Caffeine.newBuilder()
+                .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
+                .removalListener(new CacheRemovalListener())
+                .build();
+    }
+
+    private static class CacheRemovalListener implements RemovalListener<Vec3i, Chunk> {
+
+        @Override
+        public void onRemoval(@Nullable Vec3i key, @Nullable Chunk value, @org.checkerframework.checker.nullness.qual.NonNull RemovalCause cause) {
+            if (value != null && value.getNode() != null && value.getNode().getParent() != null) {
+                log.warn("{} is evicted from the cache, but its node is still attached!", value);
+            }
+        }
+
     }
 
     @RequiredArgsConstructor
