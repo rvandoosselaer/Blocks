@@ -91,6 +91,8 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
                     log.trace("Setting queue bucket to {} for geometry {}", RenderQueue.Bucket.Transparent, geometry);
                 }
                 geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
+                // we presume that transparent blocks don't cast shadows
+                geometry.setShadowMode(RenderQueue.ShadowMode.Receive);
             }
             node.attachChild(geometry);
         });

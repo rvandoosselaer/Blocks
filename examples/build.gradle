@@ -20,6 +20,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
     implementation "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
     implementation "org.jmonkeyengine:jme3-bullet-native:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-effects:${jmeVersion}"
 //    compileOnly "org.jmonkeyengine:jme3-bullet:${jmeVersion}"
 //
 //    // utilities
