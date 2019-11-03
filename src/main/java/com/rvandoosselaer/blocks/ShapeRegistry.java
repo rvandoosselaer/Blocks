@@ -62,6 +62,7 @@ public class ShapeRegistry {
         register(Shape.STAIR_RIGHT, new Stair(Direction.RIGHT));
         register(Shape.STAIR_BACK, new Stair(Direction.BACK));
         register(Shape.STAIR_LEFT, new Stair(Direction.LEFT));
+        register(Shape.WATER, new Slab(0, 0.9f));
     }
 
 }

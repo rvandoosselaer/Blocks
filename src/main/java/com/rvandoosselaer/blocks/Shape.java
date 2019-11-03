@@ -22,6 +22,7 @@ public interface Shape {
     String STAIR_RIGHT = "stair-right";
     String STAIR_BACK = "stair-back";
     String STAIR_LEFT = "stair-left";
+    String WATER = "water";
 
     /**
      * Adds the shape at the location in the chunk to the chunk mesh.

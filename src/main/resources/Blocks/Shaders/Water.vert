@@ -104,7 +104,8 @@ void main(){
    //
    modelSpacePos.y += cos(modelSpacePos.z * m_WaveSize + (m_WaveSpeed * g_Time)) * m_WaveHeight * sin(modelSpacePos.x * m_WaveSize + (m_WaveSpeed * g_Time));
    // lower the y-coordinate a bit so the water block is lower then the other blocks
-   modelSpacePos.y -= 0.1;
+   // edit: removed this from the shader and applied in the shape implementation
+   // modelSpacePos.y -= 0.1;
 
    // animated sprite texture settings
    float tileDistance = g_Time * m_TextureScrollSpeed;

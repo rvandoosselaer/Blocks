@@ -27,6 +27,7 @@ public class Block {
     public static final String OAK = "oak";
     public static final String SAND = "sand";
     public static final String WATER = "water";
+    public static final String WATER_STILL = "water-still";
 
     @ToString.Include
     @EqualsAndHashCode.Include

@@ -166,16 +166,16 @@ public class BlockRegistry {
                 .build());
         // water
         register(Block.builder()
-                .name("water")
-                .shape("cube")
+                .name(Block.WATER)
+                .shape(Shape.WATER)
                 .type("water")
                 .usingMultipleImages(false)
                 .transparent(true)
                 .solid(false)
                 .build());
         register(Block.builder()
-                .name("water-still")
-                .shape("cube")
+                .name(Block.WATER_STILL)
+                .shape(Shape.WATER)
                 .type("water-still")
                 .usingMultipleImages(false)
                 .transparent(true)
