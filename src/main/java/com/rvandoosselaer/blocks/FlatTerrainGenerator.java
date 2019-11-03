@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class FlatTerrainGenerator implements ChunkGenerator {
 
     /**
-     * the y value (inclusive) of the heighest blocks
+     * the y value (inclusive) of the highest blocks
      */
     private int y = 0;
     private final Block block;

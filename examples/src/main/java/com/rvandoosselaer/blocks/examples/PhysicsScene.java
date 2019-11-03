@@ -28,6 +28,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
+//TODO: rewrite
 /**
  * An application where you can shoot a ball using the space bar.
  *

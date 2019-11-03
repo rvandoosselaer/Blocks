@@ -31,7 +31,6 @@ public class DefaultBlocks extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        // initialize Blocks
         BlocksConfig.initialize(assetManager);
 
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
@@ -52,6 +51,7 @@ public class DefaultBlocks extends SimpleApplication {
         rootNode.attachChild(chunk.getNode());
 
         addLights(rootNode);
+
         viewPort.setBackgroundColor(ColorRGBA.Cyan);
         flyCam.setMoveSpeed(10f);
     }

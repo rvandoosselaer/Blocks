@@ -18,7 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 /**
- * An application that toggles between a new theme and the default theme. When pressing the space bar, the theme changes.
+ * An application that toggles between a new theme and the default theme.
+ * When pressing the space bar, the theme changes.
+ *
  * @author rvandoosselaer
  */
 public class ChangeTheme extends SimpleApplication implements ActionListener {

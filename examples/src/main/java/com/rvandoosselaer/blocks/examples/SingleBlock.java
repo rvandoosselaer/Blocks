@@ -31,7 +31,6 @@ public class SingleBlock extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        // initialize Blocks
         BlocksConfig.initialize(assetManager);
 
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
