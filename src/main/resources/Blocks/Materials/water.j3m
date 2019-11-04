@@ -12,6 +12,7 @@ Material water : Blocks/MatDefs/Water.j3md {
         TextureScrollSpeed : 8
         numTilesX : 1
         numTilesY : 32
+        OffsetY : -0.1
     }
 
     AdditionalRenderState {

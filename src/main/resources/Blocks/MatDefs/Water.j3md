@@ -142,6 +142,9 @@ MaterialDef Phong Lighting {
 
         // # tiles on the y-axis
         Int numTilesY
+
+        // offset to the y-coordinate
+        Float OffsetY
     }
 
     Technique {

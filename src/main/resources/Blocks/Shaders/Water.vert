@@ -19,6 +19,7 @@ uniform int m_numTilesX;
 uniform int m_numTilesY;
 uniform float m_TextureScrollSpeed;
 varying vec2 texCoordAni;
+uniform float m_OffsetY;
 // end
 
 uniform vec4 m_Ambient;
@@ -103,9 +104,9 @@ void main(){
    // adapt vertices position to simulate waves
    //
    modelSpacePos.y += cos(modelSpacePos.z * m_WaveSize + (m_WaveSpeed * g_Time)) * m_WaveHeight * sin(modelSpacePos.x * m_WaveSize + (m_WaveSpeed * g_Time));
-   // lower the y-coordinate a bit so the water block is lower then the other blocks
-   // edit: removed this from the shader and applied in the shape implementation
-   // modelSpacePos.y -= 0.1;
+   // add an offset to the y-coordinate, to have a 'better' water effect. The block itself should behave like a cube,
+   // it's only a visual aid. That's why it's done in the shader.
+   modelSpacePos.y += m_OffsetY;
 
    // animated sprite texture settings
    float tileDistance = g_Time * m_TextureScrollSpeed;
