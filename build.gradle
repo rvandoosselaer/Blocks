@@ -22,6 +22,7 @@ ext {
     log4j2Version = "[2.11,)"
     jacksonVersion = "[2.9,)"
     protobufVersion = "[3.10,)"
+    guavaVersion = "[28,)"
 }
 
 repositories {
@@ -39,6 +40,7 @@ dependencies {
     implementation "com.simsilica:sim-math:${simMathVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
     implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+    implementation "com.google.guava:guava:${guavaVersion}"
 
     // logging
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"

@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import lombok.*;
@@ -104,15 +105,15 @@ public class BlocksManager {
 
         // start executors
         if (isMeshGenerationMultiThreaded()) {
-            meshGenerationExecutor = Executors.newFixedThreadPool(meshGenerationPoolSize);
+            meshGenerationExecutor = Executors.newFixedThreadPool(meshGenerationPoolSize, new ThreadFactoryBuilder().setNameFormat("chunk-mesh-generator-%d").build());
             log.debug("Created mesh generation ThreadPoolExecutor with pool size: {}", meshGenerationPoolSize);
         }
         if (isChunkPersistenceMultiThreaded()) {
-            chunkPersistenceExecutor = Executors.newFixedThreadPool(chunkPersistencePoolSize);
+            chunkPersistenceExecutor = Executors.newFixedThreadPool(chunkPersistencePoolSize, new ThreadFactoryBuilder().setNameFormat("chunk-repository-%d").build());
             log.debug("Created chunk persistence ThreadPoolExecutor with pool size: {}", chunkPersistencePoolSize);
         }
         if (isChunkGenerationMultiThreaded()) {
-            chunkGenerationExecutor = Executors.newFixedThreadPool(chunkGenerationPoolSize);
+            chunkGenerationExecutor = Executors.newFixedThreadPool(chunkGenerationPoolSize, new ThreadFactoryBuilder().setNameFormat("chunk-generator-%d").build());
             log.debug("Created chunk generation ThreadPoolExecutor with pool size: {}", chunkGenerationPoolSize);
         }
 
