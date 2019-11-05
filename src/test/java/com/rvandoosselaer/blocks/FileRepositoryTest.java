@@ -91,15 +91,17 @@ public class FileRepositoryTest {
     private void cleanup(Path path) {
         try {
             // remove all files
-            Files.list(path).forEach(file -> {
-                try {
-                    Files.delete(file);
-                } catch (IOException e) {
-                    // ignore
-                }
-            });
+            Files.list(path).forEach(this::silentDelete);
             // remove folder
             Files.delete(path);
+        } catch (IOException e) {
+            // ignore
+        }
+    }
+
+    private void silentDelete(Path file) {
+        try {
+            Files.delete(file);
         } catch (IOException e) {
             // ignore
         }

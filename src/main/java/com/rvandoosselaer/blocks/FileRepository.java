@@ -54,37 +54,15 @@ public class FileRepository implements ChunkRepository {
             throw new IllegalArgumentException("Invalid path specified: " + path.toAbsolutePath());
         }
 
-        Path chunkPath = getChunkPath(location);
-
         // chunk doesn't exist
-        if (Files.notExists(chunkPath)) {
+        if (Files.notExists(getChunkPath(location))) {
             if (log.isTraceEnabled()) {
                 log.trace("Chunk {} not found in repository", location);
             }
             return null;
         }
 
-        long start = System.nanoTime();
-
-        if (log.isTraceEnabled()) {
-            log.trace("Loading {}", chunkPath.toAbsolutePath());
-        }
-
-        try (InputStream in = Files.newInputStream(chunkPath)) {
-            BlocksProtos.ChunkProto chunkProto =  BlocksProtos.ChunkProto.newBuilder()
-                    .mergeFrom(in)
-                    .build();
-            Chunk chunk = chunkProtoToChunk(chunkProto);
-            if (log.isTraceEnabled()) {
-                log.trace("Loading {} took {}ms", chunk, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
-            }
-
-            return chunk;
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        return null;
+        return loadChunkFromPath(getChunkPath(location));
     }
 
     @Override
@@ -103,13 +81,45 @@ public class FileRepository implements ChunkRepository {
             }
         }
 
-        Path chunkPath = getChunkPath(chunk);
+        return writeChunkToPath(chunk, getChunkPath(chunk));
+    }
+
+    public Path getChunkPath(@NonNull Chunk chunk) {
+        return path != null ? Paths.get(path.toAbsolutePath().toString(), getChunkFilename(chunk)) : null;
+    }
+
+    public static String getChunkFilename(@NonNull Chunk chunk) {
+        return getChunkFilename(chunk.getLocation());
+    }
+
+    private Chunk loadChunkFromPath(Path chunkPath) {
+        if (log.isTraceEnabled()) {
+            log.trace("Loading {}", chunkPath.toAbsolutePath());
+        }
 
         long start = System.nanoTime();
+        try (InputStream in = Files.newInputStream(chunkPath)) {
+            BlocksProtos.ChunkProto chunkProto =  BlocksProtos.ChunkProto.newBuilder()
+                    .mergeFrom(in)
+                    .build();
+            Chunk chunk = chunkProtoToChunk(chunkProto);
+            if (log.isTraceEnabled()) {
+                log.trace("Loading {} took {}ms", chunk, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+            }
+
+            return chunk;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private boolean writeChunkToPath(Chunk chunk, Path chunkPath) {
         if (log.isTraceEnabled()) {
             log.trace("Saving {} to {}", chunk, chunkPath.toAbsolutePath());
         }
 
+        long start = System.nanoTime();
         try (OutputStream out = Files.newOutputStream(chunkPath)) {
             BlocksProtos.ChunkProto chunkProto = chunkToChunkProto(chunk);
             chunkProto.writeTo(out);
@@ -120,16 +130,7 @@ public class FileRepository implements ChunkRepository {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-
         return false;
-    }
-
-    public Path getChunkPath(@NonNull Chunk chunk) {
-        return path != null ? Paths.get(path.toAbsolutePath().toString(), getChunkFilename(chunk)) : null;
-    }
-
-    public static String getChunkFilename(@NonNull Chunk chunk) {
-        return getChunkFilename(chunk.getLocation());
     }
 
     private Path getChunkPath(@NonNull Vec3i location) {

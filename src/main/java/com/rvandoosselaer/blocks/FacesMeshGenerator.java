@@ -52,11 +52,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
             // check if there is a block
             if (block != null) {
                 // create a mesh for each different block type
-                ChunkMesh mesh = meshMap.get(block.getType());
-                if (mesh == null) {
-                    mesh = new ChunkMesh();
-                    meshMap.put(block.getType(), mesh);
-                }
+                ChunkMesh mesh = meshMap.computeIfAbsent(block.getType(), function -> new ChunkMesh());
 
                 // add the block mesh to the chunk mesh
                 Shape shape = shapeRegistry.get(block.getShape());
@@ -73,32 +69,9 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
 
         // create a geometry for each type of block
         meshMap.forEach((type, chunkMesh) -> {
-            Mesh mesh = chunkMesh.generateMesh();
-            int totalTangents = mesh.getTriangleCount() * 2;
-            int currentTangents = mesh.getBuffer(VertexBuffer.Type.Tangent).getNumElements();
-            if (mesh.getBuffer(VertexBuffer.Type.Tangent) == null || currentTangents < totalTangents) {
-                long tangentGeneratorStart = System.nanoTime();
-                MikktspaceTangentGenerator.genTangSpaceDefault(new MikkTSpaceImpl(mesh));
-                if (log.isTraceEnabled()) {
-                    log.trace("Generating tangents using {} took {}ms", MikktspaceTangentGenerator.class, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - tangentGeneratorStart));
-                }
-            }
-            Geometry geometry = new Geometry(type, mesh);
-            geometry.setMaterial(typeRegistry.get(type));
-            geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-            if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Setting queue bucket to {} for geometry {}", RenderQueue.Bucket.Transparent, geometry);
-                }
-                geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
-                // we presume that transparent blocks don't cast shadows
-                geometry.setShadowMode(RenderQueue.ShadowMode.Receive);
-            }
+            Geometry geometry = createGeometry(type, chunkMesh);
             node.attachChild(geometry);
         });
-
-        // clear the map for gc purposes
-        meshMap.clear();
 
         // position the node
         node.setLocalTranslation(chunk.getWorldLocation());
@@ -161,11 +134,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
             // check if there is a block
             if (block != null) {
                 // create a mesh for each different block type
-                ChunkMesh mesh = meshMap.get(block.getType());
-                if (mesh == null) {
-                    mesh = new ChunkMesh();
-                    meshMap.put(block.getType(), mesh);
-                }
+                ChunkMesh mesh = meshMap.computeIfAbsent(block.getType(), function -> new ChunkMesh());
 
                 // add the block mesh to the chunk mesh
                 Shape shape = shapeRegistry.get(block.getShape());
@@ -187,28 +156,9 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
 
         // create a geometry for each type of block
         meshMap.forEach((type, chunkMesh) -> {
-            Mesh mesh = chunkMesh.generateMesh();
-            if (mesh.getBuffer(VertexBuffer.Type.Tangent) == null) {
-                long tangentGeneratorStart = System.nanoTime();
-                MikktspaceTangentGenerator.genTangSpaceDefault(new MikkTSpaceImpl(mesh));
-                if (log.isTraceEnabled()) {
-                    log.trace("Generating tangents using {} took {}ms", MikktspaceTangentGenerator.class, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - tangentGeneratorStart));
-                }
-            }
-            Geometry geometry = new Geometry(type, mesh);
-            geometry.setMaterial(typeRegistry.get(type));
-            geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-            if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Setting queue bucket to {} for geometry {}", RenderQueue.Bucket.Transparent, geometry);
-                }
-                geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
-            }
+            Geometry geometry = createGeometry(type, chunkMesh);
             node.attachChild(geometry);
         });
-
-        // clear the map for gc purposes
-        meshMap.clear();
 
         // position the node
         node.setLocalTranslation(chunk.getWorldLocation());
@@ -219,6 +169,39 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
 
         if (log.isTraceEnabled()) {
             log.trace("Total chunk node generation took {}ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+        }
+    }
+
+    private Geometry createGeometry(String type, ChunkMesh chunkMesh) {
+        Mesh mesh = chunkMesh.generateMesh();
+        if (needsTangentGeneration(mesh)) {
+            generateTangents(mesh);
+        }
+        Geometry geometry = new Geometry(type, mesh);
+        geometry.setMaterial(typeRegistry.get(type));
+        geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
+            if (log.isTraceEnabled()) {
+                log.trace("Setting queue bucket to {} for geometry {}", RenderQueue.Bucket.Transparent, geometry);
+            }
+            geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
+            // we presume that transparent blocks don't cast shadows
+            geometry.setShadowMode(RenderQueue.ShadowMode.Receive);
+        }
+        return geometry;
+    }
+
+    private boolean needsTangentGeneration(Mesh mesh) {
+        int totalTangents = mesh.getTriangleCount() * 2;
+        int currentTangents = mesh.getBuffer(VertexBuffer.Type.Tangent).getNumElements();
+        return mesh.getBuffer(VertexBuffer.Type.Tangent) == null || currentTangents < totalTangents;
+    }
+
+    private void generateTangents(Mesh mesh) {
+        long tangentGeneratorStart = System.nanoTime();
+        MikktspaceTangentGenerator.genTangSpaceDefault(new MikkTSpaceImpl(mesh));
+        if (log.isTraceEnabled()) {
+            log.trace("Generating tangents using {} took {}ms", MikktspaceTangentGenerator.class, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - tangentGeneratorStart));
         }
     }
 

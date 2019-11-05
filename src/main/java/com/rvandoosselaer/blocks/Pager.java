@@ -56,10 +56,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
 
         Vec3i newCenterPage = BlocksManager.getChunkLocation(location);
         if (!Objects.equals(newCenterPage, centerPageLocation)) {
-            log.debug("new center page: {}", newCenterPage);
-            centerPageLocation = newCenterPage;
-
-            updateQueues();
+            setCenterPage(newCenterPage);
         }
 
         detachPages();
@@ -253,6 +250,13 @@ public abstract class Pager<T> implements BlocksManagerListener {
 
         attachPage(newPage);
         attachedPages.put(pageLocation, newPage);
+    }
+
+    private void setCenterPage(Vec3i newCenterPage) {
+        log.debug("new center page: {}", newCenterPage);
+        centerPageLocation = newCenterPage;
+
+        updateQueues();
     }
 
 }

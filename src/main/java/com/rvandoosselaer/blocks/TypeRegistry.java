@@ -16,6 +16,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+
 /**
  * A thread safe register for block types. The register is used so only one instance of a type is used throughout the
  * Blocks framework.
@@ -168,14 +171,14 @@ public class TypeRegistry {
     private Optional<Texture> getTexture(String type, TextureType textureType, BlocksTheme theme) {
         String texture = getTexturePath(type, textureType, theme);
         try {
-            return Optional.of(assetManager.loadTexture(new TextureKey(texture)));
+            return of(assetManager.loadTexture(new TextureKey(texture)));
         } catch (AssetNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Texture {} not found in theme {}", texture, theme);
             }
         }
 
-        return Optional.empty();
+        return empty();
     }
 
     /**

@@ -32,7 +32,7 @@ import java.util.concurrent.*;
  * method.
  * <p>
  * When the node of a chunk in the cache is not set, the generation of the mesh is still in progress. Try to retrieve
- * the node at a later time. A mesh update can be requested for a chunk using the {@link #requestMeshUpdate(Chunk)} method.
+ * the node at a later time.
  * Applications can register a {@link BlocksManagerListener} to be notified when the mesh of a chunk is updated.
  *
  * @author rvandoosselaer
@@ -105,15 +105,15 @@ public class BlocksManager {
 
         // start executors
         if (isMeshGenerationMultiThreaded()) {
-            meshGenerationExecutor = Executors.newFixedThreadPool(meshGenerationPoolSize, new ThreadFactoryBuilder().setNameFormat("chunk-mesh-generator-%d").build());
+            meshGenerationExecutor = createNamedFixedThreadPool(meshGenerationPoolSize, "chunk-mesh-generator-%d");
             log.debug("Created mesh generation ThreadPoolExecutor with pool size: {}", meshGenerationPoolSize);
         }
         if (isChunkPersistenceMultiThreaded()) {
-            chunkPersistenceExecutor = Executors.newFixedThreadPool(chunkPersistencePoolSize, new ThreadFactoryBuilder().setNameFormat("chunk-repository-%d").build());
+            chunkPersistenceExecutor = createNamedFixedThreadPool(chunkPersistencePoolSize, "chunk-repository-%d");
             log.debug("Created chunk persistence ThreadPoolExecutor with pool size: {}", chunkPersistencePoolSize);
         }
         if (isChunkGenerationMultiThreaded()) {
-            chunkGenerationExecutor = Executors.newFixedThreadPool(chunkGenerationPoolSize, new ThreadFactoryBuilder().setNameFormat("chunk-generator-%d").build());
+            chunkGenerationExecutor = createNamedFixedThreadPool(chunkGenerationPoolSize, "chunk-generator-%d");
             log.debug("Created chunk generation ThreadPoolExecutor with pool size: {}", chunkGenerationPoolSize);
         }
 
@@ -145,7 +145,8 @@ public class BlocksManager {
         handleNextChunkGenerationResult();
 
         // chunk storing
-        if (storeInterval > 0 && System.currentTimeMillis() >= lastStoredTimestamp + storeInterval) {
+        boolean timeToStoreChunks = storeInterval > 0 && System.currentTimeMillis() >= lastStoredTimestamp + storeInterval;
+        if (timeToStoreChunks) {
             storeChunks();
             lastStoredTimestamp = System.currentTimeMillis();
         }
@@ -225,35 +226,6 @@ public class BlocksManager {
             throw new IllegalStateException("BlocksManager is not initialized!");
         }
         return getChunk(location) != null;
-    }
-
-    /**
-     * Request a chunk mesh update.
-     *
-     * @param location of the chunk
-     * @return true when the update is successfully requested
-     */
-    public boolean requestMeshUpdate(@NonNull Vec3i location) {
-        if (!isInitialized()) {
-            throw new IllegalStateException("BlocksManager is not initialized!");
-        }
-
-        Chunk chunk = getChunk(location);
-        return chunk != null && requestMeshUpdate(chunk);
-    }
-
-    /**
-     * Request a chunk mesh update
-     *
-     * @param chunk
-     * @return true when the update is successfully requested
-     */
-    public boolean requestMeshUpdate(@NonNull Chunk chunk) {
-        if (!isInitialized()) {
-            throw new IllegalStateException("BlocksManager is not initialized!");
-        }
-
-        return addToQueue(meshGenerationQueue, chunk);
     }
 
     /**
@@ -428,20 +400,17 @@ public class BlocksManager {
      * Perform a mesh update on the next chunk in the meshes generation queue.
      */
     private void handleNextMeshUpdate() {
-        ChunkMeshGenerator meshGenerationStrategy = BlocksConfig.getInstance().getChunkMeshGenerator();
-        if (meshGenerationStrategy == null) {
-            return;
-        }
-
-        if (meshGenerationQueue.isEmpty()) {
-            return;
-        }
-
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         Chunk chunk = meshGenerationQueue.poll();
+
+        if (meshGenerator == null || chunk == null) {
+            return;
+        }
+
         if (isMeshGenerationMultiThreaded()) {
-            meshGenerationResults.add(meshGenerationExecutor.submit(new MeshGenerationCallable(chunk, meshGenerationStrategy)));
+            meshGenerationResults.add(meshGenerationExecutor.submit(new MeshGenerationCallable(chunk, meshGenerator)));
         } else {
-            meshGenerationStrategy.createAndSetNodeAndCollisionMesh(chunk);
+            meshGenerator.createAndSetNodeAndCollisionMesh(chunk);
             notifyListenerOnChunkAvailable(chunk);
         }
     }
@@ -581,10 +550,7 @@ public class BlocksManager {
             return;
         }
 
-        Set<Chunk> chunks = new HashSet<>();
-        while (chunkStoringQueue.peek() != null) {
-            chunks.add(chunkStoringQueue.poll());
-        }
+        Set<Chunk> chunks = new HashSet<>(chunkStoringQueue);
 
         if (isChunkPersistenceMultiThreaded()) {
             chunkPersistenceExecutor.submit(new ChunkStoringRunnable(chunks, chunkRepository));
@@ -669,6 +635,10 @@ public class BlocksManager {
                 .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
                 .removalListener(new CacheRemovalListener())
                 .build();
+    }
+
+    private static ExecutorService createNamedFixedThreadPool(int size, String name) {
+        return Executors.newFixedThreadPool(size, new ThreadFactoryBuilder().setNameFormat(name).build());
     }
 
     private static class CacheRemovalListener implements RemovalListener<Vec3i, Chunk> {
