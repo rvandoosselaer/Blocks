@@ -253,6 +253,12 @@ public class BlocksManager {
             throw new IllegalStateException("BlocksManager is not initialized!");
         }
 
+        Chunk chunk = getChunk(location);
+        if (chunk != null) {
+            chunk.setNode(null);
+            chunk.setCollisionMesh(null);
+            chunk.setBlocks(null);
+        }
         cache.invalidate(location);
     }
 
