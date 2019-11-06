@@ -25,7 +25,7 @@ public class ChunkPager extends Pager<Node> {
 
     @Override
     protected Node createPage(Chunk chunk) {
-        return chunk == null ? null : chunk.getNode();
+        return chunk.getNode();
     }
 
     @Override

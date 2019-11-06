@@ -33,6 +33,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
     protected final Queue<Vec3i> pagesToAttach = new LinkedList<>();
     protected final Queue<Vec3i> pagesToDetach = new LinkedList<>();
     protected final Queue<Vec3i> updatedPages = new ConcurrentLinkedQueue<>();
+    protected final Set<Vec3i> requestedPages = ConcurrentHashMap.newKeySet();
 
     protected Vec3i gridSize;
     @Getter(AccessLevel.NONE)
@@ -60,11 +61,11 @@ public abstract class Pager<T> implements BlocksManagerListener {
             updateQueues();
         }
 
-        detachPages();
+        detachNextPage();
 
         updatePages();
 
-        attachPages();
+        attachNextPage();
     }
 
     public void cleanup() {
@@ -81,7 +82,11 @@ public abstract class Pager<T> implements BlocksManagerListener {
 
     @Override
     public void onChunkAvailable(Chunk chunk) {
-        // we are only interested in updated pages in the grid
+        // if we requested the chunk, remove it from our requested pages set
+        requestedPages.remove(chunk.getLocation());
+
+        // only take action on chunks that are in our grid
+        log.trace("chunk available called: {}", chunk);
         if (attachedPages.containsKey(chunk.getLocation())) {
             updatedPages.offer(chunk.getLocation());
         }
@@ -170,7 +175,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
     /**
      * Detach the next page in the pagesToDetach queue.
      */
-    private void detachPages() {
+    private void detachNextPage() {
         Vec3i pageLocation = pagesToDetach.poll();
         if (pageLocation == null) {
             return;
@@ -195,7 +200,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
     /**
      * Attach the next page in the pagesToAttach queue.
      */
-    private void attachPages() {
+    private void attachNextPage() {
         Vec3i pageLocation = pagesToAttach.poll();
         if (pageLocation == null) {
             return;
@@ -204,7 +209,13 @@ public abstract class Pager<T> implements BlocksManagerListener {
         Chunk chunk = blocksManager.getChunk(pageLocation);
         if (chunk == null) {
             // chunk was not found, we request it and try again later
-            blocksManager.requestChunk(pageLocation);
+            if (!requestedPages.contains(pageLocation)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Requesting page " + pageLocation);
+                }
+                blocksManager.requestChunk(pageLocation);
+                requestedPages.add(pageLocation);
+            }
             pagesToAttach.offer(pageLocation);
             return;
         }

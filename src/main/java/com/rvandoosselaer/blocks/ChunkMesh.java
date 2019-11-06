@@ -60,6 +60,14 @@ public class ChunkMesh {
         return mesh;
     }
 
+    public void clear() {
+        positions.clear();
+        indices.clear();
+        uvs.clear();
+        normals.clear();
+        tangents.clear();
+    }
+
     private static FloatBuffer vector3fToBuffer(List<Vector3f> list) {
         FloatBuffer buf = BufferUtils.createFloatBuffer(list.size() * 3);
         for (Vector3f vec : list) {
