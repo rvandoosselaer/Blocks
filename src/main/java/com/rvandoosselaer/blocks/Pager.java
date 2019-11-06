@@ -57,6 +57,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
         Vec3i newCenterPage = BlocksManager.getChunkLocation(location);
         if (!Objects.equals(newCenterPage, centerPageLocation)) {
             setCenterPage(newCenterPage);
+            updateQueues();
         }
 
         detachPages();
@@ -175,13 +176,15 @@ public abstract class Pager<T> implements BlocksManagerListener {
             return;
         }
 
-        T page = attachedPages.remove(pageLocation);
+        T page = attachedPages.get(pageLocation);
         if (page == null) {
             log.warn("Trying to detach page at location {} that isn't attached.", pageLocation);
             return;
         }
 
         detachPage(page);
+
+        attachedPages.remove(pageLocation);
 
         // the cache eviction mechanism of the BlocksManager isn't always evicting a chunk that isn't used. This can
         // cause problems when a chunk that is attached to the scenegraph is removed from the cache. By manually
@@ -255,8 +258,6 @@ public abstract class Pager<T> implements BlocksManagerListener {
     private void setCenterPage(Vec3i newCenterPage) {
         log.debug("new center page: {}", newCenterPage);
         centerPageLocation = newCenterPage;
-
-        updateQueues();
     }
 
 }
