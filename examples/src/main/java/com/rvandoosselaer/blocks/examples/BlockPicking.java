@@ -14,14 +14,20 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.FXAAFilter;
+import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.shadow.EdgeFilteringMode;
 import com.rvandoosselaer.blocks.*;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.mathd.Vec3i;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -55,8 +61,8 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
     public void simpleInitApp() {
         // setup lemur and load the default style
         GuiGlobals.initialize(this);
-        //BaseStyles.loadGlassStyle();
-        //GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
+        BaseStyles.loadGlassStyle();
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
         BlocksConfig.initialize(assetManager);
 
@@ -89,6 +95,8 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
         createClickedBlockInformationPanel();
 
         addLights(rootNode);
+
+        setupPostProcessing();
 
         inputManager.addMapping("selectBlock", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addListener(this, "selectBlock");
@@ -152,6 +160,7 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
 
     private void createCrossHair() {
         Label label = new Label("+");
+        label.setColor(ColorRGBA.White);
 
         Camera cam = getCamera();
         int width = cam.getWidth();
@@ -165,6 +174,8 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
         Container infoContainer = new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.None, FillMode.None));
         infoContainer.addChild(new Label("Block: "));
         clickedBlock = infoContainer.addChild(new Label(""));
+        ((Label) infoContainer.getChild(0)).setColor(ColorRGBA.White);
+        ((Label) infoContainer.getChild(1)).setColor(ColorRGBA.White);
 
         Camera cam = getCamera();
         int width = cam.getWidth();
@@ -180,6 +191,41 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
             clickedBlock.setText(String.format("name: %s, shape: %s, type: %s, solid: %s, transparent: %s", hoveredBlock.getName(), hoveredBlock.getShape(), hoveredBlock.getType(), hoveredBlock.isSolid(), hoveredBlock.isTransparent()));
         } else {
             clickedBlock.setText("");
+        }
+    }
+
+    protected void setupPostProcessing() {
+        FilterPostProcessor fpp = new FilterPostProcessor(getAssetManager());
+        getViewPort().addProcessor(fpp);
+
+        // check sampling
+        int samples = getContext().getSettings().getSamples();
+        boolean aa = samples != 0;
+        if (aa) {
+            fpp.setNumSamples(samples);
+        }
+
+        // shadow filter
+        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(assetManager, 1024, 4);
+        shadowFilter.setLight((DirectionalLight) rootNode.getLocalLightList().get(1));
+        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
+        shadowFilter.setEdgesThickness(2);
+        shadowFilter.setShadowIntensity(0.75f);
+        shadowFilter.setLambda(0.65f);
+        shadowFilter.setShadowZExtend(75);
+        shadowFilter.setEnabled(true);
+        fpp.addFilter(shadowFilter);
+
+        // SSAO
+        SSAOFilter ssaoFilter = new SSAOFilter();
+        ssaoFilter.setEnabled(false);
+        fpp.addFilter(ssaoFilter);
+
+        // setup FXAA if regular AA is off
+        if (!aa) {
+            FXAAFilter fxaaFilter = new FXAAFilter();
+            fxaaFilter.setEnabled(true);
+            fpp.addFilter(fxaaFilter);
         }
     }
 

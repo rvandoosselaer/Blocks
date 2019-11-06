@@ -60,6 +60,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     @Override
     public void simpleInitApp() {
         GuiGlobals.initialize(this);
+
         BaseStyles.loadGlassStyle();
         GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
@@ -81,7 +82,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         GuiGlobals.getInstance().setCursorEventsEnabled(false);
         inputManager.setCursorVisible(false);
 
-        createPlaceholders();
+        createPlaceholderBlocks();
 
         inputManager.addMapping("add-block", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("remove-block", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
@@ -127,7 +128,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         guiNode.attachChild(label);
     }
 
-    private void createPlaceholders() {
+    private void createPlaceholderBlocks() {
         Material removePlaceholderMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         removePlaceholderMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         removePlaceholderMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.2f));
