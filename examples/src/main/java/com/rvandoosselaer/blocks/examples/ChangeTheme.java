@@ -1,26 +1,17 @@
 package com.rvandoosselaer.blocks.examples;
 
-import com.jme3.app.SimpleApplication;
+import com.jme3.app.*;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FXAAFilter;
-import com.jme3.post.ssao.SSAOFilter;
-import com.jme3.scene.Node;
-import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.EdgeFilteringMode;
 import com.rvandoosselaer.blocks.*;
+import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.mathd.Vec3i;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-
-import java.util.logging.Level;
-import java.util.logging.LogManager;
+import com.simsilica.util.LogAdapter;
 
 /**
  * An application that toggles between a new theme and the default theme.
@@ -31,19 +22,31 @@ import java.util.logging.LogManager;
 public class ChangeTheme extends SimpleApplication implements ActionListener {
 
     private TypeRegistry typeRegistry;
-    private BlocksTheme sampleTheme;
+    private BlocksTheme sampleTheme = new BlocksTheme("A new theme", "/sample-theme");
 
     public static void main(String[] args) {
-        LogManager.getLogManager().getLogger("").setLevel(Level.ALL);
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LogAdapter.initialize();
 
         ChangeTheme changeTheme = new ChangeTheme();
         changeTheme.start();
     }
 
+    public ChangeTheme() {
+        super(new StatsAppState(),
+                new FlyCamAppState(),
+                new DebugKeysAppState(),
+                new LightingState(),
+                new PostProcessingState(),
+                new BasicProfilerState(false),
+                new MemoryDebugState());
+    }
+
     @Override
     public void simpleInitApp() {
+        GuiGlobals.initialize(this);
+        BaseStyles.loadGlassStyle();
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
+
         BlocksConfig.initialize(assetManager);
 
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
@@ -65,25 +68,24 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(meshGenerator);
 
+        hideCursor();
+
+        rootNode.attachChild(chunk.getNode());
+
         inputManager.addListener(this, "toggleTheme");
         inputManager.addMapping("toggleTheme", new KeyTrigger(KeyInput.KEY_SPACE));
 
+        viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
         cam.setLocation(new Vector3f(25, 6, 30));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-
-        rootNode.attachChild(chunk.getNode());
-        viewPort.setBackgroundColor(ColorRGBA.Cyan);
-        addLights(rootNode);
-
-        setupPostProcessing();
     }
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if ("toggleTheme".equals(name) && isPressed) {
             if (typeRegistry.getTheme() == null) {
-                typeRegistry.setTheme(getSampleTheme());
+                typeRegistry.setTheme(sampleTheme);
             } else {
                 typeRegistry.setTheme(null);
             }
@@ -107,53 +109,9 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
         }
     }
 
-    protected void setupPostProcessing() {
-        FilterPostProcessor fpp = new FilterPostProcessor(getAssetManager());
-        getViewPort().addProcessor(fpp);
-
-        // check sampling
-        int samples = getContext().getSettings().getSamples();
-        boolean aa = samples != 0;
-        if (aa) {
-            fpp.setNumSamples(samples);
-        }
-
-        // shadow filter
-        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(assetManager, 1024, 4);
-        shadowFilter.setLight((DirectionalLight) rootNode.getLocalLightList().get(1));
-        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
-        shadowFilter.setEdgesThickness(2);
-        shadowFilter.setShadowIntensity(0.75f);
-        shadowFilter.setLambda(0.65f);
-        shadowFilter.setShadowZExtend(75);
-        shadowFilter.setEnabled(true);
-        fpp.addFilter(shadowFilter);
-
-        // SSAO
-        SSAOFilter ssaoFilter = new SSAOFilter();
-        ssaoFilter.setEnabled(false);
-        fpp.addFilter(ssaoFilter);
-
-        // setup FXAA if regular AA is off
-        if (!aa) {
-            FXAAFilter fxaaFilter = new FXAAFilter();
-            fxaaFilter.setEnabled(true);
-            fpp.addFilter(fxaaFilter);
-        }
+    private void hideCursor() {
+        GuiGlobals.getInstance().setCursorEventsEnabled(false);
+        inputManager.setCursorVisible(false);
     }
 
-    private static void addLights(Node node) {
-        node.addLight(new AmbientLight(new ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f)));
-        node.addLight(new DirectionalLight(new Vector3f(-0.2f, -1.0f, -0.2f).normalizeLocal(), ColorRGBA.White));
-    }
-
-    private BlocksTheme getSampleTheme() {
-        if (sampleTheme == null) {
-            sampleTheme = BlocksTheme.builder()
-                    .name("A new theme")
-                    .path("/sample-theme")
-                    .build();
-        }
-        return sampleTheme;
-    }
 }

@@ -1,9 +1,6 @@
 package com.rvandoosselaer.blocks;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * A Blocks theme.
@@ -14,6 +11,8 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class BlocksTheme {
 
     /**
