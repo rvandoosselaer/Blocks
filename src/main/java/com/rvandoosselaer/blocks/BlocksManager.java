@@ -253,27 +253,7 @@ public class BlocksManager {
             throw new IllegalStateException("BlocksManager is not initialized!");
         }
 
-        Chunk chunk = getChunk(location);
-        if (chunk != null) {
-            chunk.setNode(null);
-            chunk.setCollisionMesh(null);
-            chunk.setBlocks(null);
-        }
         cache.invalidate(location);
-    }
-
-    /**
-     * Performs any pending maintenance operations needed by the cache.
-     * By default, Caffeine does not perform cleanup and evict values "automatically" or instantly after a value
-     * expires. Instead, it performs small amounts of maintenance work after write operations or occasionally after
-     * read operations if writes are rare.
-     */
-    public void cleanUpCache() {
-        if (!isInitialized()) {
-            throw new IllegalStateException("BlocksManager is not initialized!");
-        }
-
-        cache.cleanUp();
     }
 
     /**
@@ -632,7 +612,7 @@ public class BlocksManager {
      */
     private static Cache<Vec3i, Chunk> createCache(int cacheSize) {
         Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
-        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
+        int minimumSize = (gridSize.x + 1) * (gridSize.y + 1) * (gridSize.z + 1);
         if (cacheSize > 0 && cacheSize < minimumSize) {
             log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
         }
@@ -654,6 +634,8 @@ public class BlocksManager {
             if (value != null && value.getNode() != null && value.getNode().getParent() != null) {
                 log.warn("{} is evicted from the cache, but its node is still attached!", value);
             }
+
+            Optional.ofNullable(value).ifPresent(Chunk::clean);
         }
 
     }

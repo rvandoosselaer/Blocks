@@ -15,6 +15,7 @@ import java.util.function.BiFunction;
  * methods.
  * Each time the data structure of the chunk changes (when blocks are added or removed), the {@link #update()} method
  * should be called to reevaluate the {@link #isFull()} and {@link #isEmpty()} flags.
+ * Make sure to call the {@link #clean()} method to properly dispose of the chunk.
  *
  * @author rvandoosselaer
  */
@@ -199,6 +200,14 @@ public class Chunk {
         if (log.isTraceEnabled()) {
             log.trace("Updating {}} values took {}ms", this, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         }
+    }
+
+    public void clean() {
+        this.blocks = null;
+        this.node = null;
+        this.collisionMesh = null;
+        this.location = null;
+        this.worldLocation = null;
     }
 
     /**

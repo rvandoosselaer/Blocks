@@ -2,6 +2,8 @@ package com.rvandoosselaer.blocks;
 
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +15,47 @@ public class BlocksManagerTest {
     @BeforeAll
     public static void setup() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
+
+    @Test
+    public void testCacheEviction() {
+        BlocksManager blocksManager = new BlocksManager();
+        blocksManager.initialize();
+
+        blocksManager.requestChunk(new Vec3i(0, 0, 0));
+        blocksManager.update();
+
+        Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNotNull(chunk);
+
+        blocksManager.invalidateChunk(new Vec3i(0, 0, 0));
+
+        chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNull(chunk);
+    }
+
+    @Test
+    public void testChunkCleanupAfterCacheEviction() {
+        BlocksManager blocksManager = new BlocksManager();
+        blocksManager.initialize();
+
+        blocksManager.requestChunk(new Vec3i(0, 0, 0));
+        blocksManager.update();
+
+        Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNotNull(chunk);
+        Assertions.assertNotNull(chunk.getBlocks());
+
+        chunk.setNode(new Node("placeholder"));
+        chunk.setCollisionMesh(new Mesh());
+
+        Assertions.assertNotNull(chunk.getNode());
+        Assertions.assertNotNull(chunk.getCollisionMesh());
+
+        blocksManager.invalidateChunk(new Vec3i(0, 0, 0));
+        Assertions.assertNull(chunk.getBlocks());
+        Assertions.assertNull(chunk.getNode());
+        Assertions.assertNull(chunk.getCollisionMesh());
     }
 
     @Test
