@@ -35,7 +35,7 @@ public class BlocksManagerTest {
     }
 
     @Test
-    public void testChunkCleanupAfterCacheEviction() {
+    public void testChunkCleanupAfterCacheEviction() throws InterruptedException {
         BlocksManager blocksManager = new BlocksManager();
         blocksManager.initialize();
 
@@ -54,6 +54,7 @@ public class BlocksManagerTest {
 
         blocksManager.invalidateChunk(new Vec3i(0, 0, 0));
         Assertions.assertFalse(blocksManager.hasChunk(new Vec3i(0, 0, 0)));
+        Thread.sleep(500);
         Assertions.assertNull(chunk.getBlocks());
         Assertions.assertNull(chunk.getNode());
         Assertions.assertNull(chunk.getCollisionMesh());
