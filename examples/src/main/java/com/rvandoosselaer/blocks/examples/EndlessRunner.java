@@ -1,24 +1,18 @@
 package com.rvandoosselaer.blocks.examples;
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
+import com.jme3.app.*;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FXAAFilter;
-import com.jme3.post.ssao.SSAOFilter;
-import com.jme3.scene.Node;
-import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.EdgeFilteringMode;
+import com.jme3.renderer.Camera;
 import com.rvandoosselaer.blocks.*;
+import com.simsilica.lemur.*;
+import com.simsilica.lemur.component.QuadBackgroundComponent;
+import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.mathd.Vec3i;
+import com.simsilica.util.LogAdapter;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 
 /**
  * An endless runner application.
@@ -27,19 +21,32 @@ import java.util.logging.LogManager;
  */
 public class EndlessRunner extends SimpleApplication {
 
-    private float runSpeed = 10f;
+    private Label location;
+    private float runSpeed = 20f;
 
     public static void main(String[] args) {
-        LogManager.getLogManager().getLogger("").setLevel(Level.ALL);
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LogAdapter.initialize();
 
         EndlessRunner endlessRunner = new EndlessRunner();
         endlessRunner.start();
     }
 
+    public EndlessRunner() {
+        super(new StatsAppState(),
+                new FlyCamAppState(),
+                new DebugKeysAppState(),
+                new LightingState(),
+                new PostProcessingState(),
+                new BasicProfilerState(false),
+                new MemoryDebugState());
+    }
+
     @Override
     public void simpleInitApp() {
+        GuiGlobals.initialize(this);
+        BaseStyles.loadGlassStyle();
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
+
         BlocksConfig.initialize(assetManager);
 
         BlocksConfig.getInstance().setGridSize(new Vec3i(9, 1, 9));
@@ -51,61 +58,43 @@ public class EndlessRunner extends SimpleApplication {
                 .meshGenerationPoolSize(1)
                 .build();
 
-        stateManager.attachAll(new BlocksManagerState(blocksManager),
-                new ChunkPagerState(rootNode, blocksManager));
+        stateManager.attachAll(new BlocksManagerState(blocksManager), new ChunkPagerState(rootNode, blocksManager));
 
-        addLights(rootNode);
+        hideCursor();
+        createLocationContainer();
 
-        setupPostProcessing();
-
-        viewPort.setBackgroundColor(ColorRGBA.Cyan);
-        cam.setLocation(new Vector3f(0, 18, 0));
+        viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
+        cam.setLocation(new Vector3f(0, 19, 0));
     }
 
     @Override
     public void simpleUpdate(float tpf) {
         cam.setLocation(cam.getLocation().add(0, 0, runSpeed * -tpf));
         stateManager.getState(ChunkPagerState.class).setLocation(new Vector3f(cam.getLocation().x, 0, cam.getLocation().z));
+
+        location.setText(getLocationString());
     }
 
-    private static void addLights(Node node) {
-        node.addLight(new AmbientLight(new ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f)));
-        node.addLight(new DirectionalLight(new Vector3f(-0.2f, -1.0f, -0.2f).normalizeLocal(), ColorRGBA.White));
+    private String getLocationString() {
+        Vector3f location = getCamera().getLocation();
+        return String.format("%.0f, %.0f, %.0f, Chunk: %s", location.x, location.y, location.z, BlocksManager.getChunkLocation(location));
     }
 
-    protected void setupPostProcessing() {
-        FilterPostProcessor fpp = new FilterPostProcessor(getAssetManager());
-        getViewPort().addProcessor(fpp);
+    private void createLocationContainer() {
+        Container container = new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.None, FillMode.None));
+        container.setBackground(new QuadBackgroundComponent(new ColorRGBA(0, 0, 0, 0.9f)));
+        container.addChild(new Label("Location: "));
+        location = container.addChild(new Label(getLocationString()));
 
-        // check sampling
-        int samples = getContext().getSettings().getSamples();
-        boolean aa = samples != 0;
-        if (aa) {
-            fpp.setNumSamples(samples);
-        }
+        Camera cam = getCamera();
+        container.setLocalTranslation(0, cam.getHeight(), 1);
 
-        // shadow filter
-        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(assetManager, 1024, 4);
-        shadowFilter.setLight((DirectionalLight) rootNode.getLocalLightList().get(1));
-        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
-        shadowFilter.setEdgesThickness(2);
-        shadowFilter.setShadowIntensity(0.75f);
-        shadowFilter.setLambda(0.65f);
-        shadowFilter.setShadowZExtend(75);
-        shadowFilter.setEnabled(true);
-        fpp.addFilter(shadowFilter);
+        guiNode.attachChild(container);
+    }
 
-        // SSAO
-        SSAOFilter ssaoFilter = new SSAOFilter();
-        ssaoFilter.setEnabled(false);
-        fpp.addFilter(ssaoFilter);
-
-        // setup FXAA if regular AA is off
-        if (!aa) {
-            FXAAFilter fxaaFilter = new FXAAFilter();
-            fxaaFilter.setEnabled(true);
-            fpp.addFilter(fxaaFilter);
-        }
+    private void hideCursor() {
+        GuiGlobals.getInstance().setCursorEventsEnabled(false);
+        inputManager.setCursorVisible(false);
     }
 
     @RequiredArgsConstructor
@@ -134,9 +123,10 @@ public class EndlessRunner extends SimpleApplication {
         }
 
         private Block getBlock() {
-            int random = FastMath.nextRandomInt(0, 19); // [1, 19]
+            int random = FastMath.nextRandomInt(0, 19); // [0, 19]
             return random == 0 ? blockRegistry.get(Block.DIRT) : blockRegistry.get(Block.GRASS);
         }
+
     }
 
 }

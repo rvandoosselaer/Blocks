@@ -63,6 +63,8 @@ public class MemoryDebugState extends BaseAppState {
     public void update(float tpf) {
         heapLabel.setText(getHeapString());
         directLabel.setText(getDirectString());
+
+        refreshLayout();
     }
 
     private String getDirectString() {
