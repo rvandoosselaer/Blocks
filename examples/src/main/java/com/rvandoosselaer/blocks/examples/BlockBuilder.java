@@ -1,38 +1,28 @@
 package com.rvandoosselaer.blocks.examples;
 
-import com.jme3.app.SimpleApplication;
+import com.jme3.app.*;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.FXAAFilter;
-import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.WireBox;
 import com.jme3.scene.shape.Box;
-import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.EdgeFilteringMode;
 import com.rvandoosselaer.blocks.*;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.mathd.Vec3i;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-
-import java.util.logging.Level;
-import java.util.logging.LogManager;
+import com.simsilica.util.LogAdapter;
 
 /**
  * An application where you can add and remove blocks. Place a block using the left mouse button, remove a block using
@@ -49,18 +39,25 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     private BlockRegistry blockRegistry;
 
     public static void main(String[] args) {
-        LogManager.getLogManager().getLogger("").setLevel(Level.ALL);
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LogAdapter.initialize();
 
         BlockBuilder blockBuilder = new BlockBuilder();
         blockBuilder.start();
     }
 
+    public BlockBuilder() {
+        super(new StatsAppState(),
+                new FlyCamAppState(),
+                new DebugKeysAppState(),
+                new LightingState(),
+                new PostProcessingState(),
+                new BasicProfilerState(false),
+                new MemoryDebugState());
+    }
+
     @Override
     public void simpleInitApp() {
         GuiGlobals.initialize(this);
-
         BaseStyles.loadGlassStyle();
         GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
@@ -68,6 +65,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
 
         BlocksConfig.getInstance().setGridSize(new Vec3i(3, 1, 3));
         blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+
         blocksManager = BlocksManager.builder()
                 .meshGenerationPoolSize(1)
                 .chunkGenerationPoolSize(1)
@@ -79,9 +77,6 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         stateManager.attachAll(new BlocksManagerState(blocksManager), new ChunkPagerState(chunkNode, blocksManager));
 
         createCrossHair();
-        GuiGlobals.getInstance().setCursorEventsEnabled(false);
-        inputManager.setCursorVisible(false);
-
         createPlaceholderBlocks();
 
         inputManager.addMapping("add-block", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -90,14 +85,13 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
 
         rootNode.attachChild(chunkNode);
 
-        addLights(rootNode);
-
-        setupPostProcessing();
-
-        viewPort.setBackgroundColor(ColorRGBA.Cyan);
+        viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
         cam.setLocation(new Vector3f(0, 10f, 20));
         cam.lookAt(new Vector3f(16, 0, 16), Vector3f.UNIT_Y);
+
+        GuiGlobals.getInstance().setCursorEventsEnabled(false);
+        inputManager.setCursorVisible(false);
     }
 
     @Override
@@ -171,18 +165,6 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
             addPlaceholder.removeFromParent();
             removePlaceholder.removeFromParent();
         }
-        /**
-         * if (result != null) {
-         *             Vec3i clickedBlockLocation = BlocksManager.getPickedBlockLocation(result.getContactPoint(), result.getContactNormal(), false);
-         *             blockPlaceholder.setLocalTranslation(clickedBlockLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
-         *
-         *             if (blockPlaceholder.getParent() == null) {
-         *                 rootNode.attachChild(blockPlaceholder);
-         *             }
-         *         } else {
-         *             blockPlaceholder.removeFromParent();
-         *         }
-         */
     }
 
     private void addBlock() {
@@ -191,46 +173,6 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
 
     private void removeBlock() {
         blocksManager.removeBlock(new Vec3i(removePlaceholder.getWorldTranslation()));
-    }
-
-    protected void setupPostProcessing() {
-        FilterPostProcessor fpp = new FilterPostProcessor(getAssetManager());
-        getViewPort().addProcessor(fpp);
-
-        // check sampling
-        int samples = getContext().getSettings().getSamples();
-        boolean aa = samples != 0;
-        if (aa) {
-            fpp.setNumSamples(samples);
-        }
-
-        // shadow filter
-        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(assetManager, 1024, 4);
-        shadowFilter.setLight((DirectionalLight) rootNode.getLocalLightList().get(1));
-        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
-        shadowFilter.setEdgesThickness(2);
-        shadowFilter.setShadowIntensity(0.75f);
-        shadowFilter.setLambda(0.65f);
-        shadowFilter.setShadowZExtend(75);
-        shadowFilter.setEnabled(true);
-        fpp.addFilter(shadowFilter);
-
-        // SSAO
-        SSAOFilter ssaoFilter = new SSAOFilter();
-        ssaoFilter.setEnabled(false);
-        fpp.addFilter(ssaoFilter);
-
-        // setup FXAA if regular AA is off
-        if (!aa) {
-            FXAAFilter fxaaFilter = new FXAAFilter();
-            fxaaFilter.setEnabled(true);
-            fpp.addFilter(fxaaFilter);
-        }
-    }
-
-    private static void addLights(Node node) {
-        node.addLight(new AmbientLight(new ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f)));
-        node.addLight(new DirectionalLight(new Vector3f(-0.2f, -1.0f, -0.2f).normalizeLocal(), ColorRGBA.White));
     }
 
 }
