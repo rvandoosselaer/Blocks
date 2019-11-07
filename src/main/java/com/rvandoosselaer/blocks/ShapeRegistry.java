@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -21,9 +22,9 @@ public class ShapeRegistry {
         registerDefaultShapes();
     }
 
-    public Shape register(String name, Shape shape) {
+    public Shape register(@NonNull String name, Shape shape) {
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Invalid name " + name + " specified.");
+            throw new IllegalArgumentException("Invalid shape name " + name + " specified.");
         }
 
         shapeRegistry.put(name, shape);
@@ -33,10 +34,10 @@ public class ShapeRegistry {
         return shape;
     }
 
-    public Shape get(String shape) {
-        Shape s = shapeRegistry.get(shape);
+    public Shape get(String name) {
+        Shape s = shapeRegistry.get(name);
         if (s == null) {
-            log.warn("No shape registered with name {}", shape);
+            log.warn("No shape registered with name {}", name);
         }
         return s;
     }

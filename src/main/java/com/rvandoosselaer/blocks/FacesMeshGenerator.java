@@ -108,6 +108,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
         }
 
         Mesh mesh = collisionMesh.generateMesh();
+        collisionMesh.clear();
         if (log.isTraceEnabled()) {
             log.trace("Total collision mesh generation took {}ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         }
@@ -166,6 +167,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
         // set the node and collision mesh on the chunk
         chunk.setNode(node);
         chunk.setCollisionMesh(collisionMesh.generateMesh());
+        collisionMesh.clear();
 
         if (log.isTraceEnabled()) {
             log.trace("Total chunk node generation took {}ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
@@ -174,6 +176,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
 
     private Geometry createGeometry(String type, ChunkMesh chunkMesh) {
         Mesh mesh = chunkMesh.generateMesh();
+        chunkMesh.clear();
         if (needsTangentGeneration(mesh)) {
             generateTangents(mesh);
         }

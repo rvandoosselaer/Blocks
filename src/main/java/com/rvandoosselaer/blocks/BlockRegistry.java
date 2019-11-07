@@ -28,7 +28,7 @@ public class BlockRegistry {
 
     public Block register(@NonNull String name, Block block) {
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Invalid name " + name + " specified.");
+            throw new IllegalArgumentException("Invalid block name " + name + " specified.");
         }
 
         registry.put(name, block);
@@ -38,14 +38,14 @@ public class BlockRegistry {
         return block;
     }
 
-    public Block get(@NonNull String block) {
-        if (Block.EMPTY.equals(block)) {
+    public Block get(@NonNull String name) {
+        if (Block.EMPTY.equals(name)) {
             return null;
         }
 
-        Block b = registry.get(block);
+        Block b = registry.get(name);
         if (b == null) {
-            log.warn("No block registered with name {}", block);
+            log.warn("No block registered with name {}", name);
         }
         return b;
     }

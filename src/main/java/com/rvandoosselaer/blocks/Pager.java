@@ -77,6 +77,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
         pagesToAttach.clear();
         pagesToDetach.clear();
         updatedPages.clear();
+        requestedPages.clear();
         blocksManager.removeListener(this);
     }
 

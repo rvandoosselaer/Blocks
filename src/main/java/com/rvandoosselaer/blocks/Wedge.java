@@ -20,20 +20,179 @@ public class Wedge implements Shape {
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
         // get the rotation of the wedge; a front facing wedge will have it's sloping side facing forward (0,0,1)
         Quaternion rotation = new Quaternion().fromAngleAxis(rotationFromDirection(direction), Vector3f.UNIT_Y);
-
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
         // check if we have 3 textures or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        // front
+        createFrontFace(location, chunkMesh, rotation, blockScale, multipleImages);
+
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.LEFT))) {
+            createLeftFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        }
+
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.RIGHT))) {
+            createRightFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        }
+
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.BACK))) {
+            createBackFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        }
+
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.BOTTOM))) {
+            createBottomFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        }
+    }
+
+    private static void createBottomFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-        chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-        chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-        chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
+        // indices
+        chunkMesh.getIndices().add(offset);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+        chunkMesh.getIndices().add(offset);
+        chunkMesh.getIndices().add(offset + 3);
+        chunkMesh.getIndices().add(offset + 1);
+
+        if (!chunkMesh.isCollisionMesh()) {
+            // normals and tangents
+            for (int i = 0; i < 4; i++) {
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, -1.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
+            }
+            // uvs
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+            }
+        }
+    }
+
+    private static void createBackFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        // calculate index offset, we use this to connect the triangles
+        int offset = chunkMesh.getPositions().size();
+        // vertices
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
+        // indices
+        chunkMesh.getIndices().add(offset);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+        chunkMesh.getIndices().add(offset);
+        chunkMesh.getIndices().add(offset + 3);
+        chunkMesh.getIndices().add(offset + 1);
+
+        if (!chunkMesh.isCollisionMesh()) {
+            // normals and tangents
+            for (int i = 0; i < 4; i++) {
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.0f, -1.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
+            }
+            // uvs
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
+            }
+        }
+    }
+
+    private static void createRightFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        // calculate index offset, we use this to connect the triangles
+        int offset = chunkMesh.getPositions().size();
+        // vertices
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
+        // indices
+        chunkMesh.getIndices().add(offset);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+
+        if (!chunkMesh.isCollisionMesh()) {
+            // normals and tangents
+            for (int i = 0; i < 3; i++) {
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(1.0f, 0.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, -1.0f)));
+            }
+            // uvs
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
+            }
+        }
+    }
+
+    private static void createLeftFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        int offset;
+        // calculate index offset, we use this to connect the triangles
+        offset = chunkMesh.getPositions().size();
+        // vertices
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
+        // indices
+        chunkMesh.getIndices().add(offset);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+
+        if (!chunkMesh.isCollisionMesh()) {
+            // normals and tangents
+            for (int i = 0; i < 3; i++) {
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.0f, 0.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
+            }
+            // uvs
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
+            }
+        }
+    }
+
+    private static void createFrontFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        // calculate index offset, we use this to connect the triangles
+        int offset = chunkMesh.getPositions().size();
+        // vertices
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -60,150 +219,6 @@ public class Wedge implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
-            }
-        }
-
-        // left
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.LEFT))) {
-            // calculate index offset, we use this to connect the triangles
-            offset = chunkMesh.getPositions().size();
-            // vertices
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            // indices
-            chunkMesh.getIndices().add(offset);
-            chunkMesh.getIndices().add(offset + 1);
-            chunkMesh.getIndices().add(offset + 2);
-
-            if (!chunkMesh.isCollisionMesh()) {
-                // normals and tangents
-                for (int i = 0; i < 3; i++) {
-                    chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.0f, 0.0f, 0.0f)));
-                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
-                }
-                // uvs
-                if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                } else {
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                }
-            }
-        }
-
-        // right
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.RIGHT))) {
-            // calculate index offset, we use this to connect the triangles
-            offset = chunkMesh.getPositions().size();
-            // vertices
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            // indices
-            chunkMesh.getIndices().add(offset);
-            chunkMesh.getIndices().add(offset + 1);
-            chunkMesh.getIndices().add(offset + 2);
-
-            if (!chunkMesh.isCollisionMesh()) {
-                // normals and tangents
-                for (int i = 0; i < 3; i++) {
-                    chunkMesh.getNormals().add(rotation.mult(new Vector3f(1.0f, 0.0f, 0.0f)));
-                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, -1.0f)));
-                }
-                // uvs
-                if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                }
-            }
-        }
-
-        // back
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.BACK))) {
-            // calculate index offset, we use this to connect the triangles
-            offset = chunkMesh.getPositions().size();
-            // vertices
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            // indices
-            chunkMesh.getIndices().add(offset);
-            chunkMesh.getIndices().add(offset + 1);
-            chunkMesh.getIndices().add(offset + 2);
-            chunkMesh.getIndices().add(offset);
-            chunkMesh.getIndices().add(offset + 3);
-            chunkMesh.getIndices().add(offset + 1);
-
-            if (!chunkMesh.isCollisionMesh()) {
-                // normals and tangents
-                for (int i = 0; i < 4; i++) {
-                    chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.0f, -1.0f)));
-                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
-                }
-                // uvs
-                if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
-                }
-            }
-        }
-
-        // bottom
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.BOTTOM))) {
-            // calculate index offset, we use this to connect the triangles
-            offset = chunkMesh.getPositions().size();
-            // vertices
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            chunkMesh.getPositions().add(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)).addLocal(location.x, location.y, location.z).multLocal(blockScale));
-            // indices
-            chunkMesh.getIndices().add(offset);
-            chunkMesh.getIndices().add(offset + 1);
-            chunkMesh.getIndices().add(offset + 2);
-            chunkMesh.getIndices().add(offset);
-            chunkMesh.getIndices().add(offset + 3);
-            chunkMesh.getIndices().add(offset + 1);
-
-            if (!chunkMesh.isCollisionMesh()) {
-                // normals and tangents
-                for (int i = 0; i < 4; i++) {
-                    chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, -1.0f, 0.0f)));
-                    Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                    chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
-                }
-                // uvs
-                if (!multipleImages) {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                } else {
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                    chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                    chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                }
             }
         }
     }

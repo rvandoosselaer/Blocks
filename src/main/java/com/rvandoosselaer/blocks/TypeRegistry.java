@@ -54,28 +54,28 @@ public class TypeRegistry {
         registerDefaultMaterials();
     }
 
-    public Material register(@NonNull String type, @NonNull String materialPath) {
-        return register(type, load(materialPath));
+    public Material register(@NonNull String name, @NonNull String materialPath) {
+        return register(name, load(materialPath));
     }
 
-    public Material register(@NonNull String type, @NonNull Material material) {
-        if (type.isEmpty()) {
-            throw new IllegalArgumentException("Invalid type " + type + " specified.");
+    public Material register(@NonNull String name, @NonNull Material material) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("Invalid type name " + name + " specified.");
         }
 
-        Material m = setTextures(type, material.clone());
+        Material m = setTextures(name, material.clone());
 
-        registry.put(type, m);
+        registry.put(name, m);
         if (log.isTraceEnabled()) {
-            log.trace("Registered type {} -> {}", type, material);
+            log.trace("Registered type {} -> {}", name, material);
         }
         return material;
     }
 
-    public Material get(String type) {
-        Material material = registry.get(type);
+    public Material get(String name) {
+        Material material = registry.get(name);
         if (material == null) {
-            log.warn("No material found for type {}", type);
+            log.warn("No type found for name {}", name);
         }
         return material;
     }

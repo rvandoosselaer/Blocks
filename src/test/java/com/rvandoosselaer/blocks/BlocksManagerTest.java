@@ -53,6 +53,7 @@ public class BlocksManagerTest {
         Assertions.assertNotNull(chunk.getCollisionMesh());
 
         blocksManager.invalidateChunk(new Vec3i(0, 0, 0));
+        Assertions.assertFalse(blocksManager.hasChunk(new Vec3i(0, 0, 0)));
         Assertions.assertNull(chunk.getBlocks());
         Assertions.assertNull(chunk.getNode());
         Assertions.assertNull(chunk.getCollisionMesh());

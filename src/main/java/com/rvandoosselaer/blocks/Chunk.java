@@ -150,7 +150,7 @@ public class Chunk {
     }
 
     /**
-     * Creates the node of the chunk with the given {@link ChunkMeshGenerator}.
+     * Creates and returns the node of the chunk with the given {@link ChunkMeshGenerator}.
      *
      * @param strategy mesh generation strategy to use for constructing the node
      * @return the generated chunk node
@@ -161,7 +161,7 @@ public class Chunk {
     }
 
     /**
-     * Creates the collision mesh of the chunk with the given {@link ChunkMeshGenerator}.
+     * Creates and returns the collision mesh of the chunk with the given {@link ChunkMeshGenerator}.
      *
      * @param strategy mesh generation strategy to use for creating the collision mesh
      * @return the generated collision mesh
@@ -262,11 +262,7 @@ public class Chunk {
     }
 
     /**
-     * Checks if the face of the block is visible and thus should be rendered.
-     * A block is visible when:
-     * - the adjacent block in the given direction is not set
-     * - the adjacent block in the given direction is transparent and the current block is not transparent
-     * - the adjacent block isn't a cube
+     * Checks if the face of the block is visible using the faceVisibleFunction and thus should be rendered.
      *
      * @param location  block coordinate
      * @param direction of the face
