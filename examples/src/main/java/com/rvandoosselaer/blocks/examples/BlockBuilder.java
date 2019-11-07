@@ -76,8 +76,9 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
 
         stateManager.attachAll(new BlocksManagerState(blocksManager), new ChunkPagerState(chunkNode, blocksManager));
 
+        hideCursor();
         createCrossHair();
-        createPlaceholderBlocks();
+        createBlockPointers();
 
         inputManager.addMapping("add-block", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("remove-block", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
@@ -89,9 +90,6 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         flyCam.setMoveSpeed(10f);
         cam.setLocation(new Vector3f(0, 10f, 20));
         cam.lookAt(new Vector3f(16, 0, 16), Vector3f.UNIT_Y);
-
-        GuiGlobals.getInstance().setCursorEventsEnabled(false);
-        inputManager.setCursorVisible(false);
     }
 
     @Override
@@ -122,7 +120,12 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         guiNode.attachChild(label);
     }
 
-    private void createPlaceholderBlocks() {
+    private void hideCursor() {
+        GuiGlobals.getInstance().setCursorEventsEnabled(false);
+        inputManager.setCursorVisible(false);
+    }
+
+    private void createBlockPointers() {
         Material removePlaceholderMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         removePlaceholderMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         removePlaceholderMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.2f));

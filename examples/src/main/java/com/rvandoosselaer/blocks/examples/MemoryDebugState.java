@@ -26,7 +26,7 @@ public class MemoryDebugState extends BaseAppState {
     @Override
     protected void initialize(Application app) {
         container = new Container(new SpringGridLayout(Axis.Y, Axis.X, FillMode.Even, FillMode.Even));
-        container.setBackground(new QuadBackgroundComponent(new ColorRGBA(0, 0, 0, 0.7f)));
+        container.setBackground(new QuadBackgroundComponent(new ColorRGBA(0, 0, 0, 0.9f)));
         container.addChild(new Label("Memory", new ElementId(Container.ELEMENT_ID).child("title")));
 
         Container heap = container.addChild(new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Last, FillMode.Even), new ElementId(Container.ELEMENT_ID).child("entry")));

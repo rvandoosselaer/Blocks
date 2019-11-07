@@ -54,6 +54,10 @@ public class SingleBlock extends SimpleApplication {
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
 
+        hideCursor();
+    }
+
+    private void hideCursor() {
         GuiGlobals.getInstance().setCursorEventsEnabled(false);
         inputManager.setCursorVisible(false);
     }
