@@ -20,6 +20,10 @@ Don't like the look and feel of the blocks? You can easily change the default te
 
 Blocks comes with a fully fledged pager implementation that will load the blocks around the player, blocks that are out of sight will be unloaded to safe resources.
 
+**Physics support**
+
+Add the generated collision meshes to the physics space of your application to create and simulate solid environments.
+
 **Optimized for performance**
  
 Using multithreading, high demanding tasks like chunk generation and mesh creation can be run in parallel to maximize the CPU time.
