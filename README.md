@@ -3,6 +3,8 @@ Blocks is a voxel engine created for [jMonkeyEngine](https://jmonkeyengine.org).
 
 [![Build Status](https://travis-ci.com/rvandoosselaer/Blocks.svg?token=EPZCRwE8MCLwXqyrYpqT&branch=master)](https://travis-ci.com/rvandoosselaer/Blocks)
 
+![image](blocks-examples.jpg)
+
 ## Features
 
 **Multiple shapes**
