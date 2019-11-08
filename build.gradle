@@ -132,7 +132,7 @@ bintray {
         licenses = ['BSD 3-Clause']
         vcsUrl = 'https://github.com/rvandoosselaer/Blocks.git'
         version {
-            name = '1.0.0-SNAPSHOT'
+            name = '1.0.0'
             released = new Date()
         }
     }
