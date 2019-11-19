@@ -28,6 +28,7 @@ public class DefaultBlocks extends SimpleApplication {
                 new FlyCamAppState(),
                 new DebugKeysAppState(),
                 new LightingState(),
+                new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
                 new MemoryDebugState());

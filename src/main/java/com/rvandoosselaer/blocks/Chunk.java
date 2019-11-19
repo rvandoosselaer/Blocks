@@ -41,6 +41,8 @@ public class Chunk {
     private Mesh collisionMesh;
     @Setter
     private BiFunction<Block, Block, Boolean> faceVisibleFunction = new DefaultFaceVisibleFunction();
+    @Setter
+    private ChunkResolver chunkResolver;
 
     private Chunk() {
     }
@@ -248,7 +250,8 @@ public class Chunk {
     }
 
     /**
-     * Returns the neighbouring block at the given direction.
+     * Returns the neighbouring block at the given direction. When a {@link ChunkResolver} is set, the block from a
+     * neighbouring chunk is retrieved.
      *
      * @param location  block coordinate
      * @param direction neighbour direction
@@ -257,8 +260,19 @@ public class Chunk {
     protected Block getNeighbour(@NonNull Vec3i location, @NonNull Direction direction) {
         Vec3i blockLocation = location.add(direction.getVector());
 
-        return isInsideChunk(blockLocation.x, blockLocation.y, blockLocation.z) ?
-                getBlock(blockLocation.x, blockLocation.y, blockLocation.z) : null;
+        if (isInsideChunk(blockLocation.x, blockLocation.y, blockLocation.z)) {
+            return getBlock(blockLocation.x, blockLocation.y, blockLocation.z);
+        }
+
+        if (hasChunkResolver()) {
+            Vec3i chunkLocation = calculateNeighbourChunkLocation(blockLocation);
+            Vec3i neighbourBlockLocation = calculateNeighbourChunkBlockLocation(blockLocation);
+
+            Chunk chunk = chunkResolver.getChunk(chunkLocation);
+            return chunk != null ? chunk.getBlock(neighbourBlockLocation.x, neighbourBlockLocation.y, neighbourBlockLocation.z) : null;
+        }
+
+        return null;
     }
 
     /**
@@ -273,6 +287,59 @@ public class Chunk {
         Block neighbour = getNeighbour(location, direction);
 
         return faceVisibleFunction.apply(block, neighbour);
+    }
+
+    private boolean hasChunkResolver() {
+        return chunkResolver != null;
+    }
+
+    private Vec3i calculateNeighbourChunkLocation(Vec3i blockLocation) {
+        Vec3i chunkLocation = new Vec3i(getLocation());
+        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+
+        if (blockLocation.x < 0) {
+            chunkLocation.addLocal(-1, 0, 0);
+        }
+        if (blockLocation.x >= chunkSize.x) {
+            chunkLocation.addLocal(1, 0, 0);
+        }
+        if (blockLocation.y < 0) {
+            chunkLocation.addLocal(0, -1, 0);
+        }
+        if (blockLocation.y >= chunkSize.y) {
+            chunkLocation.addLocal(0, 1, 0);
+        }
+        if (blockLocation.z < 0) {
+            chunkLocation.addLocal(0, 0, -1);
+        }
+        if (blockLocation.z >= chunkSize.z) {
+            chunkLocation.addLocal(0, 0, 1);
+        }
+        return chunkLocation;
+    }
+
+    private Vec3i calculateNeighbourChunkBlockLocation(Vec3i blockLocation) {
+        Vec3i toReturn = new Vec3i(blockLocation);
+        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+        if (blockLocation.x < 0) {
+            toReturn.x = chunkSize.x - 1;
+        }
+        if (blockLocation.x >= chunkSize.x) {
+            toReturn.x = 0;
+        }
+        if (blockLocation.y < 0) {
+            toReturn.y = chunkSize.y - 1;
+        }
+        if (blockLocation.y >= chunkSize.y) {
+            toReturn.y = 0;
+        }
+        if (blockLocation.z < 0) {
+            toReturn.z = chunkSize.z - 1;
+        }
+        if (blockLocation.z >= chunkSize.z) {
+            toReturn.z = 0;
+        }
+        return toReturn;
     }
 
     /**

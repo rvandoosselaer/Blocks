@@ -38,7 +38,7 @@ import java.util.concurrent.*;
  * @author rvandoosselaer
  */
 @Slf4j
-public class BlocksManager {
+public class BlocksManager implements ChunkResolver {
 
     /**
      * The size of the cache. Set to increase or decrease the number of chunks to keep in memory.
@@ -205,6 +205,7 @@ public class BlocksManager {
      * @param location of the chunk
      * @return chunk or null when not found
      */
+    @Override
     public Chunk getChunk(@NonNull Vec3i location) {
         if (!isInitialized()) {
             throw new IllegalStateException("BlocksManager is not initialized!");
@@ -598,6 +599,12 @@ public class BlocksManager {
     }
 
     private void addToCache(@NonNull Chunk chunk) {
+        if (chunk.getChunkResolver() == null) {
+            chunk.setChunkResolver(this);
+            if (log.isTraceEnabled()) {
+                log.trace("Setting {} as chunk resolver on {}.", this, chunk);
+            }
+        }
         cache.put(chunk.getLocation(), chunk);
         if (log.isTraceEnabled()) {
             log.trace("Adding {} to cache. Estimated new cache size: {}", chunk, cache.estimatedSize());

@@ -36,6 +36,7 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
                 new FlyCamAppState(),
                 new DebugKeysAppState(),
                 new LightingState(),
+                new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
                 new MemoryDebugState());

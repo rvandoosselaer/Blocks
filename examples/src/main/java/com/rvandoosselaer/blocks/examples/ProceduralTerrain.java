@@ -34,6 +34,7 @@ public class ProceduralTerrain extends SimpleApplication {
                 new FlyCamAppState(),
                 new DebugKeysAppState(),
                 new LightingState(),
+                new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
                 new MemoryDebugState());
