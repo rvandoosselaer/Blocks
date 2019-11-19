@@ -28,6 +28,12 @@ import com.simsilica.util.LogAdapter;
 /**
  * An application where you can shoot a ball using the space bar.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author rvandoosselaer
  */
 public class PhysicsScene extends SimpleApplication implements ActionListener {

@@ -11,6 +11,12 @@ import com.simsilica.util.LogAdapter;
 /**
  * An application that renders a single block.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author rvandoosselaer
  */
 public class SingleBlock extends SimpleApplication {

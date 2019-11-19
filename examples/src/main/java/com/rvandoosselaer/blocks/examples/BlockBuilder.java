@@ -28,6 +28,12 @@ import com.simsilica.util.LogAdapter;
  * An application where you can add and remove blocks. Place a block using the left mouse button, remove a block using
  * the right mouse button.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author rvandoosselaer
  */
 public class BlockBuilder extends SimpleApplication implements ActionListener {

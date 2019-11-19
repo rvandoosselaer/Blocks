@@ -17,6 +17,12 @@ import lombok.RequiredArgsConstructor;
 /**
  * An endless runner application.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author: rvandoosselaer
  */
 public class EndlessRunner extends SimpleApplication {

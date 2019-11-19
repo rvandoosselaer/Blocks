@@ -28,6 +28,12 @@ import java.util.List;
 /**
  * An application that fills a chunk with random blocks. The information of the clicked block is printed in the GUI.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author rvandoosselaer
  */
 public class BlockPicking extends SimpleApplication implements ActionListener {

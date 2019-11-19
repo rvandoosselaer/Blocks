@@ -17,6 +17,12 @@ import com.simsilica.util.LogAdapter;
  * An application that toggles between a new theme and the default theme.
  * When pressing the space bar, the theme changes.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author rvandoosselaer
  */
 public class ChangeTheme extends SimpleApplication implements ActionListener {

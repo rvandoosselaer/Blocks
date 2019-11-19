@@ -18,6 +18,12 @@ import java.util.Random;
 /**
  * An application that renders a terrain generated from noise.
  *
+ * Default key mappings:
+ * print camera position:            c
+ * print direct memory information:  m
+ * toggle wireframe:                 p
+ * toggle profiler:                  F6
+ *
  * @author rvandoosselaer
  */
 public class ProceduralTerrain extends SimpleApplication {
