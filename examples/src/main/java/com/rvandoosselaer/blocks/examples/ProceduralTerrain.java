@@ -76,7 +76,7 @@ public class ProceduralTerrain extends SimpleApplication {
         inputManager.setCursorVisible(false);
     }
 
-    private class ChunkNoiseGenerator implements ChunkGenerator {
+    private static class ChunkNoiseGenerator implements ChunkGenerator {
 
         private final long seed;
         private LayeredNoise layeredNoise;

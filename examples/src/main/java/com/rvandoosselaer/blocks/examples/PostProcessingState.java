@@ -16,12 +16,6 @@ public class PostProcessingState extends BaseAppState {
 
     private FilterPostProcessor filterPostProcessor;
 
-    /**
-     * FilterPostProcessor fpp = new FilterPostProcessor(getAssetManager());
-     *         getViewPort().addProcessor(fpp);
-     *
-     * @param app
-     */
     @Override
     protected void initialize(Application app) {
         filterPostProcessor = new FilterPostProcessor(app.getAssetManager());

@@ -98,7 +98,7 @@ public class EndlessRunner extends SimpleApplication {
     }
 
     @RequiredArgsConstructor
-    private class TerrainGenerator implements ChunkGenerator {
+    private static class TerrainGenerator implements ChunkGenerator {
 
         /**
          * the y value (inclusive) of the highest blocks

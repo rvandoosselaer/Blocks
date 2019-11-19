@@ -210,7 +210,7 @@ public class TypeRegistry {
 
     @Getter
     @RequiredArgsConstructor
-    private class TexturesWrapper {
+    private static class TexturesWrapper {
 
         private final Texture diffuseMap;
         private final Optional<Texture> normalMap;

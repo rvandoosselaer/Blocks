@@ -641,7 +641,7 @@ public class BlocksManager {
     }
 
     @RequiredArgsConstructor
-    private class MeshGenerationCallable implements Callable<Chunk> {
+    private static class MeshGenerationCallable implements Callable<Chunk> {
 
         @NonNull
         private final Chunk chunk;
@@ -657,7 +657,7 @@ public class BlocksManager {
     }
 
     @RequiredArgsConstructor
-    private class ChunkLoadCallable implements Callable<ChunkLoadResult> {
+    private static class ChunkLoadCallable implements Callable<ChunkLoadResult> {
 
         @NonNull
         private final Vec3i chunkLocation;
@@ -672,7 +672,7 @@ public class BlocksManager {
     }
 
     @RequiredArgsConstructor
-    private class ChunkGenerationCallable implements Callable<Chunk> {
+    private static class ChunkGenerationCallable implements Callable<Chunk> {
 
         @NonNull
         private final Vec3i chunkLocation;
@@ -687,7 +687,7 @@ public class BlocksManager {
     }
 
     @RequiredArgsConstructor
-    private class ChunkStoringRunnable implements Runnable {
+    private static class ChunkStoringRunnable implements Runnable {
 
         private final Collection<Chunk> chunks;
         private final ChunkRepository repository;
@@ -702,7 +702,7 @@ public class BlocksManager {
 
     @Getter
     @RequiredArgsConstructor
-    private class ChunkLoadResult {
+    private static class ChunkLoadResult {
 
         @NonNull
         private final Vec3i location;
