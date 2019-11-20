@@ -105,22 +105,22 @@ public class FacesMeshGeneratorTest {
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-merlon"));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID));
         chunk.createNode(meshGenerator);
 
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stonebrick-merlon").getType())).getMesh();
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID).getType())).getMesh();
         // 5 faces, 6 triangles
         Assertions.assertEquals(6, mesh.getTriangleCount());
 
-        chunk.addBlock(0, 0, 0, blockRegistry.get("grass"));
-        chunk.addBlock(0, 1, 0, blockRegistry.get("stonebrick-merlon"));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.GRASS));
+        chunk.addBlock(0, 1, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID));
         chunk.createNode(meshGenerator);
 
-        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.GRASS).getType())).getMesh();
         // 6 faces, 10 triangles
         Assertions.assertEquals(6 * 2, mesh.getTriangleCount());
 
-        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stonebrick-merlon").getType())).getMesh();
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID).getType())).getMesh();
         // 4 faces, 4 triangles
         Assertions.assertEquals(4, mesh.getTriangleCount());
     }
@@ -132,18 +132,18 @@ public class FacesMeshGeneratorTest {
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get("stonebrick-wedge-front"));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT));
         chunk.createNode(meshGenerator);
 
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stonebrick-wedge-front").getType())).getMesh();
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT).getType())).getMesh();
         // 5 faces, 8 triangles
         Assertions.assertEquals(8, mesh.getTriangleCount());
 
         // test other wedge directions
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-front"));
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-right"));
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-back"));
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stonebrick-wedge-left"));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_BACK));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_LEFT));
+        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_RIGHT));
     }
 
     private void testEnclosedWedge(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
@@ -160,7 +160,7 @@ public class FacesMeshGeneratorTest {
 
         // cube mesh
         Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
-        // 5 cubes = 5 * (6 faces, 12 triangles)
+        // 6 cubes = 6 * (6 faces = 12 triangles)
         Assertions.assertEquals(6 * 12, mesh.getTriangleCount());
 
         // wedge mesh
@@ -175,17 +175,17 @@ public class FacesMeshGeneratorTest {
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get("stone-stair-front"));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
         chunk.createNode(meshGenerator);
 
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("stone-stair-front").getType())).getMesh();
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT).getType())).getMesh();
         // 14 faces
         Assertions.assertEquals(14 * 2, mesh.getTriangleCount());
 
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-front"));
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-right"));
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-back"));
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get("stone-stair-left"));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_BACK));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_LEFT));
+        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_RIGHT));
     }
 
     private void testEnclosedStair(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
@@ -207,7 +207,7 @@ public class FacesMeshGeneratorTest {
 
         // stair mesh
         mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
-        // 6 faces$
+        // 6 faces
         Assertions.assertEquals(6 * 2, mesh.getTriangleCount());
     }
 
