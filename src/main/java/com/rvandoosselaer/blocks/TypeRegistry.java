@@ -31,6 +31,7 @@ public class TypeRegistry {
     public static final String DEFAULT_BLOCK_MATERIAL = "Blocks/Materials/default-block.j3m";
     public static final String WATER_MATERIAL = "Blocks/Materials/water.j3m";
     public static final String WATER_STILL_MATERIAL = "Blocks/Materials/water-still.j3m";
+    public static final BlocksTheme FAITHFUL_THEME = new BlocksTheme("Faithful", "Blocks/Themes/faithful/");
 
     private enum TextureType {
         DIFFUSE, NORMAL, PARALLAX;

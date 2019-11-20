@@ -69,6 +69,8 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
 
         BlocksConfig.initialize(assetManager);
 
+        BlocksConfig.getInstance().getTypeRegistry().setTheme(TypeRegistry.FAITHFUL_THEME);
+
         chunk = Chunk.createAt(new Vec3i());
         for (int x = 0; x < BlocksConfig.getInstance().getChunkSize().x; x++) {
             for (int z = 0; z < BlocksConfig.getInstance().getChunkSize().z; z++) {
