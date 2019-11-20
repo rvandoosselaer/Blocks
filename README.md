@@ -47,4 +47,4 @@ If you have a bug or an idea, you can create a ticket for it [here.](https://git
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgements
-- Block textures made by [Ringoster](https://www.minecraftforum.net/members/Ringoster) from the TRITON pack. See [forum post](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/resource-packs/2273313-triton-64x-512x-hd-cartoon-comic-style-concept-art?comment=577).
+- Block textures made by [Soartex](https://soartex.net) from the Soartex Fanver.

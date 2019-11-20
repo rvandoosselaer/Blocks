@@ -41,7 +41,7 @@ public class TypeRegistry {
     @Getter
     private BlocksTheme theme;
     @Getter
-    private BlocksTheme defaultTheme = new BlocksTheme("Default", "Blocks/Themes/default/");
+    private BlocksTheme defaultTheme = new BlocksTheme("Soartex Fanver", "Blocks/Themes/default/");
 
     public TypeRegistry(@NonNull AssetManager assetManager) {
         this(assetManager, null);
