@@ -1,6 +1,9 @@
 package com.rvandoosselaer.blocks;
 
 /**
+ * Contains all the keys of the blocks that are registered in the {@link BlockRegistry}. Use these keys to retrieve the
+ * blocks from the {@link BlockRegistry#get(String)}.
+ *
  * @author: rvandoosselaer
  */
 public interface BlockIds {

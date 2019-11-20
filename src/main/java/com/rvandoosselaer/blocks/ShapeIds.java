@@ -1,6 +1,9 @@
 package com.rvandoosselaer.blocks;
 
 /**
+ * Contains all the keys of the shapes that are registered in the {@link ShapeRegistry}. Use these keys to retrieve the
+ * shapes from the {@link ShapeRegistry#get(String)}.
+ *
  * @author: rvandoosselaer
  */
 public interface ShapeIds {
