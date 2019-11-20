@@ -76,7 +76,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         blocksManager = BlocksManager.builder()
                 .meshGenerationPoolSize(1)
                 .chunkGenerationPoolSize(1)
-                .chunkGenerator(new FlatTerrainGenerator(blockRegistry.get(Block.GRASS)))
+                .chunkGenerator(new FlatTerrainGenerator(blockRegistry.get(BlockIds.GRASS)))
                 .build();
 
         chunkNode = new Node("chunk-node");
@@ -178,7 +178,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     }
 
     private void addBlock() {
-        blocksManager.addBlock(new Vec3i(addPlaceholder.getWorldTranslation()), blockRegistry.get(Block.GRASS));
+        blocksManager.addBlock(new Vec3i(addPlaceholder.getWorldTranslation()), blockRegistry.get(BlockIds.GRASS));
     }
 
     private void removeBlock() {

@@ -51,18 +51,19 @@ public class ShapeRegistry {
     }
 
     public void registerDefaultShapes() {
-        register(Shape.CUBE, new Cube());
-        register(Shape.PYRAMID, new Pyramid());
-        register(Shape.WEDGE_FRONT, new Wedge(Direction.FRONT));
-        register(Shape.WEDGE_RIGHT, new Wedge(Direction.RIGHT));
-        register(Shape.WEDGE_BACK, new Wedge(Direction.BACK));
-        register(Shape.WEDGE_LEFT, new Wedge(Direction.LEFT));
-        register(Shape.SLAB, new Slab(0, 1f / 3f));
-        register(Shape.DOUBLE_SLAB, new Slab(0, 2f / 3f));
-        register(Shape.STAIR_FRONT, new Stair(Direction.FRONT));
-        register(Shape.STAIR_RIGHT, new Stair(Direction.RIGHT));
-        register(Shape.STAIR_BACK, new Stair(Direction.BACK));
-        register(Shape.STAIR_LEFT, new Stair(Direction.LEFT));
+        register(ShapeIds.CUBE, new Cube());
+        register(ShapeIds.SLAB, new Slab(0, 1f / 3f));
+        register(ShapeIds.DOUBLE_SLAB, new Slab(0, 2f / 3f));
+        register(ShapeIds.PLATE, new Slab(0, 0.1f));
+        register(ShapeIds.STAIRS_BACK, new Stair(Direction.BACK));
+        register(ShapeIds.STAIRS_FRONT, new Stair(Direction.FRONT));
+        register(ShapeIds.STAIRS_LEFT, new Stair(Direction.LEFT));
+        register(ShapeIds.STAIRS_RIGHT, new Stair(Direction.RIGHT));
+        register(ShapeIds.WEDGE_BACK, new Wedge(Direction.BACK));
+        register(ShapeIds.WEDGE_FRONT, new Wedge(Direction.FRONT));
+        register(ShapeIds.WEDGE_LEFT, new Wedge(Direction.LEFT));
+        register(ShapeIds.WEDGE_RIGHT, new Wedge(Direction.RIGHT));
+        register(ShapeIds.PYRAMID, new Pyramid());
     }
 
 }

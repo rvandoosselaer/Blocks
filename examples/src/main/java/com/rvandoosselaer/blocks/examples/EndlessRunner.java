@@ -131,7 +131,7 @@ public class EndlessRunner extends SimpleApplication {
 
         private Block getBlock() {
             int random = FastMath.nextRandomInt(0, 19); // [0, 19]
-            return random == 0 ? blockRegistry.get(Block.DIRT) : blockRegistry.get(Block.GRASS);
+            return random == 0 ? blockRegistry.get(BlockIds.DIRT) : blockRegistry.get(BlockIds.GRASS);
         }
 
     }

@@ -19,16 +19,6 @@ import lombok.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Block {
 
-    public static final String EMPTY = "";
-    public static final String GRASS = "grass";
-    public static final String DIRT = "dirt";
-    public static final String STONE = "stone";
-    public static final String STONEBRICK = "stonebrick";
-    public static final String OAK = "oak";
-    public static final String SAND = "sand";
-    public static final String WATER = "water";
-    public static final String WATER_STILL = "water-still";
-
     @ToString.Include
     @EqualsAndHashCode.Include
     private String name;
@@ -64,7 +54,7 @@ public class Block {
     public static Block create(String name, String type) {
         return Block.builder()
                 .name(name)
-                .shape("cube")
+                .shape(ShapeIds.CUBE)
                 .type(type)
                 .usingMultipleImages(false)
                 .transparent(false)
@@ -82,7 +72,7 @@ public class Block {
     public static Block create(String name, String type, boolean multipleImages) {
         return Block.builder()
                 .name(name)
-                .shape("cube")
+                .shape(ShapeIds.CUBE)
                 .type(type)
                 .usingMultipleImages(multipleImages)
                 .transparent(false)

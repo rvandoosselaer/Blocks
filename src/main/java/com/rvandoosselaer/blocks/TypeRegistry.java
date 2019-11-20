@@ -93,14 +93,28 @@ public class TypeRegistry {
     }
 
     public void registerDefaultMaterials() {
-        register("grass", DEFAULT_BLOCK_MATERIAL);
-        register("sand", DEFAULT_BLOCK_MATERIAL);
-        register("dirt", DEFAULT_BLOCK_MATERIAL);
-        register("oak", DEFAULT_BLOCK_MATERIAL);
-        register("stone", DEFAULT_BLOCK_MATERIAL);
-        register("stonebrick", DEFAULT_BLOCK_MATERIAL);
-        register("water", WATER_MATERIAL);
-        register("water-still", WATER_STILL_MATERIAL);
+        register(TypeIds.BIRCH_LOG, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.BIRCH_PLANKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.BRICKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.COBBLESTONE, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.MOSSY_COBBLESTONE, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.DIRT, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.GRAVEL, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.GRASS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.GRASS_SNOW, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.PALM_TREE_LOG, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.PALM_TREE_PLANKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.ROCK, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.OAK_LOG, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.OAK_PLANKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.SAND, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.SNOW, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.SPRUCE_LOG, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.SPRUCE_PLANKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.STONE_BRICKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.MOSSY_STONE_BRICKS, DEFAULT_BLOCK_MATERIAL);
+        register(TypeIds.WATER, WATER_MATERIAL);
+        register(TypeIds.WATER_STILL, WATER_STILL_MATERIAL);
     }
 
     public void setTheme(BlocksTheme theme) {

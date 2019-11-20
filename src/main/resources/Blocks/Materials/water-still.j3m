@@ -9,9 +9,9 @@ Material water-still : Blocks/MatDefs/Water.j3md {
         WaveSpeed : 0
         WaveHeight : 0
         WaveSize : 0
-        TextureScrollSpeed : 8
+        TextureScrollSpeed : 23
         numTilesX : 1
-        numTilesY : 32
+        numTilesY : 64
         OffsetY : -0.1
     }
 

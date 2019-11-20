@@ -107,7 +107,7 @@ public class ProceduralTerrain extends SimpleApplication {
 
                         float h = Math.max(height, waterHeight);
                         if (worldY <= h) {
-                            Block block = worldY <= height ? BlocksConfig.getInstance().getBlockRegistry().get(Block.GRASS) : BlocksConfig.getInstance().getBlockRegistry().get(Block.WATER);
+                            Block block = worldY <= height ? BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS) : BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.WATER);
                             chunk.addBlock(x, y, z, block);
                         }
                     }

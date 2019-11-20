@@ -58,9 +58,9 @@ public class Pyramid implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
             }
         }
@@ -88,9 +88,9 @@ public class Pyramid implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
+                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
             }
         }
     }
@@ -117,9 +117,9 @@ public class Pyramid implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
+                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
             }
         }
     }
@@ -146,9 +146,9 @@ public class Pyramid implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
+                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
             }
         }
     }
@@ -175,9 +175,9 @@ public class Pyramid implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
+                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
             }
 
         }

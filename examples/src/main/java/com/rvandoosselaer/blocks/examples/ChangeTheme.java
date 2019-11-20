@@ -64,7 +64,7 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
         for (int x = 0; x < chunkSize.x; x++) {
             for (int z = 0; z < chunkSize.z; z++) {
                 if (x > 8 && x < 20 && z > 6 && z < 23) {
-                    chunk.addBlock(x, 0, z, blockRegistry.get(Block.WATER));
+                    chunk.addBlock(x, 0, z, blockRegistry.get(BlockIds.WATER));
                 } else {
                     chunk.addBlock(x, 0, z, getRandomBlock(blockRegistry));
                 }
@@ -104,15 +104,15 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
         int random = FastMath.nextRandomInt(0, 9);
         switch (random) {
             case 0:
-                return blockRegistry.get(Block.DIRT);
+                return blockRegistry.get(BlockIds.DIRT);
             case 1:
-                return blockRegistry.get(Block.OAK);
+                return blockRegistry.get(BlockIds.GRAVEL);
             case 2:
-                return blockRegistry.get(Block.SAND);
+                return blockRegistry.get(BlockIds.SAND);
             case 3:
-                return blockRegistry.get(Block.STONE);
+                return blockRegistry.get(BlockIds.ROCK);
             default:
-                return blockRegistry.get(Block.GRASS);
+                return blockRegistry.get(BlockIds.GRASS);
         }
     }
 

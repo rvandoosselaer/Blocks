@@ -76,15 +76,15 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
             for (int y = 0; y < 5; y++) {
                 for (int z = 0; z < chunkSize.z; z++) {
                     if (y == 0) {
-                        chunk.addBlock(x, y, z, blockRegistry.get(Block.GRASS));
+                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.GRASS));
                     } else if ((y == 1 || y == 2 ) && ((x == 10 && z >= 10 && z <= 20) || (x == 20 && z >= 10 && z <= 20) || (z == 10 && x >= 10 && x <= 20) || (z == 20 && x >= 10 && x <= 20))) {
-                        chunk.addBlock(x, y, z, blockRegistry.get(Block.STONE));
+                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.STONE_BRICKS));
                     } else if ((y == 1 || y == 2) && (x > 10 && x < 20 && z > 10 && z < 20)) {
-                        chunk.addBlock(x, y, z, blockRegistry.get(Block.WATER));
+                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.WATER));
                     } else if (y == 1) {
                         int random = FastMath.nextRandomInt(0, 9);
                         if (random == 0) {
-                            chunk.addBlock(x, y, z, blockRegistry.get(Block.DIRT));
+                            chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.DIRT));
                         }
                     }
                 }

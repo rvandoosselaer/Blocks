@@ -388,7 +388,7 @@ public class Chunk {
             if (neighbour.isTransparent() && !block.isTransparent()) {
                 return true;
             }
-            if (!Shape.CUBE.equals(neighbour.getShape())) {
+            if (!ShapeIds.CUBE.equals(neighbour.getShape())) {
                 return true;
             }
             return false;
