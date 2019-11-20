@@ -178,11 +178,11 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     }
 
     private void addBlock() {
-        blocksManager.addBlock(new Vec3i(addPlaceholder.getWorldTranslation()), blockRegistry.get(BlockIds.GRASS));
+        blocksManager.addBlock(new Vec3i(addPlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f)), blockRegistry.get(BlockIds.GRASS));
     }
 
     private void removeBlock() {
-        blocksManager.removeBlock(new Vec3i(removePlaceholder.getWorldTranslation()));
+        blocksManager.removeBlock(new Vec3i(removePlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f)));
     }
 
 }
