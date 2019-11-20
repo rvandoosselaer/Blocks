@@ -52,7 +52,17 @@ public class DirectionTest {
 
     @Test
     public void testUnknown() {
-        Assertions.assertNull(Direction.fromVector(new Vector3f(1, 1, 1)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Direction.fromVector(new Vector3f(1, 1, 1)));
+    }
+
+    @Test
+    public void testOpposites() {
+        Assertions.assertEquals(Direction.TOP.opposite(), Direction.BOTTOM);
+        Assertions.assertEquals(Direction.BOTTOM.opposite(), Direction.TOP);
+        Assertions.assertEquals(Direction.RIGHT.opposite(), Direction.LEFT);
+        Assertions.assertEquals(Direction.LEFT.opposite(), Direction.RIGHT);
+        Assertions.assertEquals(Direction.BACK.opposite(), Direction.FRONT);
+        Assertions.assertEquals(Direction.FRONT.opposite(), Direction.BACK);
     }
 
 }

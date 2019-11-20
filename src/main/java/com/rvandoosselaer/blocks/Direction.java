@@ -4,6 +4,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.Arrays;
 
@@ -13,6 +14,7 @@ import java.util.Arrays;
  * @author rvandoosselaer
  */
 @Getter
+@ToString
 public enum Direction {
     TOP(0, 1, 0),
     BOTTOM(0, -1, 0),
@@ -36,6 +38,11 @@ public enum Direction {
                     return dotProduct > 0.95f;
                 })
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException("Unable to find direction from vector: " + vector3f));
     }
+
+    public Direction opposite() {
+        return Direction.fromVector(getVector().toVector3f().negate());
+    }
+
 }
