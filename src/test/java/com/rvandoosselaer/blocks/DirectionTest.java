@@ -2,10 +2,10 @@ package com.rvandoosselaer.blocks;
 
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DirectionTest {
 
@@ -53,7 +53,7 @@ public class DirectionTest {
 
     @Test
     public void testUnknown() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Direction.fromVector(new Vector3f(1, 1, 1)));
+        assertThrows(IllegalArgumentException.class, () -> Direction.fromVector(new Vector3f(1, 1, 1)));
     }
 
     @Test
