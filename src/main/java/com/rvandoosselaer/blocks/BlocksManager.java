@@ -375,14 +375,14 @@ public class BlocksManager implements ChunkResolver {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
 
         // add a small offset to the contact point, so we point a bit more 'inward' into the block
-        contactPoint = contactPoint.add(contactNormal.negate().mult(0.05f * blockScale));
+        Vector3f adjustedContactPoint = contactPoint.add(contactNormal.negate().mult(0.05f * blockScale));
 
         if (pickNeighbour) {
             Vector3f neighbourDirection = contactNormal.mult(0.75f * blockScale);
-            contactPoint.addLocal(neighbourDirection);
+            adjustedContactPoint.addLocal(neighbourDirection);
         }
 
-        Vec3i blockWorldLocation = new Vec3i((int) Math.floor(contactPoint.x), (int) Math.floor(contactPoint.y), (int) Math.floor(contactPoint.z));
+        Vec3i blockWorldLocation = new Vec3i((int) Math.floor(adjustedContactPoint.x), (int) Math.floor(adjustedContactPoint.y), (int) Math.floor(adjustedContactPoint.z));
         if (log.isTraceEnabled()) {
             log.trace("Calculated block location from contact point {} and contact normal {} : {}", contactPoint, contactNormal, blockWorldLocation);
         }
