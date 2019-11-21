@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BlocksManagerTest {
 
     @BeforeAll
-    public static void setup() {
+    public static void setUp() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
     }
 
@@ -198,8 +198,6 @@ public class BlocksManagerTest {
     @Test
     public void testPickedBlockLocation() {
         BlocksConfig.getInstance().setBlockScale(1);
-
-        BlocksManager blocksManager = new BlocksManager();
 
         Vector3f block = new Vector3f(1.3f, 0.99999f, -2.84f);
         Vec3i blockLocation = BlocksManager.getPickedBlockLocation(block, Vector3f.UNIT_Y, false);

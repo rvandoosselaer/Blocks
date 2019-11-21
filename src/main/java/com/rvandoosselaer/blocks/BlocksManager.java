@@ -378,7 +378,8 @@ public class BlocksManager implements ChunkResolver {
         contactPoint = contactPoint.add(contactNormal.negate().mult(0.05f * blockScale));
 
         if (pickNeighbour) {
-            contactPoint.addLocal(contactNormal.mult(0.75f * blockScale));
+            Vector3f neighbourDirection = contactNormal.mult(0.75f * blockScale);
+            contactPoint.addLocal(neighbourDirection);
         }
 
         Vec3i blockWorldLocation = new Vec3i((int) Math.floor(contactPoint.x), (int) Math.floor(contactPoint.y), (int) Math.floor(contactPoint.z));

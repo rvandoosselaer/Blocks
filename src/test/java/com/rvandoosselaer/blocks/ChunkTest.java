@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ChunkTest {
 
     @BeforeAll
-    public static void setup() {
+    public static void setUp() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
     }
 

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FacesMeshGeneratorTest {
 
     @BeforeAll
-    public static void setup() {
+    public static void setUp() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
     }
 
