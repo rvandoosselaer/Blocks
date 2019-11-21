@@ -16,47 +16,47 @@ public class DirectionTest {
     }
 
     @Test
-    public void testRight() {
+    public void assertRight() {
         Assertions.assertEquals(new Vec3i(1, 0, 0), Direction.RIGHT.getVector());
         Assertions.assertEquals(Direction.RIGHT, Direction.fromVector(new Vector3f(1, 0, 0)));
         Assertions.assertEquals(Direction.RIGHT, Direction.fromVector(new Vector3f(1.0001f, 0, 0)));
     }
 
     @Test
-    public void testBack() {
+    public void assertBack() {
         Assertions.assertEquals(new Vec3i(0, 0, -1), Direction.BACK.getVector());
         Assertions.assertEquals(Direction.BACK, Direction.fromVector(new Vector3f(0, 0, -1)));
         Assertions.assertEquals(Direction.BACK, Direction.fromVector(new Vector3f(0, 0, -0.999f)));
     }
 
     @Test
-    public void testLeft() {
+    public void assertLeft() {
         Assertions.assertEquals(new Vec3i(-1, 0, 0), Direction.LEFT.getVector());
         Assertions.assertEquals(Direction.LEFT, Direction.fromVector(new Vector3f(-1, 0, 0)));
         Assertions.assertEquals(Direction.LEFT, Direction.fromVector(new Vector3f(-1.001f, 0, 0)));
     }
 
     @Test
-    public void testTop() {
+    public void assertTop() {
         Assertions.assertEquals(new Vec3i(0, 1, 0), Direction.TOP.getVector());
         Assertions.assertEquals(Direction.TOP, Direction.fromVector(new Vector3f(0, 1, 0)));
         Assertions.assertEquals(Direction.TOP, Direction.fromVector(new Vector3f(0, 1.001f, 0)));
     }
 
     @Test
-    public void testBottom() {
+    public void assertBottom() {
         Assertions.assertEquals(new Vec3i(0, -1, 0), Direction.BOTTOM.getVector());
         Assertions.assertEquals(Direction.BOTTOM, Direction.fromVector(new Vector3f(0, -1, 0)));
         Assertions.assertEquals(Direction.BOTTOM, Direction.fromVector(new Vector3f(0, -0.999f, 0)));
     }
 
     @Test
-    public void testUnknown() {
+    public void assertUnknown() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> Direction.fromVector(new Vector3f(1, 1, 1)));
     }
 
     @Test
-    public void testOpposites() {
+    public void assertOpposites() {
         Assertions.assertEquals(Direction.TOP.opposite(), Direction.BOTTOM);
         Assertions.assertEquals(Direction.BOTTOM.opposite(), Direction.TOP);
         Assertions.assertEquals(Direction.RIGHT.opposite(), Direction.LEFT);
