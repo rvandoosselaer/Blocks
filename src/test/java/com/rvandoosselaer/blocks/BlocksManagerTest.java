@@ -5,10 +5,15 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.simsilica.mathd.Vec3i;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BlocksManagerTest {
 
@@ -26,12 +31,12 @@ public class BlocksManagerTest {
         blocksManager.update();
 
         Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNotNull(chunk);
+        assertNotNull(chunk);
 
         blocksManager.invalidateChunk(new Vec3i(0, 0, 0));
 
         chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNull(chunk);
+        assertNull(chunk);
     }
 
     @Test
@@ -43,21 +48,21 @@ public class BlocksManagerTest {
         blocksManager.update();
 
         Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNotNull(chunk);
-        Assertions.assertNotNull(chunk.getBlocks());
+        assertNotNull(chunk);
+        assertNotNull(chunk.getBlocks());
 
         chunk.setNode(new Node("placeholder"));
         chunk.setCollisionMesh(new Mesh());
 
-        Assertions.assertNotNull(chunk.getNode());
-        Assertions.assertNotNull(chunk.getCollisionMesh());
+        assertNotNull(chunk.getNode());
+        assertNotNull(chunk.getCollisionMesh());
 
         blocksManager.invalidateChunk(new Vec3i(0, 0, 0));
-        Assertions.assertFalse(blocksManager.hasChunk(new Vec3i(0, 0, 0)));
+        assertFalse(blocksManager.hasChunk(new Vec3i(0, 0, 0)));
         Thread.sleep(500);
-        Assertions.assertNull(chunk.getBlocks());
-        Assertions.assertNull(chunk.getNode());
-        Assertions.assertNull(chunk.getCollisionMesh());
+        assertNull(chunk.getBlocks());
+        assertNull(chunk.getNode());
+        assertNull(chunk.getCollisionMesh());
     }
 
     @Test
@@ -68,14 +73,14 @@ public class BlocksManagerTest {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNull(chunk);
+        assertNull(chunk);
 
         blocksManager.addBlock(new Vec3i(0, 0, 0), blockRegistry.get("grass"));
         chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNotNull(chunk);
+        assertNotNull(chunk);
 
         Block block = chunk.getBlock(new Vec3i(0, 0, 0));
-        Assertions.assertNotNull(block);
+        assertNotNull(block);
     }
 
     @Test
@@ -86,11 +91,11 @@ public class BlocksManagerTest {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         blocksManager.addBlock(new Vec3i(0, 0, 0), blockRegistry.get("grass"));
-        Assertions.assertNotNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
+        assertNotNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
 
         Block previousBlock = blocksManager.removeBlock(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(blockRegistry.get("grass"), previousBlock);
-        Assertions.assertNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
+        assertEquals(blockRegistry.get("grass"), previousBlock);
+        assertNull(blocksManager.getChunk(new Vec3i(0, 0, 0)).getBlock(new Vec3i(0, 0, 0)));
 
         blocksManager.removeBlock(new Vec3i(0, 0, 0));
     }
@@ -101,16 +106,16 @@ public class BlocksManagerTest {
         blocksManager.initialize();
 
         Chunk chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNull(chunk);
+        assertNull(chunk);
 
         boolean requested = blocksManager.requestChunk(new Vec3i(0, 0, 0));
-        Assertions.assertTrue(requested);
+        assertTrue(requested);
 
         blocksManager.update(); // load, generation and create step
 
         chunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNotNull(chunk);
-        Assertions.assertTrue(chunk.isEmpty());
+        assertNotNull(chunk);
+        assertTrue(chunk.isEmpty());
     }
 
     @Test
@@ -128,15 +133,15 @@ public class BlocksManagerTest {
         blocksManager.initialize();
 
         Chunk loadedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNull(loadedChunk);
+        assertNull(loadedChunk);
 
         boolean requested = blocksManager.requestChunk(new Vec3i(0, 0, 0));
-        Assertions.assertTrue(requested);
+        assertTrue(requested);
 
         blocksManager.update(); // perform load
 
         loadedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(chunk, loadedChunk);
+        assertEquals(chunk, loadedChunk);
     }
 
     @Test
@@ -154,15 +159,15 @@ public class BlocksManagerTest {
         blocksManager.initialize();
 
         Chunk generatedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertNull(generatedChunk);
+        assertNull(generatedChunk);
 
         boolean requested = blocksManager.requestChunk(new Vec3i(0, 0, 0));
-        Assertions.assertTrue(requested);
+        assertTrue(requested);
 
         blocksManager.update(); // perform load and generation
 
         generatedChunk = blocksManager.getChunk(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(chunk, generatedChunk);
+        assertEquals(chunk, generatedChunk);
     }
 
     @Test
@@ -172,22 +177,22 @@ public class BlocksManagerTest {
         Vector3f location = new Vector3f(0, 0, 0);
         Vec3i chunkLocation = BlocksManager.getChunkLocation(location);
 
-        Assertions.assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+        assertEquals(new Vec3i(0, 0, 0), chunkLocation);
 
         location = new Vector3f(13, 10, 5);
         chunkLocation = BlocksManager.getChunkLocation(location);
 
-        Assertions.assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+        assertEquals(new Vec3i(0, 0, 0), chunkLocation);
 
         location = new Vector3f(-5, 3, -9);
         chunkLocation = BlocksManager.getChunkLocation(location);
 
-        Assertions.assertEquals(new Vec3i(-1, 0, -1), chunkLocation);
+        assertEquals(new Vec3i(-1, 0, -1), chunkLocation);
 
         location = new Vector3f(16, 15, 2);
         chunkLocation = BlocksManager.getChunkLocation(location);
 
-        Assertions.assertEquals(new Vec3i(1, 0, 0), chunkLocation);
+        assertEquals(new Vec3i(1, 0, 0), chunkLocation);
     }
 
     @Test
@@ -199,22 +204,22 @@ public class BlocksManagerTest {
         Vector3f block = new Vector3f(1.3f, 0.99999f, -2.84f);
         Vec3i blockLocation = BlocksManager.getPickedBlockLocation(block, Vector3f.UNIT_Y, false);
 
-        Assertions.assertEquals(new Vec3i(1, 0, -3), blockLocation);
+        assertEquals(new Vec3i(1, 0, -3), blockLocation);
 
         block = new Vector3f(-13.140036f, 15.920046f, -15.0f);
         blockLocation = BlocksManager.getPickedBlockLocation(block, new Vector3f(0, 0, -1), false);
 
-        Assertions.assertEquals(new Vec3i(-14, 15, -15), blockLocation);
+        assertEquals(new Vec3i(-14, 15, -15), blockLocation);
 
         block = new Vector3f(-15.554672f, 15.649327f, -13.999999f);
         blockLocation = BlocksManager.getPickedBlockLocation(block, new Vector3f(0, 0, -1), true);
 
-        Assertions.assertEquals(new Vec3i(-16, 15, -15), blockLocation);
+        assertEquals(new Vec3i(-16, 15, -15), blockLocation);
 
         block = new Vector3f(1.5f, 1.0012f, 0.9997f);
         blockLocation = BlocksManager.getPickedBlockLocation(block, new Vector3f(0, -1, 0), true);
 
-        Assertions.assertEquals(new Vec3i(1, 0, 0), blockLocation);
+        assertEquals(new Vec3i(1, 0, 0), blockLocation);
     }
 
 }
