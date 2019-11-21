@@ -2,7 +2,12 @@ package com.rvandoosselaer.blocks;
 
 import com.rvandoosselaer.blocks.protobuf.BlocksProtos;
 import com.simsilica.mathd.Vec3i;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

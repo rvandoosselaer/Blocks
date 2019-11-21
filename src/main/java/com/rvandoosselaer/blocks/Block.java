@@ -1,6 +1,12 @@
 package com.rvandoosselaer.blocks;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * The basic building block of the Blocks framework. A block has a name and some properties describing the look and feel

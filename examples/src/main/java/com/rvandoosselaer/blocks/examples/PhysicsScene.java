@@ -1,6 +1,10 @@
 package com.rvandoosselaer.blocks.examples;
 
-import com.jme3.app.*;
+import com.jme3.app.BasicProfilerState;
+import com.jme3.app.DebugKeysAppState;
+import com.jme3.app.FlyCamAppState;
+import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
@@ -18,7 +22,11 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Sphere;
-import com.rvandoosselaer.blocks.*;
+import com.rvandoosselaer.blocks.BlockIds;
+import com.rvandoosselaer.blocks.BlockRegistry;
+import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.Chunk;
+import com.rvandoosselaer.blocks.ChunkMeshGenerator;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.style.BaseStyles;

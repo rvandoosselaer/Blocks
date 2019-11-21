@@ -7,32 +7,32 @@ Blocks is a voxel engine created for [jMonkeyEngine](https://jmonkeyengine.org).
 
 ## Features
 
-**Multiple shapes**
+### Multiple shapes
 
 Next to the default cube shape, Blocks also supports more complicated shapes like pyramids, wedges, slabs, stairs, ...
 This will make your creations feel even more vibrant!
 
-**Theming support**
+### Theming support
 
 Don't like the look and feel of the blocks? You can easily change the default textures by creating and using a different theme. 
 
-**Endless terrain**
+### Endless terrain
 
 Blocks comes with a fully fledged pager implementation that will load the blocks around the player, blocks that are out of sight will be unloaded to safe resources.
 
-**Physics support**
+### Physics support
 
 Add the generated collision meshes to the physics space of your application to create and simulate solid environments.
 
-**Optimized for performance**
+### Optimized for performance
  
 Using multithreading, high demanding tasks like chunk generation and mesh creation can be run in parallel to maximize the CPU time.
 
-**Designed for customization**
+### Designed for customization
 
 Blocks is build with modularity and reuse in mind. If a part of the framework doesn't match your requirements you can easily swap it out and replace it with something else.
 
-**Built using jMonkeyEngine best practices**
+### Built using jMonkeyEngine best practices
 
 The lifecycle of the Blocks framework is managed by AppState objects. This way the Blocks framework can easily and safely be plugged into the StateManager of jMonkeyEngine.
 

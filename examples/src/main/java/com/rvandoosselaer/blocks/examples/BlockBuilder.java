@@ -1,6 +1,10 @@
 package com.rvandoosselaer.blocks.examples;
 
-import com.jme3.app.*;
+import com.jme3.app.BasicProfilerState;
+import com.jme3.app.DebugKeysAppState;
+import com.jme3.app.FlyCamAppState;
+import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
@@ -17,7 +21,13 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.WireBox;
 import com.jme3.scene.shape.Box;
-import com.rvandoosselaer.blocks.*;
+import com.rvandoosselaer.blocks.BlockIds;
+import com.rvandoosselaer.blocks.BlockRegistry;
+import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.BlocksManager;
+import com.rvandoosselaer.blocks.BlocksManagerState;
+import com.rvandoosselaer.blocks.ChunkPagerState;
+import com.rvandoosselaer.blocks.FlatTerrainGenerator;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.style.BaseStyles;
