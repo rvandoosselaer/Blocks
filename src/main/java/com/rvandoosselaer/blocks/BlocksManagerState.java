@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 /**
  * An AppState implementation to manage the lifecycle of a {@link BlocksManager}.
  *
+ * @deprecated use {@link ChunkManagerState}
  * @author rvandoosselaer
  */
+@Deprecated
 @Getter
 @RequiredArgsConstructor
 public class BlocksManagerState extends BaseAppState {
