@@ -203,6 +203,25 @@ public class ChunkManagerTest {
         Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(optionalChunk.isPresent());
 
+        chunkManager.removeChunk(optionalChunk.get());
+
+        optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
+        assertFalse(optionalChunk.isPresent());
+    }
+
+    @Test
+    public void testRemoveChunkByLocationByLocation() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.initialize();
+
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
+        assertTrue(optionalChunk.isPresent());
+
         chunkManager.removeChunk(new Vec3i(0, 0, 0));
 
         optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
