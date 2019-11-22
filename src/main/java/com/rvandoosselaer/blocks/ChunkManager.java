@@ -21,7 +21,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * thread safe, but the lifecycle methods initialize, update and cleanup should be called from the same thread!
+ * The ChunkManager is responsible for the administration of chunks and the maintenance of the underlying ChunkCache.
+ * The ChunkManager is thread safe, but the lifecycle methods {@link #initialize()}, {@link #update()} and
+ * {@link #cleanup()} should be called from the same thread. It is good practice to let the lifecycle of the
+ * ChunkManager be handled by the {@link ChunkManagerState}.
+ * <p>
+ * A chunk can be retrieved by using the {@link #get(Vec3i)} method. When the chunk isn't available it can be
+ * requested with the {@link #request(Vec3i)} method.
+ * The ChunkManager will first try to load the requested chunk using the {@link ChunkRepository}. When this is not
+ * successful it will try to generate the chunk using the {@link ChunkGenerator}. When this also fails, an empty
+ * chunk will be created. The requested chunk is placed in the cache and can be retrieved with the {@link #get(Vec3i)}
+ * method.
+ * <p>
+ * Applications can register a {@link ChunkManagerListener} to the ChunkManager to get notified when a chunk is
+ * available in the cache or when a chunk is updated.
  *
  * @author: rvandoosselaer
  */
@@ -210,6 +223,10 @@ public class ChunkManager {
 
     public void removeListener(@NonNull ChunkManagerListener listener) {
         listeners.remove(listener);
+    }
+
+    public ChunkResolver getChunkResolver() {
+        return cache;
     }
 
     private void performLoading() {
