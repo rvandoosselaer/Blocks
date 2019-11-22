@@ -217,6 +217,11 @@ public class BlocksManager implements ChunkResolver {
         this.initialized = false;
     }
 
+    @Override
+    public Optional<Chunk> get(@NonNull Vec3i location) {
+        return Optional.ofNullable(getChunk(location));
+    }
+
     /**
      * Retrieves the chunk at the location from the cache.
      *
