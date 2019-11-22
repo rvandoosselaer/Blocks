@@ -26,11 +26,11 @@ import java.util.concurrent.Future;
  * {@link #cleanup()} should be called from the same thread. It is good practice to let the lifecycle of the
  * ChunkManager be handled by the {@link ChunkManagerState}.
  * <p>
- * A chunk can be retrieved by using the {@link #get(Vec3i)} method. When the chunk isn't available it can be
- * requested with the {@link #request(Vec3i)} method.
+ * A chunk can be retrieved by using the {@link #getChunk(Vec3i)} method. When the chunk isn't available it can be
+ * requested with the {@link #requestChunk(Vec3i)} method.
  * The ChunkManager will first try to load the requested chunk using the {@link ChunkRepository}. When this is not
  * successful it will try to generate the chunk using the {@link ChunkGenerator}. When this also fails, an empty
- * chunk will be created. The requested chunk is placed in the cache and can be retrieved with the {@link #get(Vec3i)}
+ * chunk will be created. The requested chunk is placed in the cache and can be retrieved with the {@link #getChunk(Vec3i)}
  * method.
  * <p>
  * Applications can register a {@link ChunkManagerListener} to the ChunkManager to get notified when a chunk is
@@ -92,34 +92,34 @@ public class ChunkManager {
      * @param location
      * @return location of the chunk
      */
-    public static Vec3i getLocation(Vector3f location) {
+    public static Vec3i getChunkLocation(Vector3f location) {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         // Math.floor() rounds the decimal part down; 4.13 => 4.0, 4.98 => 4.0, -7.82 => -8.0
         // downcasting double to int removes the decimal part
         return new Vec3i((int) Math.floor(location.x / chunkSize.x), (int) Math.floor(location.y / chunkSize.y), (int) Math.floor(location.z / chunkSize.z));
     }
 
-    public Optional<Chunk> get(Vec3i location) {
+    public Optional<Chunk> getChunk(Vec3i location) {
         assertInitialized();
 
         return location == null ? Optional.empty() : cache.get(location);
     }
 
-    public void request(Vec3i location) {
+    public void requestChunk(Vec3i location) {
         assertInitialized();
 
-        if (!get(location).isPresent()) {
+        if (!getChunk(location).isPresent()) {
             addElementToQueue(new Vec3i(location), loadingQueue);
         }
     }
 
-    public void requestUpdate(Vec3i location) {
+    public void requestChunkMeshUpdate(Vec3i location) {
         assertInitialized();
 
-        get(location).ifPresent(chunk -> addElementToQueue(chunk, meshQueue));
+        getChunk(location).ifPresent(chunk -> addElementToQueue(chunk, meshQueue));
     }
 
-    public void requestUpdate(Chunk chunk) {
+    public void requestChunkMeshUpdate(Chunk chunk) {
         assertInitialized();
 
         if (chunk != null) {
@@ -129,9 +129,9 @@ public class ChunkManager {
 
     /**
      * @param location of the chunk
-     * @see #remove(Chunk)
+     * @see #removeChunk(Chunk)
      */
-    public void remove(Vec3i location) {
+    public void removeChunk(Vec3i location) {
         assertInitialized();
 
         if (location != null) {
@@ -144,7 +144,7 @@ public class ChunkManager {
      *
      * @param chunk
      */
-    public void remove(Chunk chunk) {
+    public void removeChunk(Chunk chunk) {
         assertInitialized();
 
         if (chunk != null) {
@@ -352,7 +352,7 @@ public class ChunkManager {
     }
 
     private void handleMeshGenerationResult(Chunk chunk) {
-        if (get(chunk.getLocation()).isPresent()) {
+        if (getChunk(chunk.getLocation()).isPresent()) {
             triggerListenerChunkUpdated(chunk);
         } else {
             addToCache(chunk);

@@ -28,27 +28,27 @@ public class ChunkManagerTest {
         BlocksConfig.getInstance().setChunkSize(new Vec3i(16, 16, 16));
 
         Vector3f location = new Vector3f(0, 0, 0);
-        Vec3i chunkLocation = ChunkManager.getLocation(location);
+        Vec3i chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(0, 0, 0), chunkLocation);
 
         location = new Vector3f(13, 10, 5);
-        chunkLocation = ChunkManager.getLocation(location);
+        chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(0, 0, 0), chunkLocation);
 
         location = new Vector3f(-5, 3, -9);
-        chunkLocation = ChunkManager.getLocation(location);
+        chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(-1, 0, -1), chunkLocation);
 
         location = new Vector3f(16, 15, 2);
-        chunkLocation = ChunkManager.getLocation(location);
+        chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(1, 0, 0), chunkLocation);
 
         location = new Vector3f(16, 32, 2);
-        chunkLocation = ChunkManager.getLocation(location);
+        chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(1, 2, 0), chunkLocation);
     }
@@ -65,17 +65,17 @@ public class ChunkManagerTest {
         ChunkManager chunkManager = ChunkManager.builder().repository(repository).build();
         chunkManager.initialize();
 
-        Optional<Chunk> loadedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        Optional<Chunk> loadedChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertFalse(loadedChunk.isPresent());
 
-        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update(); // loading done
         Thread.sleep(50);
         chunkManager.update(); // mesh done
 
-        loadedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        loadedChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(loadedChunk.isPresent());
         assertEquals(loadedChunk.get(), chunk);
     }
@@ -92,17 +92,17 @@ public class ChunkManagerTest {
         ChunkManager chunkManager = ChunkManager.builder().generator(generator).build();
         chunkManager.initialize();
 
-        Optional<Chunk> generatedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        Optional<Chunk> generatedChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertFalse(generatedChunk.isPresent());
 
-        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update(); // generation done
         Thread.sleep(50);
         chunkManager.update(); // mesh done
 
-        generatedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        generatedChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(generatedChunk.isPresent());
         assertEquals(generatedChunk.get(), chunk);
     }
@@ -112,15 +112,15 @@ public class ChunkManagerTest {
         ChunkManager chunkManager = new ChunkManager();
         chunkManager.initialize();
 
-        Optional<Chunk> chunk = chunkManager.get(new Vec3i(0, 0, 0));
+        Optional<Chunk> chunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertFalse(chunk.isPresent());
 
-        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
         chunkManager.update(); // creation is instant
         Thread.sleep(50);
         chunkManager.update(); // mesh done
 
-        chunk = chunkManager.get(new Vec3i(0, 0, 0));
+        chunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(chunk.isPresent());
         assertTrue(chunk.get().isEmpty());
     }
@@ -133,12 +133,12 @@ public class ChunkManagerTest {
         chunkManager.addListener(listener);
         chunkManager.initialize();
 
-        chunkManager.request(new Vec3i(1, 2, 3));
+        chunkManager.requestChunk(new Vec3i(1, 2, 3));
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update();
 
-        Optional<Chunk> chunk = chunkManager.get(new Vec3i(1, 2, 3));
+        Optional<Chunk> chunk = chunkManager.getChunk(new Vec3i(1, 2, 3));
         assertTrue(chunk.isPresent());
 
         // check that the listener is called with the chunk
@@ -153,15 +153,15 @@ public class ChunkManagerTest {
         chunkManager.addListener(listener);
         chunkManager.initialize();
 
-        chunkManager.request(new Vec3i(3, 2, 1));
+        chunkManager.requestChunk(new Vec3i(3, 2, 1));
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update();
 
-        Optional<Chunk> chunk = chunkManager.get(new Vec3i(3, 2, 1));
+        Optional<Chunk> chunk = chunkManager.getChunk(new Vec3i(3, 2, 1));
         assertTrue(chunk.isPresent());
 
-        chunkManager.requestUpdate(new Vec3i(3, 2, 1));
+        chunkManager.requestChunkMeshUpdate(new Vec3i(3, 2, 1));
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update();
@@ -177,15 +177,15 @@ public class ChunkManagerTest {
 
         Chunk chunk = Chunk.createAt(new Vec3i(3, 3, 3));
 
-        Optional<Chunk> optionalChunk = chunkManager.get(new Vec3i(3, 3, 3));
+        Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(3, 3, 3));
         assertFalse(optionalChunk.isPresent());
 
-        chunkManager.requestUpdate(chunk);
+        chunkManager.requestChunkMeshUpdate(chunk);
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update();
 
-        optionalChunk = chunkManager.get(new Vec3i(3, 3, 3));
+        optionalChunk = chunkManager.getChunk(new Vec3i(3, 3, 3));
         assertTrue(optionalChunk.isPresent());
         assertEquals(optionalChunk.get(), chunk);
     }
@@ -195,17 +195,17 @@ public class ChunkManagerTest {
         ChunkManager chunkManager = new ChunkManager();
         chunkManager.initialize();
 
-        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
         chunkManager.update();
         Thread.sleep(50);
         chunkManager.update();
 
-        Optional<Chunk> optionalChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(optionalChunk.isPresent());
 
-        chunkManager.remove(new Vec3i(0, 0, 0));
+        chunkManager.removeChunk(new Vec3i(0, 0, 0));
 
-        optionalChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertFalse(optionalChunk.isPresent());
     }
 
