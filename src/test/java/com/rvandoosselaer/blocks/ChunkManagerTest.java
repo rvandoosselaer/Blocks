@@ -5,8 +5,13 @@ import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author: rvandoosselaer
@@ -46,6 +51,162 @@ public class ChunkManagerTest {
         chunkLocation = ChunkManager.getLocation(location);
 
         assertEquals(new Vec3i(1, 2, 0), chunkLocation);
+    }
+
+    @Test
+    public void testRequestChunkWithRepository() throws InterruptedException {
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+        chunk.update();
+
+        ChunkRepository repository = Mockito.mock(ChunkRepository.class);
+        Mockito.when(repository.load(new Vec3i(0, 0, 0))).thenReturn(chunk);
+
+        ChunkManager chunkManager = ChunkManager.builder().repository(repository).build();
+        chunkManager.initialize();
+
+        Optional<Chunk> loadedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertFalse(loadedChunk.isPresent());
+
+        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update(); // loading done
+        Thread.sleep(50);
+        chunkManager.update(); // mesh done
+
+        loadedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertTrue(loadedChunk.isPresent());
+        assertEquals(loadedChunk.get(), chunk);
+    }
+
+    @Test
+    public void testRequestChunkWithGenerator() throws InterruptedException {
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+        chunk.update();
+
+        ChunkGenerator generator = Mockito.mock(ChunkGenerator.class);
+        Mockito.when(generator.generate(new Vec3i(0, 0, 0))).thenReturn(chunk);
+
+        ChunkManager chunkManager = ChunkManager.builder().generator(generator).build();
+        chunkManager.initialize();
+
+        Optional<Chunk> generatedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertFalse(generatedChunk.isPresent());
+
+        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update(); // generation done
+        Thread.sleep(50);
+        chunkManager.update(); // mesh done
+
+        generatedChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertTrue(generatedChunk.isPresent());
+        assertEquals(generatedChunk.get(), chunk);
+    }
+
+    @Test
+    public void testRequestChunk() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.initialize();
+
+        Optional<Chunk> chunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertFalse(chunk.isPresent());
+
+        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.update(); // creation is instant
+        Thread.sleep(50);
+        chunkManager.update(); // mesh done
+
+        chunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertTrue(chunk.isPresent());
+        assertTrue(chunk.get().isEmpty());
+    }
+
+    @Test
+    public void testListenerCalledWhenChunkAvailable() throws InterruptedException {
+        ChunkManagerListener listener = Mockito.mock(ChunkManagerListener.class);
+
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.addListener(listener);
+        chunkManager.initialize();
+
+        chunkManager.request(new Vec3i(1, 2, 3));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        Optional<Chunk> chunk = chunkManager.get(new Vec3i(1, 2, 3));
+        assertTrue(chunk.isPresent());
+
+        // check that the listener is called with the chunk
+        Mockito.verify(listener).onChunkAvailable(chunk.get());
+    }
+
+    @Test
+    public void testListenerCalledWhenChunkUpdated() throws InterruptedException {
+        ChunkManagerListener listener = Mockito.mock(ChunkManagerListener.class);
+
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.addListener(listener);
+        chunkManager.initialize();
+
+        chunkManager.request(new Vec3i(3, 2, 1));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        Optional<Chunk> chunk = chunkManager.get(new Vec3i(3, 2, 1));
+        assertTrue(chunk.isPresent());
+
+        chunkManager.requestUpdate(new Vec3i(3, 2, 1));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        // check that the listener is called with the chunk
+        Mockito.verify(listener).onChunkUpdated(chunk.get());
+    }
+
+    @Test
+    public void testRequestUpdateChunkIsAdded() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.initialize();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(3, 3, 3));
+
+        Optional<Chunk> optionalChunk = chunkManager.get(new Vec3i(3, 3, 3));
+        assertFalse(optionalChunk.isPresent());
+
+        chunkManager.requestUpdate(chunk);
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        optionalChunk = chunkManager.get(new Vec3i(3, 3, 3));
+        assertTrue(optionalChunk.isPresent());
+        assertEquals(optionalChunk.get(), chunk);
+    }
+
+    @Test
+    public void testRemoveChunk() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.initialize();
+
+        chunkManager.request(new Vec3i(0, 0, 0));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        Optional<Chunk> optionalChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertTrue(optionalChunk.isPresent());
+
+        chunkManager.remove(new Vec3i(0, 0, 0));
+
+        optionalChunk = chunkManager.get(new Vec3i(0, 0, 0));
+        assertFalse(optionalChunk.isPresent());
     }
 
 }

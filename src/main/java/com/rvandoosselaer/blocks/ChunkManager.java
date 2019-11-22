@@ -5,6 +5,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -33,7 +35,7 @@ public class ChunkManager {
     private Queue<Vec3i> loadingQueue = new ConcurrentLinkedQueue<>();
     private Queue<Vec3i> generatorQueue = new ConcurrentLinkedQueue<>();
     private Queue<Chunk> meshQueue = new ConcurrentLinkedQueue<>();
-    private List<Future<Chunk>> loadingResults = new ArrayList<>();
+    private List<Future<LoadingResult>> loadingResults = new ArrayList<>();
     private List<Future<Chunk>> generatorResults = new ArrayList<>();
     private List<Future<Chunk>> meshResults = new ArrayList<>();
     private ChunkRepository repository;
@@ -50,6 +52,7 @@ public class ChunkManager {
     private ExecutorService repositoryExecutor;
     private ExecutorService generatorExecutor;
     private ExecutorService meshExecutor;
+    private final List<ChunkManagerListener> listeners = new CopyOnWriteArrayList<>();
 
     public ChunkManager() {
         this(0);
@@ -163,14 +166,16 @@ public class ChunkManager {
         initialized = true;
     }
 
-    public void update(float tpf) {
+    public void update() {
         assertInitialized();
+
+        handleLoadResults();
+        handleGenerationResults();
+        handleMeshGenerationResults();
 
         performLoading();
         performGeneration();
         performMeshGeneration();
-
-        handleLoadResults();
 
         performCacheMaintenance();
     }
@@ -199,6 +204,14 @@ public class ChunkManager {
         initialized = false;
     }
 
+    public void addListener(@NonNull ChunkManagerListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(@NonNull ChunkManagerListener listener) {
+        listeners.remove(listener);
+    }
+
     private void performLoading() {
         if (loadingQueue.isEmpty()) {
             return;
@@ -214,7 +227,7 @@ public class ChunkManager {
             return;
         }
 
-        Future<Chunk> loadingResult = repositoryExecutor.submit(new LoadingCallable(location, repository));
+        Future<LoadingResult> loadingResult = repositoryExecutor.submit(new LoadingCallable(location, repository));
         loadingResults.add(loadingResult);
     }
 
@@ -251,15 +264,100 @@ public class ChunkManager {
         meshResults.add(meshResult);
     }
 
+    private void handleLoadResults() {
+        if (loadingResults.isEmpty()) {
+            return;
+        }
+
+        Optional<Future<LoadingResult>> loadingResult = loadingResults.stream().filter(Future::isDone).findFirst();
+        if (loadingResult.isPresent()) {
+            Future<LoadingResult> loadingResultFuture = loadingResult.get();
+            try {
+                handleLoadResult(loadingResultFuture.get());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            loadingResults.remove(loadingResultFuture);
+        }
+
+        loadingResults.removeIf(Future::isCancelled);
+    }
+
+    private void handleLoadResult(LoadingResult loadingResult) {
+        if (loadingResult.hasChunk()) {
+            addElementToQueue(loadingResult.getChunk(), meshQueue);
+        } else {
+            addElementToQueue(loadingResult.getLocation(), generatorQueue);
+        }
+
+    }
+
+    private void handleGenerationResults() {
+        if (generatorResults.isEmpty()) {
+            return;
+        }
+
+        Optional<Future<Chunk>> generatorResult = generatorResults.stream().filter(Future::isDone).findFirst();
+        if (generatorResult.isPresent()) {
+            Future<Chunk> generatorResultFuture = generatorResult.get();
+            try {
+                handleGenerationResult(generatorResultFuture.get());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            generatorResults.remove(generatorResultFuture);
+        }
+
+        generatorResults.removeIf(Future::isCancelled);
+    }
+
+    private void handleGenerationResult(Chunk chunk) {
+        addElementToQueue(chunk, meshQueue);
+    }
+
+    private void handleMeshGenerationResults() {
+        if (meshResults.isEmpty()) {
+            return;
+        }
+
+        Optional<Future<Chunk>> meshResult = meshResults.stream().filter(Future::isDone).findFirst();
+        if (meshResult.isPresent()) {
+            Future<Chunk> meshResultFuture = meshResult.get();
+            try {
+                handleMeshGenerationResult(meshResultFuture.get());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            meshResults.remove(meshResultFuture);
+        }
+
+        meshResults.removeIf(Future::isCancelled);
+    }
+
+    private void handleMeshGenerationResult(Chunk chunk) {
+        if (get(chunk.getLocation()).isPresent()) {
+            triggerListenerChunkUpdated(chunk);
+        } else {
+            addToCache(chunk);
+        }
+    }
+
+    private void triggerListenerChunkUpdated(Chunk chunk) {
+        listeners.forEach(listener -> listener.onChunkUpdated(chunk));
+    }
+
+    private void triggerListenerChunkAvailable(Chunk chunk) {
+        listeners.forEach(listener -> listener.onChunkAvailable(chunk));
+    }
+
     private void createChunk(Vec3i location) {
         Chunk chunk = Chunk.createAt(location);
-
-        addToCache(chunk);
+        addElementToQueue(chunk, meshQueue);
     }
 
     private void addToCache(Chunk chunk) {
         cache.put(chunk);
-        //TODO: trigger ChunkManagerListener.chunkAvailable(chunk);
+        triggerListenerChunkAvailable(chunk);
     }
 
     private void assertInitialized() {
@@ -298,15 +396,28 @@ public class ChunkManager {
         return Executors.newFixedThreadPool(size, new ThreadFactoryBuilder().setNameFormat(name).build());
     }
 
+    @Getter
     @RequiredArgsConstructor
-    private static class LoadingCallable implements Callable<Chunk> {
+    private static class LoadingResult {
+
+        private final Vec3i location;
+        private final Chunk chunk;
+
+        boolean hasChunk() {
+            return chunk != null;
+        }
+
+    }
+
+    @RequiredArgsConstructor
+    private static class LoadingCallable implements Callable<LoadingResult> {
 
         private final Vec3i location;
         private final ChunkRepository repository;
 
         @Override
-        public Chunk call() {
-            return repository.load(location);
+        public LoadingResult call() {
+            return new LoadingResult(location, repository.load(location));
         }
 
     }
@@ -319,7 +430,9 @@ public class ChunkManager {
 
         @Override
         public Chunk call() {
-            return generator.generate(location);
+            Chunk chunk = generator.generate(location);
+            chunk.update();
+            return chunk;
         }
 
     }
