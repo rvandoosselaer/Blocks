@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -223,6 +224,11 @@ public class FacesMeshGeneratorTest {
 
         public void addAll(Chunk... chunks) {
             Arrays.stream(chunks).forEach(this::add);
+        }
+
+        @Override
+        public Optional<Chunk> get(@NonNull Vec3i location) {
+            return Optional.ofNullable(getChunk(location));
         }
 
         @Override
