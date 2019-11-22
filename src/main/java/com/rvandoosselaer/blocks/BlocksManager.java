@@ -1,9 +1,5 @@
 package com.rvandoosselaer.blocks;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.RemovalCause;
-import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
@@ -14,7 +10,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,14 +51,14 @@ import java.util.concurrent.Future;
  * @author rvandoosselaer
  */
 @Slf4j
-public class BlocksManager implements ChunkResolver {
+public class BlocksManager {
 
     /**
      * The size of the cache. Set to increase or decrease the number of chunks to keep in memory.
      */
     private final int cacheSize;
 
-    private Cache<Vec3i, Chunk> cache;
+    private ChunkCache cache;
     @Getter
     private boolean initialized = false;
     @Getter
@@ -94,6 +89,11 @@ public class BlocksManager implements ChunkResolver {
     private List<Future<Chunk>> chunkGenerationResults = new ArrayList<>();
     private int storeInterval = -1;
     private long lastStoredTimestamp = -1;
+    /**
+     * Time between cache maintenance operations in milliseconds
+     */
+    private int cacheMaintenanceInterval = 1000;
+    private long lastCacheMaintenanceTimestamp = -1;
 
     public BlocksManager() {
         this(0);
@@ -104,7 +104,7 @@ public class BlocksManager implements ChunkResolver {
     }
 
     @Builder
-    private BlocksManager(int cacheSize, int meshGenerationPoolSize, int chunkPersistencePoolSize, int chunkGenerationPoolSize, ChunkRepository chunkRepository, ChunkGenerator chunkGenerator, int storeInterval) {
+    private BlocksManager(int cacheSize, int meshGenerationPoolSize, int chunkPersistencePoolSize, int chunkGenerationPoolSize, ChunkRepository chunkRepository, ChunkGenerator chunkGenerator, int storeInterval, int cacheMaintenanceInterval) {
         this.cacheSize = cacheSize;
         this.meshGenerationPoolSize = meshGenerationPoolSize;
         this.chunkPersistencePoolSize = chunkPersistencePoolSize;
@@ -112,6 +112,7 @@ public class BlocksManager implements ChunkResolver {
         this.chunkRepository = chunkRepository;
         this.chunkGenerator = chunkGenerator;
         this.storeInterval = storeInterval;
+        this.cacheMaintenanceInterval = cacheMaintenanceInterval;
     }
 
     public void initialize() {
@@ -119,7 +120,7 @@ public class BlocksManager implements ChunkResolver {
             log.trace("{} - initialize", getClass().getSimpleName());
         }
 
-        cache = createCache(cacheSize);
+        cache = new ChunkCache(cacheSize);
 
         // start executors
         if (isMeshGenerationMultiThreaded()) {
@@ -168,6 +169,13 @@ public class BlocksManager implements ChunkResolver {
             storeChunks();
             lastStoredTimestamp = System.currentTimeMillis();
         }
+
+        // cache maintenance
+        boolean shouldPerformMaintenance = cacheMaintenanceInterval > 0 && System.currentTimeMillis() >= lastCacheMaintenanceTimestamp + cacheMaintenanceInterval;
+        if (shouldPerformMaintenance) {
+            cache.maintain();
+            lastCacheMaintenanceTimestamp = System.currentTimeMillis();
+        }
     }
 
     public void cleanup() {
@@ -211,8 +219,7 @@ public class BlocksManager implements ChunkResolver {
         chunkLoadingResults.clear();
         chunkGenerationResults.clear();
         // clear the cache
-        cache.invalidateAll();
-        cache.cleanUp();
+        cache.evictAll();
 
         this.initialized = false;
     }
@@ -223,17 +230,12 @@ public class BlocksManager implements ChunkResolver {
      * @param location of the chunk
      * @return chunk or null when not found
      */
-    @Override
     public Chunk getChunk(@NonNull Vec3i location) {
         if (!isInitialized()) {
             throw new IllegalStateException("BlocksManager is not initialized!");
         }
 
-        Chunk chunk = cache.getIfPresent(location);
-        if (log.isTraceEnabled()) {
-            log.trace("Fetching chunk from cache: {} -> {}", location, chunk);
-        }
-        return chunk;
+        return cache.get(location).orElse(null);
     }
 
     /**
@@ -272,7 +274,7 @@ public class BlocksManager implements ChunkResolver {
             throw new IllegalStateException("BlocksManager is not initialized!");
         }
 
-        cache.invalidate(location);
+        cache.evict(location);
     }
 
     /**
@@ -619,51 +621,19 @@ public class BlocksManager implements ChunkResolver {
 
     private void addToCache(@NonNull Chunk chunk) {
         if (chunk.getChunkResolver() == null) {
-            chunk.setChunkResolver(this);
+            chunk.setChunkResolver(cache);
             if (log.isTraceEnabled()) {
-                log.trace("Setting {} as chunk resolver on {}.", this, chunk);
+                log.trace("Setting {} as chunk resolver on {}.", cache, chunk);
             }
         }
-        cache.put(chunk.getLocation(), chunk);
+        cache.put(chunk);
         if (log.isTraceEnabled()) {
-            log.trace("Adding {} to cache. Estimated new cache size: {}", chunk, cache.estimatedSize());
+            log.trace("Adding {} to cache. Estimated new cache size: {}", chunk, cache.getSize());
         }
-    }
-
-    /**
-     * Construct the BlocksManager cache. When a size &lte; 0 of is specified, a minimum value is calculated.
-     *
-     * @param cacheSize
-     * @return cache
-     */
-    private static Cache<Vec3i, Chunk> createCache(int cacheSize) {
-        Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
-        int minimumSize = (gridSize.x + 1) * (gridSize.y + 1) * (gridSize.z + 1);
-        if (cacheSize > 0 && cacheSize < minimumSize) {
-            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
-        }
-
-        return Caffeine.newBuilder()
-                .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
-                .removalListener(new CacheRemovalListener())
-                .build();
     }
 
     private static ExecutorService createNamedFixedThreadPool(int size, String name) {
         return Executors.newFixedThreadPool(size, new ThreadFactoryBuilder().setNameFormat(name).build());
-    }
-
-    private static class CacheRemovalListener implements RemovalListener<Vec3i, Chunk> {
-
-        @Override
-        public void onRemoval(@Nullable Vec3i key, @Nullable Chunk value, @org.checkerframework.checker.nullness.qual.NonNull RemovalCause cause) {
-            if (value != null && value.getNode() != null && value.getNode().getParent() != null) {
-                log.warn("{} is evicted from the cache, but its node is still attached!", value);
-            }
-
-            Optional.ofNullable(value).ifPresent(Chunk::clean);
-        }
-
     }
 
     @RequiredArgsConstructor

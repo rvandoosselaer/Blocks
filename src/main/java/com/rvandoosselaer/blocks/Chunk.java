@@ -208,12 +208,22 @@ public class Chunk {
         }
     }
 
+    /**
+     * @deprecated use {@link #cleanup()} instead
+     */
+    @Deprecated
     public void clean() {
+        cleanup();
+    }
+
+    public void cleanup() {
         this.blocks = null;
         this.node = null;
         this.collisionMesh = null;
         this.location = null;
         this.worldLocation = null;
+        this.chunkResolver = null;
+        this.faceVisibleFunction = null;
     }
 
     /**
