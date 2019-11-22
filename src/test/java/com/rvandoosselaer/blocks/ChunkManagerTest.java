@@ -1,6 +1,7 @@
 package com.rvandoosselaer.blocks;
 
 import com.jme3.asset.DesktopAssetManager;
+import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -226,6 +228,98 @@ public class ChunkManagerTest {
 
         optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertFalse(optionalChunk.isPresent());
+    }
+
+    @Test
+    public void testAddBlock() throws InterruptedException {
+        ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
+
+        Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
+
+        assertTrue(optionalChunk.isPresent());
+        assertEquals(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+    }
+
+    @Test
+    public void testRemoveBlock() throws InterruptedException {
+        ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
+
+        Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
+
+        assertTrue(optionalChunk.isPresent());
+        assertEquals(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+
+        chunkManager.removeBlock(new Vector3f(0.2f, 0.3f, 0.8f));
+
+        optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
+        assertTrue(optionalChunk.isPresent());
+        assertNull(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)));
+    }
+
+    @Test
+    public void testGetBlock() throws InterruptedException {
+        ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
+
+        Optional<Block> optionalBlock = chunkManager.getBlock(new Vector3f(0.5f, 0.2f, 0.8f));
+        assertTrue(optionalBlock.isPresent());
+        assertEquals(optionalBlock.get(), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+    }
+
+    @Test
+    public void testGetBlockFromCollisionResult() throws InterruptedException {
+        ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
+
+        CollisionResult collisionResult = new CollisionResult();
+        collisionResult.setContactPoint(new Vector3f(0.8f, 1.0121f, 0.8f));
+        collisionResult.setContactNormal(Vector3f.UNIT_Y);
+
+        Optional<Block> optionalBlock = chunkManager.getBlock(collisionResult);
+        assertTrue(optionalBlock.isPresent());
+        assertEquals(optionalBlock.get(), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+    }
+
+    @Test
+    public void testGetNeighbourBlock() throws InterruptedException {
+        ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
+
+        Optional<Block> optionalBlock = chunkManager.getNeighbourBlock(new Vector3f(0.5f, 0.9f, 0.1f), Direction.RIGHT);
+        assertFalse(optionalBlock.isPresent());
+
+        optionalBlock = chunkManager.getNeighbourBlock(new Vector3f(1.4f, 0.5f, 0.3f), Direction.LEFT);
+        assertTrue(optionalBlock.isPresent());
+        assertEquals(optionalBlock.get(), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+    }
+
+    @Test
+    public void testGetNeighbourBlockFromCollisionResult() throws InterruptedException {
+        ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
+
+        CollisionResult collisionResult = new CollisionResult();
+        collisionResult.setContactPoint(new Vector3f(0.2f, 1.001f, 0.3f));
+        collisionResult.setContactNormal(Vector3f.UNIT_Y.negate());
+
+        Optional<Block> optionalBlock = chunkManager.getNeighbourBlock(collisionResult);
+        assertTrue(optionalBlock.isPresent());
+        assertEquals(optionalBlock.get(), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+
+        collisionResult.setContactPoint(new Vector3f(0.993f, 0.5f, 0.3f));
+        collisionResult.setContactNormal(new Vector3f(Vector3f.UNIT_X));
+
+        optionalBlock = chunkManager.getNeighbourBlock(collisionResult);
+        assertFalse(optionalBlock.isPresent());
+    }
+
+    private ChunkManager getChunkManagerWithBlockAtZero() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.initialize();
+
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
+        chunkManager.update();
+        Thread.sleep(50);
+        chunkManager.update();
+
+        chunkManager.addBlock(new Vector3f(0.7f, 0.9f, 0.3f), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+        return chunkManager;
     }
 
 }
