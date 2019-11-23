@@ -315,6 +315,7 @@ public class ChunkManagerTest {
     @Test
     public void testChunkTriggersMeshUpdateOnAdjacentChunks() throws InterruptedException {
         ChunkManager chunkManager = new ChunkManager();
+        chunkManager.setTriggerAdjacentChunkUpdates(true);
         ChunkManagerListener listener = Mockito.mock(ChunkManagerListener.class);
         chunkManager.addListener(listener);
         chunkManager.initialize();
