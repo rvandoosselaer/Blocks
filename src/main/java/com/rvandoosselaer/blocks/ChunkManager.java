@@ -118,6 +118,22 @@ public class ChunkManager {
         return new Vec3i((int) Math.floor(location.x / chunkSize.x), (int) Math.floor(location.y / chunkSize.y), (int) Math.floor(location.z / chunkSize.z));
     }
 
+    public static Vec3i getBlockLocation(@NonNull Vector3f location) {
+        return toVec3i(location);
+    }
+
+    public static Vec3i getBlockLocation(@NonNull CollisionResult collisionResult) {
+        return toVec3i(getAdjustedContactPoint(collisionResult.getContactPoint(), collisionResult.getContactNormal()));
+    }
+
+    public static Vec3i getNeighbourBlockLocation(@NonNull Vector3f location, Direction direction) {
+        return toVec3i(getNeighbourBlockLocation(location, direction.getVector().toVector3f()));
+    }
+
+    public static Vec3i getNeighbourBlockLocation(@NonNull CollisionResult collisionResult) {
+        return toVec3i(getNeighbourBlockLocation(collisionResult.getContactPoint(), collisionResult.getContactNormal()));
+    }
+
     public Optional<Chunk> getChunk(Vec3i location) {
         assertInitialized();
 
@@ -289,8 +305,12 @@ public class ChunkManager {
         }
 
         // stop executors
-        repositoryExecutor.shutdownNow();
-        generatorExecutor.shutdownNow();
+        if (repositoryExecutor != null) {
+            repositoryExecutor.shutdownNow();
+        }
+        if (generatorExecutor != null) {
+            generatorExecutor.shutdownNow();
+        }
         meshExecutor.shutdownNow();
 
         // clear queues and cache
@@ -321,13 +341,13 @@ public class ChunkManager {
         return new Vec3i((int) Math.floor(location.x), (int) Math.floor(location.y), (int) Math.floor(location.z));
     }
 
-    private Vector3f getAdjustedContactPoint(Vector3f contactPoint, Vector3f contactNormal) {
+    private static Vector3f getAdjustedContactPoint(Vector3f contactPoint, Vector3f contactNormal) {
         // add a small offset to the contact point, so we point a bit more 'inward' into the block
         float blockScale = BlocksConfig.getInstance().getBlockScale();
         return contactPoint.add(contactNormal.negate().multLocal(0.05f * blockScale));
     }
 
-    private Vector3f getNeighbourBlockLocation(Vector3f location, Vector3f normal) {
+    private static Vector3f getNeighbourBlockLocation(Vector3f location, Vector3f normal) {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
         Vector3f neighbourDirection = normal.mult(0.75f * blockScale);
         return location.add(neighbourDirection);
@@ -525,6 +545,7 @@ public class ChunkManager {
 
     private void addToCache(Chunk chunk) {
         cache.put(chunk);
+        chunk.setChunkResolver(cache);
         triggerListenerChunkAvailable(chunk);
     }
 
