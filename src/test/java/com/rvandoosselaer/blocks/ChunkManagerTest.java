@@ -7,6 +7,9 @@ import com.simsilica.mathd.Vec3i;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.AtLeast;
+import org.mockito.internal.verification.AtMost;
+import org.mockito.internal.verification.Times;
 
 import java.util.Optional;
 
@@ -307,6 +310,74 @@ public class ChunkManagerTest {
 
         optionalBlock = chunkManager.getNeighbourBlock(collisionResult);
         assertFalse(optionalBlock.isPresent());
+    }
+
+    @Test
+    public void testChunkTriggersMeshUpdateOnAdjacentChunks() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        ChunkManagerListener listener = Mockito.mock(ChunkManagerListener.class);
+        chunkManager.addListener(listener);
+        chunkManager.initialize();
+
+        chunkManager.requestChunk(new Vec3i(0, 0, 0));
+        chunkManager.requestChunk(new Vec3i(1, 0, 0));
+        chunkManager.requestChunk(new Vec3i(2, 0, 0));
+        chunkManager.requestChunk(new Vec3i(0, 0, 1));
+        chunkManager.requestChunk(new Vec3i(1, 0, 1));
+        chunkManager.requestChunk(new Vec3i(2, 0, 1));
+        chunkManager.requestChunk(new Vec3i(0, 0, 2));
+        chunkManager.requestChunk(new Vec3i(1, 0, 2));
+        chunkManager.requestChunk(new Vec3i(2, 0, 2));
+
+        // make sure we update enough before polling the results
+        updateChunkManager(60, chunkManager);
+
+        // a chunk should have been updated at least 2 times, and at most 4 times
+        // edge chunks have 2 neighbours, the center chunk has 4 neighbours. We check however with at least 1 invocation
+        // as it is possible that the chunk was requested 2 times, but was already in the queue, in this case the listener
+        // will only be called once.
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 0)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 0)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 0)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 0)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 0)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 0)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 1)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 1)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 1)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 1)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 1)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 1)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 2)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 2)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 2)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 2)).get());
+        Mockito.verify(listener, new AtLeast(1)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 2)).get());
+        Mockito.verify(listener, new AtMost(4)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 2)).get());
+
+        Mockito.reset(listener);
+
+        chunkManager.addBlock(new Vector3f(0, 0, 0), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+
+        updateChunkManager(3, chunkManager);
+
+        Mockito.verify(listener).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 0)).get());
+        Mockito.verify(listener).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 0)).get());
+        Mockito.verify(listener).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 1)).get());
+        Mockito.verify(listener, new Times(0)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 0)).get());
+        Mockito.verify(listener, new Times(0)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 1)).get());
+        Mockito.verify(listener, new Times(0)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 1)).get());
+        Mockito.verify(listener, new Times(0)).onChunkUpdated(chunkManager.getChunk(new Vec3i(0, 0, 2)).get());
+        Mockito.verify(listener, new Times(0)).onChunkUpdated(chunkManager.getChunk(new Vec3i(1, 0, 2)).get());
+        Mockito.verify(listener, new Times(0)).onChunkUpdated(chunkManager.getChunk(new Vec3i(2, 0, 2)).get());
+    }
+
+    private void updateChunkManager(int times, ChunkManager chunkManager) throws InterruptedException {
+        for (int i = 0; i < times; i++) {
+            chunkManager.update();
+            Thread.sleep(50);
+            chunkManager.update();
+        }
     }
 
     private ChunkManager getChunkManagerWithBlockAtZero() throws InterruptedException {

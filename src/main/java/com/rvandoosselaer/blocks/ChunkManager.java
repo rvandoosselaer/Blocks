@@ -10,17 +10,23 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * The ChunkManager is responsible for the administration of chunks and the maintenance of the underlying ChunkCache.
@@ -68,6 +74,17 @@ public class ChunkManager {
     private ExecutorService generatorExecutor;
     private ExecutorService meshExecutor;
     private final List<ChunkManagerListener> listeners = new CopyOnWriteArrayList<>();
+    /**
+     * The ChunkManager triggers mesh updates on adjacent chunks when they are added or updated. This is because the
+     * face checking algorithm takes neighbouring chunks in to account. It is possible however that a chunk is rendered
+     * while it's neighbour was not yet available, resulting in a to detailed mesh. That's why we trigger the mesh update
+     * again when the neighbour is available. We should take care however to not get into an infinite loop: Chunk A
+     * triggers chunk B, chunk B triggers chunk A, chunk A trigger chunk B again...
+     * That's why we keep a registry of chunk update triggers to keep track of who updated who. This registry is checked
+     * before an update is triggered to make sure that chunks don't keep triggering each other. Values in the registry
+     * are only removed when the structure (blocks) of a chunk changes. When addBlock or removeBlock are called.
+     */
+    private final Set<Map.Entry<Chunk, Chunk>> chunkUpdateRegistry = new HashSet<>();
 
     public ChunkManager() {
         this(0);
@@ -321,6 +338,7 @@ public class ChunkManager {
         Block previousBlock = chunk.addBlock(blockLocationInsideChunk, block);
         if (!Objects.equals(previousBlock, block)) {
             chunk.update();
+            chunkUpdateRegistry.removeIf(entry -> entry.getKey().equals(chunk));
             addElementToQueue(chunk, meshQueue);
         }
     }
@@ -330,6 +348,7 @@ public class ChunkManager {
         Block block = chunk.removeBlock(blockLocationInsideChunk);
         if (block != null) {
             chunk.update();
+            chunkUpdateRegistry.removeIf(entry -> entry.getKey().equals(chunk));
             addElementToQueue(chunk, meshQueue);
         }
     }
@@ -462,6 +481,33 @@ public class ChunkManager {
         } else {
             addToCache(chunk);
         }
+
+        updateAdjacentChunks(chunk);
+    }
+
+    private void updateAdjacentChunks(Chunk chunk) {
+        Set<Vec3i> adjacentChunkLocations = getAdjacentChunkLocations(chunk);
+
+        for (Vec3i chunkLocation : adjacentChunkLocations) {
+            getChunk(chunkLocation).ifPresent(neighbour -> chunkWantsToUpdateNeighbour(chunk, neighbour));
+        }
+    }
+
+    private void chunkWantsToUpdateNeighbour(Chunk chunk, Chunk neighbour) {
+        if (isChunkAllowedToUpdateNeighbour(chunk, neighbour)) {
+            requestChunkMeshUpdate(neighbour);
+            chunkUpdateRegistry.add(new AbstractMap.SimpleImmutableEntry<>(chunk, neighbour));
+        }
+    }
+
+    private Set<Vec3i> getAdjacentChunkLocations(Chunk chunk) {
+        return Arrays.stream(Direction.values())
+                .map(direction -> chunk.getLocation().add(direction.getVector()))
+                .collect(Collectors.toSet());
+    }
+
+    private boolean isChunkAllowedToUpdateNeighbour(Chunk chunk, Chunk neighbour) {
+        return !chunkUpdateRegistry.contains(new AbstractMap.SimpleImmutableEntry<>(chunk, neighbour));
     }
 
     private void triggerListenerChunkUpdated(Chunk chunk) {
