@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.AbstractMap;
@@ -65,6 +66,8 @@ public class ChunkManager {
     /**
      * Time between cache maintenance operations in milliseconds
      */
+    @Getter
+    @Setter
     private int cacheMaintenanceInterval = 1000;
     private long lastCacheMaintenanceTimestamp = -1;
     private int repositoryPoolSize = 1;
@@ -84,7 +87,10 @@ public class ChunkManager {
      * before an update is triggered to make sure that chunks don't keep triggering each other. Values in the registry
      * are only removed when the structure (blocks) of a chunk changes. When addBlock or removeBlock are called.
      */
-    private final Set<Map.Entry<Chunk, Chunk>> chunkUpdateRegistry = new HashSet<>();
+    private final Set<Map.Entry<Chunk, Chunk>> chunkUpdateTriggersRegistry = new HashSet<>();
+    @Getter
+    @Setter
+    private boolean triggerAdjacentChunkUpdates;
 
     public ChunkManager() {
         this(0);
@@ -95,7 +101,7 @@ public class ChunkManager {
     }
 
     @Builder
-    private ChunkManager(int cacheSize, ChunkRepository repository, int repositoryPoolSize, ChunkGenerator generator, int generatorPoolSize, int meshPoolSize, int cacheMaintenanceInterval) {
+    private ChunkManager(int cacheSize, ChunkRepository repository, int repositoryPoolSize, ChunkGenerator generator, int generatorPoolSize, int meshPoolSize, int cacheMaintenanceInterval, boolean triggerAdjacentChunkUpdates) {
         this.cacheSize = cacheSize;
         this.repository = repository;
         this.repositoryPoolSize = repositoryPoolSize;
@@ -103,6 +109,7 @@ public class ChunkManager {
         this.generatorPoolSize = generatorPoolSize;
         this.meshPoolSize = meshPoolSize;
         this.cacheMaintenanceInterval = cacheMaintenanceInterval;
+        this.triggerAdjacentChunkUpdates = triggerAdjacentChunkUpdates;
     }
 
     /**
@@ -358,7 +365,7 @@ public class ChunkManager {
         Block previousBlock = chunk.addBlock(blockLocationInsideChunk, block);
         if (!Objects.equals(previousBlock, block)) {
             chunk.update();
-            chunkUpdateRegistry.removeIf(entry -> entry.getKey().equals(chunk));
+            chunkUpdateTriggersRegistry.removeIf(entry -> entry.getKey().equals(chunk));
             addElementToQueue(chunk, meshQueue);
         }
     }
@@ -368,7 +375,7 @@ public class ChunkManager {
         Block block = chunk.removeBlock(blockLocationInsideChunk);
         if (block != null) {
             chunk.update();
-            chunkUpdateRegistry.removeIf(entry -> entry.getKey().equals(chunk));
+            chunkUpdateTriggersRegistry.removeIf(entry -> entry.getKey().equals(chunk));
             addElementToQueue(chunk, meshQueue);
         }
     }
@@ -502,7 +509,9 @@ public class ChunkManager {
             addToCache(chunk);
         }
 
-        updateAdjacentChunks(chunk);
+        if (isTriggerAdjacentChunkUpdates()) {
+            updateAdjacentChunks(chunk);
+        }
     }
 
     private void updateAdjacentChunks(Chunk chunk) {
@@ -516,7 +525,7 @@ public class ChunkManager {
     private void chunkWantsToUpdateNeighbour(Chunk chunk, Chunk neighbour) {
         if (isChunkAllowedToUpdateNeighbour(chunk, neighbour)) {
             requestChunkMeshUpdate(neighbour);
-            chunkUpdateRegistry.add(new AbstractMap.SimpleImmutableEntry<>(chunk, neighbour));
+            chunkUpdateTriggersRegistry.add(new AbstractMap.SimpleImmutableEntry<>(chunk, neighbour));
         }
     }
 
@@ -527,7 +536,7 @@ public class ChunkManager {
     }
 
     private boolean isChunkAllowedToUpdateNeighbour(Chunk chunk, Chunk neighbour) {
-        return !chunkUpdateRegistry.contains(new AbstractMap.SimpleImmutableEntry<>(chunk, neighbour));
+        return !chunkUpdateTriggersRegistry.contains(new AbstractMap.SimpleImmutableEntry<>(chunk, neighbour));
     }
 
     private void triggerListenerChunkUpdated(Chunk chunk) {
