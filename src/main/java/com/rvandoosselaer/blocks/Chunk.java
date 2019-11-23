@@ -282,8 +282,9 @@ public class Chunk {
             Vec3i chunkLocation = calculateNeighbourChunkLocation(blockLocation);
             Vec3i neighbourBlockLocation = calculateNeighbourChunkBlockLocation(blockLocation);
 
-            Chunk chunk = chunkResolver.getChunk(chunkLocation);
-            return chunk != null ? chunk.getBlock(neighbourBlockLocation.x, neighbourBlockLocation.y, neighbourBlockLocation.z) : null;
+            return chunkResolver.get(chunkLocation)
+                    .map(value -> value.getBlock(neighbourBlockLocation.x, neighbourBlockLocation.y, neighbourBlockLocation.z))
+                    .orElse(null);
         }
 
         return null;
