@@ -48,9 +48,11 @@ import java.util.concurrent.Future;
  * the node at a later time.
  * Applications can register a {@link BlocksManagerListener} to be notified when the mesh of a chunk is updated.
  *
+ * @deprecated use {@link ChunkManager} instead
  * @author rvandoosselaer
  */
 @Slf4j
+@Deprecated
 public class BlocksManager {
 
     /**

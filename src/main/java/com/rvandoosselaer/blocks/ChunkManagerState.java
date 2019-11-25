@@ -3,36 +3,32 @@ package com.rvandoosselaer.blocks;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * An AppState implementation to manage the lifecycle of a {@link BlocksManager}.
+ * An application state to handle the lifecycle of a ChunkManager.
  *
- * @deprecated use {@link ChunkManagerState}
- * @author rvandoosselaer
+ * @author: rvandoosselaer
  */
-@Deprecated
 @Getter
 @RequiredArgsConstructor
-public class BlocksManagerState extends BaseAppState {
+public class ChunkManagerState extends BaseAppState {
 
-    @NonNull
-    private final BlocksManager blocksManager;
+    private final ChunkManager chunkManager;
 
     @Override
     protected void initialize(Application app) {
-        blocksManager.initialize();
+        chunkManager.initialize();
     }
 
     @Override
     protected void cleanup(Application app) {
-        blocksManager.cleanup();
+        chunkManager.cleanup();
     }
 
     @Override
     public void update(float tpf) {
-        blocksManager.update();
+        chunkManager.update();
     }
 
     @Override

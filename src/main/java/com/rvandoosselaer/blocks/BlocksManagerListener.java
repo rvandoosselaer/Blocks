@@ -5,8 +5,10 @@ package com.rvandoosselaer.blocks;
  * BlocksManagers cache.
  * Applications can use this be notified when a chunk or an updated version of a chunk is available.
  *
+ * @deprecated use {@link ChunkManagerListener}
  * @author rvandoosselaer
  */
+@Deprecated
 public interface BlocksManagerListener {
 
     /**
