@@ -4,11 +4,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.simsilica.mathd.Vec3i;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -283,7 +279,7 @@ public class Chunk {
             Vec3i neighbourBlockLocation = calculateNeighbourChunkBlockLocation(blockLocation);
 
             return chunkResolver.get(chunkLocation)
-                    .map(value -> value.getBlock(neighbourBlockLocation.x, neighbourBlockLocation.y, neighbourBlockLocation.z))
+                    .map(chunk -> chunk.getBlock(neighbourBlockLocation.x, neighbourBlockLocation.y, neighbourBlockLocation.z))
                     .orElse(null);
         }
 
