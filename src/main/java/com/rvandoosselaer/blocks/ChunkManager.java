@@ -601,7 +601,7 @@ public class ChunkManager {
         private final Vec3i location;
         private final Chunk chunk;
 
-        boolean hasChunk() {
+        public boolean hasChunk() {
             return chunk != null;
         }
 
