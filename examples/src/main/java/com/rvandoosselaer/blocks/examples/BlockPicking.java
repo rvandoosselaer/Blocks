@@ -21,8 +21,8 @@ import com.jme3.scene.debug.WireBox;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
-import com.rvandoosselaer.blocks.BlocksManager;
 import com.rvandoosselaer.blocks.Chunk;
+import com.rvandoosselaer.blocks.ChunkManager;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
 import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.lemur.Axis;
@@ -138,7 +138,7 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
 
     private void updatePlaceholder(CollisionResult result) {
         if (result != null) {
-            Vec3i clickedBlockLocation = BlocksManager.getPickedBlockLocation(result.getContactPoint(), result.getContactNormal(), false);
+            Vec3i clickedBlockLocation = ChunkManager.getBlockLocation(result);
             blockPlaceholder.setLocalTranslation(clickedBlockLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
 
             if (blockPlaceholder.getParent() == null) {
@@ -150,7 +150,7 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
     }
 
     private Block getHoveredBlock(CollisionResult result) {
-        Vec3i clickedBlockLocation = BlocksManager.getPickedBlockLocation(result.getContactPoint(), result.getContactNormal(), false);
+        Vec3i clickedBlockLocation = ChunkManager.getBlockLocation(result);
 
         return chunk.getBlock(clickedBlockLocation);
     }

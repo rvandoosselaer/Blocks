@@ -17,8 +17,8 @@ public class PhysicsChunkPagerState extends BaseAppState {
 
     private final PhysicsChunkPager physicsChunkPager;
 
-    public PhysicsChunkPagerState(PhysicsSpace physicsSpace, BlocksManager blocksManager) {
-        this(new PhysicsChunkPager(physicsSpace, blocksManager));
+    public PhysicsChunkPagerState(PhysicsSpace physicsSpace, ChunkManager chunkManager) {
+        this(new PhysicsChunkPager(physicsSpace, chunkManager));
     }
 
     @Override

@@ -13,10 +13,10 @@ import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
-import com.rvandoosselaer.blocks.BlocksManager;
-import com.rvandoosselaer.blocks.BlocksManagerState;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkGenerator;
+import com.rvandoosselaer.blocks.ChunkManager;
+import com.rvandoosselaer.blocks.ChunkManagerState;
 import com.rvandoosselaer.blocks.ChunkPagerState;
 import com.simsilica.lemur.Axis;
 import com.simsilica.lemur.Container;
@@ -72,16 +72,14 @@ public class EndlessRunner extends SimpleApplication {
 
         BlocksConfig.initialize(assetManager);
 
-        BlocksConfig.getInstance().setGridSize(new Vec3i(9, 1, 9));
+        BlocksConfig.getInstance().setGrid(new Vec3i(9, 1, 9));
 
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-        BlocksManager blocksManager = BlocksManager.builder()
-                .chunkGenerationPoolSize(1)
-                .chunkGenerator(new TerrainGenerator(16, blockRegistry))
-                .meshGenerationPoolSize(1)
+        ChunkManager chunkManager = ChunkManager.builder()
+                .generator(new TerrainGenerator(16, blockRegistry))
                 .build();
 
-        stateManager.attachAll(new BlocksManagerState(blocksManager), new ChunkPagerState(rootNode, blocksManager));
+        stateManager.attachAll(new ChunkManagerState(chunkManager), new ChunkPagerState(rootNode, chunkManager));
 
         hideCursor();
         createLocationContainer();
@@ -100,7 +98,7 @@ public class EndlessRunner extends SimpleApplication {
 
     private String getLocationString() {
         Vector3f location = getCamera().getLocation();
-        return String.format("%.0f, %.0f, %.0f, Chunk: %s", location.x, location.y, location.z, BlocksManager.getChunkLocation(location));
+        return String.format("%.0f, %.0f, %.0f, Chunk: %s", location.x, location.y, location.z, ChunkManager.getChunkLocation(location));
     }
 
     private void createLocationContainer() {

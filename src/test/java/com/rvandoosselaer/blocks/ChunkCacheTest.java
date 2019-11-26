@@ -10,11 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author: rvandoosselaer
@@ -39,7 +35,7 @@ public class ChunkCacheTest {
 
     @Test
     public void testCacheDefaultMaximumSize() {
-        Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
+        Vec3i gridSize = BlocksConfig.getInstance().getGrid();
         int size = gridSize.x * gridSize.y * gridSize.z;
         ChunkCache cache = new ChunkCache();
 

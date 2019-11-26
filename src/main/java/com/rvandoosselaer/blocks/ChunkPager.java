@@ -17,10 +17,10 @@ public class ChunkPager extends Pager<Node> {
     @Getter
     private final Node node;
 
-    public ChunkPager(@NonNull Node node, @NonNull BlocksManager blocksManager) {
-        super(blocksManager);
+    public ChunkPager(@NonNull Node node, @NonNull ChunkManager chunkManager) {
+        super(chunkManager);
         this.node = node;
-        this.gridSize = BlocksConfig.getInstance().getGridSize();
+        this.gridSize = BlocksConfig.getInstance().getGrid();
     }
 
     @Override

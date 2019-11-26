@@ -24,8 +24,8 @@ import com.jme3.scene.shape.Box;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
-import com.rvandoosselaer.blocks.BlocksManager;
-import com.rvandoosselaer.blocks.BlocksManagerState;
+import com.rvandoosselaer.blocks.ChunkManager;
+import com.rvandoosselaer.blocks.ChunkManagerState;
 import com.rvandoosselaer.blocks.ChunkPagerState;
 import com.rvandoosselaer.blocks.FlatTerrainGenerator;
 import com.simsilica.lemur.GuiGlobals;
@@ -51,7 +51,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     private Node chunkNode;
     private Geometry addPlaceholder;
     private Geometry removePlaceholder;
-    private BlocksManager blocksManager;
+    private ChunkManager chunkManager;
     private BlockRegistry blockRegistry;
 
     public static void main(String[] args) {
@@ -80,18 +80,16 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
 
         BlocksConfig.initialize(assetManager);
 
-        BlocksConfig.getInstance().setGridSize(new Vec3i(3, 1, 3));
+        BlocksConfig.getInstance().setGrid(new Vec3i(3, 1, 3));
         blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        blocksManager = BlocksManager.builder()
-                .meshGenerationPoolSize(1)
-                .chunkGenerationPoolSize(1)
-                .chunkGenerator(new FlatTerrainGenerator(blockRegistry.get(BlockIds.GRASS)))
+        chunkManager = ChunkManager.builder()
+                .generator(new FlatTerrainGenerator(blockRegistry.get(BlockIds.GRASS)))
                 .build();
 
         chunkNode = new Node("chunk-node");
 
-        stateManager.attachAll(new BlocksManagerState(blocksManager), new ChunkPagerState(chunkNode, blocksManager));
+        stateManager.attachAll(new ChunkManagerState(chunkManager), new ChunkPagerState(chunkNode, chunkManager));
 
         hideCursor();
         createCrossHair();
@@ -170,13 +168,13 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
 
     private void updatePlaceholders(CollisionResult result) {
         if (result != null) {
-            Vec3i pointingLocation = BlocksManager.getPickedBlockLocation(result.getContactPoint(), result.getContactNormal(), false);
+            Vec3i pointingLocation = ChunkManager.getBlockLocation(result);
             removePlaceholder.setLocalTranslation(pointingLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
             if (removePlaceholder.getParent() == null) {
                 rootNode.attachChild(removePlaceholder);
             }
 
-            Vec3i placingLocation = BlocksManager.getPickedBlockLocation(result.getContactPoint(), result.getContactNormal(), true);
+            Vec3i placingLocation = ChunkManager.getNeighbourBlockLocation(result);
             addPlaceholder.setLocalTranslation(placingLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
             if (addPlaceholder.getParent() == null) {
                 rootNode.attachChild(addPlaceholder);
@@ -188,11 +186,11 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     }
 
     private void addBlock() {
-        blocksManager.addBlock(new Vec3i(addPlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f)), blockRegistry.get(BlockIds.GRASS));
+        chunkManager.addBlock(addPlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f), blockRegistry.get(BlockIds.GRASS));
     }
 
     private void removeBlock() {
-        blocksManager.removeBlock(new Vec3i(removePlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f)));
+        chunkManager.removeBlock(removePlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f));
     }
 
 }

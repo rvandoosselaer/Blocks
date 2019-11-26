@@ -25,8 +25,8 @@ public class BlocksConfig {
 
     private Vec3i chunkSize;
     private float blockScale;
-    private Vec3i gridSize;
-    private Vec3i physicsGridSize;
+    private Vec3i grid;
+    private Vec3i physicsGrid;
     private ShapeRegistry shapeRegistry;
     private BlockRegistry blockRegistry;
     private TypeRegistry typeRegistry;
@@ -43,8 +43,8 @@ public class BlocksConfig {
         instance = new BlocksConfig(assetManager);
         instance.setChunkSize(new Vec3i(32, 32, 32));
         instance.setBlockScale(1f);
-        instance.setGridSize(new Vec3i(9, 5, 9));
-        instance.setPhysicsGridSize(new Vec3i(5, 3, 5));
+        instance.setGrid(new Vec3i(9, 5, 9));
+        instance.setPhysicsGrid(new Vec3i(5, 3, 5));
         instance.setShapeRegistry(new ShapeRegistry());
         instance.setBlockRegistry(new BlockRegistry());
         instance.setTypeRegistry(new TypeRegistry(assetManager));
@@ -69,18 +69,18 @@ public class BlocksConfig {
         this.blockScale = blockScale;
     }
 
-    public void setGridSize(@NonNull Vec3i gridSize) {
-        if ((gridSize.x - 1) % 2 != 0 || (gridSize.y - 1) % 2 != 0 || (gridSize.z - 1) % 2 != 0) {
-            throw new IllegalArgumentException("Invalid grid size specified: " + gridSize + ". GridSize values should be a power of 2 + 1.");
+    public void setGrid(@NonNull Vec3i grid) {
+        if ((grid.x - 1) % 2 != 0 || (grid.y - 1) % 2 != 0 || (grid.z - 1) % 2 != 0) {
+            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". GridSize values should be a power of 2 + 1.");
         }
-        this.gridSize = gridSize;
+        this.grid = grid;
     }
 
-    public void setPhysicsGridSize(@NonNull Vec3i physicsGridSize) {
-        if ((physicsGridSize.x - 1) % 2 != 0 || (physicsGridSize.y - 1) % 2 != 0 || (physicsGridSize.z - 1) % 2 != 0) {
-            throw new IllegalArgumentException("Invalid grid size specified: " + physicsGridSize + ". PhysicsGridSize values should be a power of 2 + 1.");
+    public void setPhysicsGrid(@NonNull Vec3i physicsGrid) {
+        if ((physicsGrid.x - 1) % 2 != 0 || (physicsGrid.y - 1) % 2 != 0 || (physicsGrid.z - 1) % 2 != 0) {
+            throw new IllegalArgumentException("Invalid grid size specified: " + physicsGrid + ". PhysicsGridSize values should be a power of 2 + 1.");
         }
-        this.physicsGridSize = physicsGridSize;
+        this.physicsGrid = physicsGrid;
     }
 
 }

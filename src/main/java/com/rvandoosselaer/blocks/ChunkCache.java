@@ -67,7 +67,7 @@ public class ChunkCache implements ChunkResolver {
     }
 
     private static Cache<Vec3i, Chunk> createCache(int cacheSize) {
-        Vec3i gridSize = BlocksConfig.getInstance().getGridSize();
+        Vec3i gridSize = BlocksConfig.getInstance().getGrid();
         int minimumSize = gridSize.x * gridSize.y * gridSize.z;
 
         if (cacheSize > 0 && cacheSize < minimumSize) {

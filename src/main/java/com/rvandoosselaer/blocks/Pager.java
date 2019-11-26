@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,10 +35,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public abstract class Pager<T> implements BlocksManagerListener {
+public abstract class Pager<T> {
 
     @NonNull
-    protected final BlocksManager blocksManager;
+    protected final ChunkManager chunkManager;
 
     protected final Map<Vec3i, T> attachedPages = new ConcurrentHashMap<>();
     protected final Queue<Vec3i> pagesToAttach = new LinkedList<>();
@@ -52,12 +53,29 @@ public abstract class Pager<T> implements BlocksManagerListener {
     protected Vector3f location = new Vector3f();
     protected Vec3i gridLowerBounds = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
     protected Vec3i gridUpperBounds = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+    private ChunkManagerListener listener = new ChunkPagerListener();
+
+    private class ChunkPagerListener implements ChunkManagerListener {
+
+        @Override
+        public void onChunkUpdated(Chunk chunk) {
+            if (attachedPages.containsKey(chunk.getLocation())) {
+                updatedPages.offer(chunk.getLocation());
+            }
+        }
+
+        @Override
+        public void onChunkAvailable(Chunk chunk) {
+            requestedPages.remove(chunk.getLocation());
+        }
+
+    }
 
     public void initialize() {
         if (log.isTraceEnabled()) {
             log.trace("{} initialize()", getClass().getSimpleName());
         }
-        blocksManager.registerListener(this);
+        chunkManager.addListener(listener);
     }
 
     public void update() {
@@ -65,7 +83,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
             return;
         }
 
-        Vec3i newCenterPage = BlocksManager.getChunkLocation(location);
+        Vec3i newCenterPage = ChunkManager.getChunkLocation(location);
         if (!Objects.equals(newCenterPage, centerPageLocation)) {
             setCenterPage(newCenterPage);
             updateQueues();
@@ -88,19 +106,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
         pagesToDetach.clear();
         updatedPages.clear();
         requestedPages.clear();
-        blocksManager.removeListener(this);
-    }
-
-    @Override
-    public void onChunkAvailable(Chunk chunk) {
-        // if we requested the chunk, remove it from our requested pages set
-        requestedPages.remove(chunk.getLocation());
-
-        // only take action on chunks that are in our grid
-        log.trace("chunk available called: {}", chunk);
-        if (attachedPages.containsKey(chunk.getLocation())) {
-            updatedPages.offer(chunk.getLocation());
-        }
+        chunkManager.removeListener(listener);
     }
 
     /**
@@ -205,7 +211,7 @@ public abstract class Pager<T> implements BlocksManagerListener {
         // the cache eviction mechanism of the BlocksManager isn't always evicting a chunk that isn't used. This can
         // cause problems when a chunk that is attached to the scenegraph is removed from the cache. By manually
         // evicting a chunk that is safely detached, we try to counter this behaviour.
-        blocksManager.invalidateChunk(pageLocation);
+        chunkManager.removeChunk(pageLocation);
     }
 
     /**
@@ -217,21 +223,21 @@ public abstract class Pager<T> implements BlocksManagerListener {
             return;
         }
 
-        Chunk chunk = blocksManager.getChunk(pageLocation);
-        if (chunk == null) {
+        Optional<Chunk> chunk = chunkManager.getChunk(pageLocation);
+        if (!chunk.isPresent()) {
             // chunk was not found, we request it and try again later
             if (!requestedPages.contains(pageLocation)) {
                 if (log.isTraceEnabled()) {
                     log.trace("Requesting page " + pageLocation);
                 }
-                blocksManager.requestChunk(pageLocation);
+                chunkManager.requestChunk(pageLocation);
                 requestedPages.add(pageLocation);
             }
             pagesToAttach.offer(pageLocation);
             return;
         }
 
-        T page = createPage(chunk);
+        T page = createPage(chunk.get());
         if (page == null) {
             // something went wrong creating the page, try again later
             pagesToAttach.offer(pageLocation);
@@ -261,13 +267,13 @@ public abstract class Pager<T> implements BlocksManagerListener {
         detachPage(oldPage);
 
         // create and attach the new page
-        Chunk chunk = blocksManager.getChunk(pageLocation);
-        if (chunk == null) {
+        Optional<Chunk> chunk = chunkManager.getChunk(pageLocation);
+        if (!chunk.isPresent()) {
             log.warn("Request to update page at location {} but linked chunk {} was not found.", pageLocation, pageLocation);
             return;
         }
 
-        T newPage = createPage(chunk);
+        T newPage = createPage(chunk.get());
         if (newPage == null) {
             log.warn("Unable to create new page at location {}", pageLocation);
             return;

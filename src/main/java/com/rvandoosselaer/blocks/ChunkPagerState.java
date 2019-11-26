@@ -18,8 +18,8 @@ public class ChunkPagerState extends BaseAppState {
 
     private final ChunkPager chunkPager;
 
-    public ChunkPagerState(Node node, BlocksManager blocksManager) {
-        this(new ChunkPager(node, blocksManager));
+    public ChunkPagerState(Node node, ChunkManager chunkManager) {
+        this(new ChunkPager(node, chunkManager));
     }
 
     @Override

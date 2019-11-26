@@ -14,10 +14,10 @@ import com.jme3.math.Vector3f;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlocksConfig;
-import com.rvandoosselaer.blocks.BlocksManager;
-import com.rvandoosselaer.blocks.BlocksManagerState;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkGenerator;
+import com.rvandoosselaer.blocks.ChunkManager;
+import com.rvandoosselaer.blocks.ChunkManagerState;
 import com.rvandoosselaer.blocks.ChunkPagerState;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.style.BaseStyles;
@@ -65,16 +65,17 @@ public class ProceduralTerrain extends SimpleApplication {
 
         BlocksConfig.initialize(assetManager);
 
-        BlocksConfig.getInstance().setGridSize(new Vec3i(11, 1, 11));
+        BlocksConfig.getInstance().setGrid(new Vec3i(11, 1, 11));
         BlocksConfig.getInstance().setChunkSize(new Vec3i(32, 256, 32));
 
-        BlocksManager blocksManager = BlocksManager.builder()
-                .chunkGenerationPoolSize(3)
-                .meshGenerationPoolSize(3)
-                .chunkGenerator(new ChunkNoiseGenerator(System.currentTimeMillis()))
+        ChunkManager chunkManager = ChunkManager.builder()
+                .generatorPoolSize(2)
+                .meshPoolSize(2)
+                .generator(new ChunkNoiseGenerator(System.currentTimeMillis()))
+                .triggerAdjacentChunkUpdates(true)
                 .build();
 
-        stateManager.attachAll(new BlocksManagerState(blocksManager), new ChunkPagerState(rootNode, blocksManager));
+        stateManager.attachAll(new ChunkManagerState(chunkManager), new ChunkPagerState(rootNode, chunkManager));
 
         hideCursor();
 

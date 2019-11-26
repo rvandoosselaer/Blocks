@@ -21,14 +21,14 @@ public class PhysicsChunkPager extends Pager<PhysicsRigidBody> {
 
     private PhysicsSpace physicsSpace;
 
-    public PhysicsChunkPager(@NonNull BlocksManager blocksManager) {
-        this(null, blocksManager);
+    public PhysicsChunkPager(@NonNull ChunkManager chunkManager) {
+        this(null, chunkManager);
     }
 
-    public PhysicsChunkPager(PhysicsSpace physicsSpace, @NonNull BlocksManager blocksManager) {
-        super(blocksManager);
+    public PhysicsChunkPager(PhysicsSpace physicsSpace, @NonNull ChunkManager chunkManager) {
+        super(chunkManager);
         this.physicsSpace = physicsSpace;
-        this.gridSize = BlocksConfig.getInstance().getPhysicsGridSize();
+        this.gridSize = BlocksConfig.getInstance().getPhysicsGrid();
     }
 
     @Override
