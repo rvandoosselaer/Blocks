@@ -50,6 +50,7 @@ public class BlocksConfigTest {
     @Test
     public void testInValidGridSize() {
         assertThrows(IllegalArgumentException.class, () -> BlocksConfig.getInstance().setGrid(new Vec3i(6, 3, 6)));
+        assertThrows(IllegalArgumentException.class, () -> BlocksConfig.getInstance().setGrid(new Vec3i(3, 3, -3)));
         assertThrows(NullPointerException.class, () -> BlocksConfig.getInstance().setGrid(null));
     }
 
@@ -62,6 +63,7 @@ public class BlocksConfigTest {
     @Test
     public void testInValidPhysicsGridSize() {
         assertThrows(IllegalArgumentException.class, () -> BlocksConfig.getInstance().setPhysicsGrid(new Vec3i(4, 4, 4)));
+        assertThrows(IllegalArgumentException.class, () -> BlocksConfig.getInstance().setPhysicsGrid(new Vec3i(-5, -5, -5)));
         assertThrows(NullPointerException.class, () -> BlocksConfig.getInstance().setPhysicsGrid(null));
     }
 

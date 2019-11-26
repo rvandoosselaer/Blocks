@@ -70,17 +70,27 @@ public class BlocksConfig {
     }
 
     public void setGrid(@NonNull Vec3i grid) {
-        if ((grid.x - 1) % 2 != 0 || (grid.y - 1) % 2 != 0 || (grid.z - 1) % 2 != 0) {
-            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". GridSize values should be a power of 2 + 1.");
-        }
+        assertGridHasUnevenValues(grid);
+        assertGridIsGreaterThenOne(grid);
         this.grid = grid;
     }
 
     public void setPhysicsGrid(@NonNull Vec3i physicsGrid) {
-        if ((physicsGrid.x - 1) % 2 != 0 || (physicsGrid.y - 1) % 2 != 0 || (physicsGrid.z - 1) % 2 != 0) {
-            throw new IllegalArgumentException("Invalid grid size specified: " + physicsGrid + ". PhysicsGridSize values should be a power of 2 + 1.");
-        }
+        assertGridHasUnevenValues(physicsGrid);
+        assertGridIsGreaterThenOne(physicsGrid);
         this.physicsGrid = physicsGrid;
+    }
+
+    private void assertGridHasUnevenValues(@NonNull Vec3i grid) {
+        if ((grid.x - 1) % 2 != 0 || (grid.y - 1) % 2 != 0 || (grid.z - 1) % 2 != 0) {
+            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be a power of 2 + 1.");
+        }
+    }
+
+    private void assertGridIsGreaterThenOne(@NonNull Vec3i grid) {
+        if (grid.x < 1 || grid.y < 1 || grid.z < 1) {
+            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be greater then 0.");
+        }
     }
 
 }
