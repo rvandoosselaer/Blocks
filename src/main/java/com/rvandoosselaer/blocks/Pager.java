@@ -2,21 +2,10 @@ package com.rvandoosselaer.blocks;
 
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -208,7 +197,7 @@ public abstract class Pager<T> {
 
         attachedPages.remove(pageLocation);
 
-        // the cache eviction mechanism of the BlocksManager isn't always evicting a chunk that isn't used. This can
+        // the cache eviction mechanism of the ChunkCache isn't always evicting a chunk that isn't used. This can
         // cause problems when a chunk that is attached to the scenegraph is removed from the cache. By manually
         // evicting a chunk that is safely detached, we try to counter this behaviour.
         chunkManager.removeChunk(pageLocation);
