@@ -56,9 +56,7 @@ public class BlocksConfig {
     }
 
     public void setChunkSize(@NonNull Vec3i chunkSize) {
-        if (chunkSize.x <= 0 || chunkSize.y <= 0 || chunkSize.z <= 0) {
-            throw new IllegalArgumentException("Invalid chunk size specified: " + chunkSize + ".");
-        }
+        assertChunkSize(chunkSize);
         this.chunkSize = chunkSize;
     }
 
@@ -70,24 +68,33 @@ public class BlocksConfig {
     }
 
     public void setGrid(@NonNull Vec3i grid) {
-        assertGridHasUnevenValues(grid);
-        assertGridIsGreaterThenOne(grid);
+        assertGrid(grid);
         this.grid = grid;
     }
 
     public void setPhysicsGrid(@NonNull Vec3i physicsGrid) {
-        assertGridHasUnevenValues(physicsGrid);
-        assertGridIsGreaterThenOne(physicsGrid);
+        assertGrid(physicsGrid);
         this.physicsGrid = physicsGrid;
     }
 
-    private void assertGridHasUnevenValues(@NonNull Vec3i grid) {
+    private static void assertChunkSize(@NonNull Vec3i chunkSize) {
+        if (chunkSize.x <= 0 || chunkSize.y <= 0 || chunkSize.z <= 0) {
+            throw new IllegalArgumentException("Invalid chunk size specified: " + chunkSize + ".");
+        }
+    }
+
+    private static void assertGrid(@NonNull Vec3i physicsGrid) {
+        assertGridHasUnevenValues(physicsGrid);
+        assertGridHasPositiveValues(physicsGrid);
+    }
+
+    private static void assertGridHasUnevenValues(@NonNull Vec3i grid) {
         if ((grid.x - 1) % 2 != 0 || (grid.y - 1) % 2 != 0 || (grid.z - 1) % 2 != 0) {
             throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be a power of 2 + 1.");
         }
     }
 
-    private void assertGridIsGreaterThenOne(@NonNull Vec3i grid) {
+    private static void assertGridHasPositiveValues(@NonNull Vec3i grid) {
         if (grid.x < 1 || grid.y < 1 || grid.z < 1) {
             throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be greater then 0.");
         }
