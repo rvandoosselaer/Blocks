@@ -2,7 +2,6 @@ package com.rvandoosselaer.blocks;
 
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,44 +31,35 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author rvandoosselaer
  */
 @Slf4j
-@Getter
-@Setter
 @RequiredArgsConstructor
 public abstract class Pager<T> {
 
+    @Getter
+    @Setter
     @NonNull
     protected final ChunkManager chunkManager;
 
+    @Getter
     protected final Map<Vec3i, T> attachedPages = new ConcurrentHashMap<>();
     protected final Queue<Vec3i> pagesToAttach = new LinkedList<>();
     protected final Queue<Vec3i> pagesToDetach = new LinkedList<>();
     protected final Queue<Vec3i> updatedPages = new ConcurrentLinkedQueue<>();
     protected final Set<Vec3i> requestedPages = ConcurrentHashMap.newKeySet();
 
+    @Getter
+    @Setter
     protected Vec3i gridSize;
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    protected Vec3i centerPageLocation;
+    protected Vec3i centerPage;
+    @Getter
+    @Setter
     protected Vector3f location = new Vector3f();
+    @Getter
+    @Setter
     protected Vec3i gridLowerBounds = new Vec3i(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    @Getter
+    @Setter
     protected Vec3i gridUpperBounds = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
     private ChunkManagerListener listener = new ChunkPagerListener();
-
-    private class ChunkPagerListener implements ChunkManagerListener {
-
-        @Override
-        public void onChunkUpdated(Chunk chunk) {
-            if (attachedPages.containsKey(chunk.getLocation())) {
-                updatedPages.offer(chunk.getLocation());
-            }
-        }
-
-        @Override
-        public void onChunkAvailable(Chunk chunk) {
-            requestedPages.remove(chunk.getLocation());
-        }
-
-    }
 
     public void initialize() {
         if (log.isTraceEnabled()) {
@@ -83,11 +73,7 @@ public abstract class Pager<T> {
             return;
         }
 
-        Vec3i newCenterPage = ChunkManager.getChunkLocation(location);
-        if (!Objects.equals(newCenterPage, centerPageLocation)) {
-            setCenterPage(newCenterPage);
-            updateQueues();
-        }
+        updateCenterPage();
 
         detachNextPage();
 
@@ -107,6 +93,7 @@ public abstract class Pager<T> {
         updatedPages.clear();
         requestedPages.clear();
         chunkManager.removeListener(listener);
+        listener = null;
     }
 
     /**
@@ -115,16 +102,16 @@ public abstract class Pager<T> {
      * @return the set of pages in the grid
      */
     protected Set<Vec3i> getPages() {
-        if (centerPageLocation == null || gridSize == null) {
+        if (centerPage == null || gridSize == null) {
             return Collections.emptySet();
         }
 
-        int minX = Math.max(centerPageLocation.x - ((gridSize.x - 1) / 2), gridLowerBounds.x);
-        int maxX = Math.min(centerPageLocation.x + ((gridSize.x - 1) / 2), gridUpperBounds.x);
-        int minY = Math.max(centerPageLocation.y - ((gridSize.y - 1) / 2), gridLowerBounds.y);
-        int maxY = Math.min(centerPageLocation.y + ((gridSize.y - 1) / 2), gridUpperBounds.y);
-        int minZ = Math.max(centerPageLocation.z - ((gridSize.z - 1) / 2), gridLowerBounds.z);
-        int maxZ = Math.min(centerPageLocation.z + ((gridSize.z - 1) / 2), gridUpperBounds.z);
+        int minX = Math.max(centerPage.x - ((gridSize.x - 1) / 2), gridLowerBounds.x);
+        int maxX = Math.min(centerPage.x + ((gridSize.x - 1) / 2), gridUpperBounds.x);
+        int minY = Math.max(centerPage.y - ((gridSize.y - 1) / 2), gridLowerBounds.y);
+        int maxY = Math.min(centerPage.y + ((gridSize.y - 1) / 2), gridUpperBounds.y);
+        int minZ = Math.max(centerPage.z - ((gridSize.z - 1) / 2), gridLowerBounds.z);
+        int maxZ = Math.min(centerPage.z + ((gridSize.z - 1) / 2), gridUpperBounds.z);
 
         Set<Vec3i> pages = new HashSet<>();
         for (int x = minX; x <= maxX; x++) {
@@ -189,6 +176,14 @@ public abstract class Pager<T> {
      */
     protected abstract void attachPage(T page);
 
+    private void updateCenterPage() {
+        Vec3i newCenterPage = ChunkManager.getChunkLocation(location);
+        if (!Objects.equals(newCenterPage, centerPage)) {
+            setCenterPage(newCenterPage);
+            updateQueues();
+        }
+    }
+
     /**
      * Detach the next page in the pagesToDetach queue.
      */
@@ -198,6 +193,10 @@ public abstract class Pager<T> {
             return;
         }
 
+        detachPageAtLocation(pageLocation);
+    }
+
+    private void detachPageAtLocation(Vec3i pageLocation) {
         T page = attachedPages.get(pageLocation);
         if (page == null) {
             log.warn("Trying to detach page at location {} that isn't attached.", pageLocation);
@@ -223,17 +222,13 @@ public abstract class Pager<T> {
             return;
         }
 
+        attachPageAtLocation(pageLocation);
+    }
+
+    private void attachPageAtLocation(Vec3i pageLocation) {
         Optional<Chunk> chunk = chunkManager.getChunk(pageLocation);
         if (!chunk.isPresent()) {
-            // chunk was not found, we request it and try again later
-            if (!requestedPages.contains(pageLocation)) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Requesting page " + pageLocation);
-                }
-                chunkManager.requestChunk(pageLocation);
-                requestedPages.add(pageLocation);
-            }
-            pagesToAttach.offer(pageLocation);
+            requestPage(pageLocation);
             return;
         }
 
@@ -246,6 +241,18 @@ public abstract class Pager<T> {
 
         attachPage(page);
         attachedPages.put(pageLocation, page);
+    }
+
+    private void requestPage(Vec3i pageLocation) {
+        // chunk was not found, we request it and try again later
+        if (!requestedPages.contains(pageLocation)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Requesting page " + pageLocation);
+            }
+            chunkManager.requestChunk(pageLocation);
+            requestedPages.add(pageLocation);
+        }
+        pagesToAttach.offer(pageLocation);
     }
 
     /**
@@ -283,9 +290,27 @@ public abstract class Pager<T> {
         attachedPages.put(pageLocation, newPage);
     }
 
-    private void setCenterPage(Vec3i newCenterPage) {
-        log.debug("new center page: {}", newCenterPage);
-        centerPageLocation = newCenterPage;
+    private void setCenterPage(Vec3i centerPage) {
+        if (log.isTraceEnabled()) {
+            log.trace("New center page: {}", centerPage);
+        }
+        this.centerPage = centerPage;
+    }
+
+    private class ChunkPagerListener implements ChunkManagerListener {
+
+        @Override
+        public void onChunkUpdated(Chunk chunk) {
+            if (attachedPages.containsKey(chunk.getLocation())) {
+                updatedPages.offer(chunk.getLocation());
+            }
+        }
+
+        @Override
+        public void onChunkAvailable(Chunk chunk) {
+            requestedPages.remove(chunk.getLocation());
+        }
+
     }
 
 }
