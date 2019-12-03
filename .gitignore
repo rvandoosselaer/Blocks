@@ -6,3 +6,7 @@ build
 
 # Ignore idea files
 .idea
+
+# Ignore extracted native libraries
+examples/*.so
+examples/*.dll
