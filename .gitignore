@@ -8,5 +8,6 @@ build
 .idea
 
 # Ignore extracted native libraries
-examples/*.so
+examples/*.dylib
 examples/*.dll
+examples/*.so

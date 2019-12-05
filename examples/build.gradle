@@ -46,10 +46,13 @@ dependencies {
 }
 
 // cleanup tasks
-clean.dependsOn('cleanDLLs', 'cleanSOs')
+clean.dependsOn('cleanDLLs', 'cleanDyLibs', 'cleanSOs')
 
 task cleanDLLs(type: Delete) {
     delete fileTree(dir: '.', include: '*.dll')
+}
+task cleanDyLibs(type: Delete) {
+    delete fileTree(dir: '.', include: '*.dylib')
 }
 task cleanSOs(type: Delete) {
     delete fileTree(dir: '.', include: '*.so')
