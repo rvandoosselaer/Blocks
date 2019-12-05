@@ -295,7 +295,7 @@ public class BlockRegistry {
     
     private void registerBrickBlocks() {
         register(Block.create(BlockIds.BRICKS, TypeIds.BRICKS, false));
-        register(Block.builder().name(BlockIds.BRICKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BRICKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_SLAB).shape(ShapeIds.SLAB).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
