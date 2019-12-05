@@ -21,5 +21,6 @@ public interface ShapeIds {
     String WEDGE_LEFT = "wedge-left";
     String WEDGE_RIGHT = "wedge-right";
     String PYRAMID = "pyramid";
+    String ROUNDED_CUBE = "rounded-cube";
 
 }

@@ -232,6 +232,7 @@ public class BlockRegistry {
     private void registerGrassBlocks() {
         register(Block.create(BlockIds.GRASS, TypeIds.GRASS, true));
         register(Block.create(BlockIds.GRASS_SNOW, TypeIds.GRASS_SNOW, true));
+        register(Block.builder().name(BlockIds.GRASS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.GRASS).usingMultipleImages(true).solid(true).transparent(false).build());
     }
 
     private void registerGravelBlocks() {

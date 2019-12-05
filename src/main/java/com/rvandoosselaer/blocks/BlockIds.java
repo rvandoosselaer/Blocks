@@ -82,6 +82,7 @@ public interface BlockIds {
 
     String GRASS = "grass";
     String GRASS_SNOW = "grass snow";
+    String GRASS_ROUNDED = "grass rounded";
 
     String PALM_TREE_LOG = "palm tree log";
     String PALM_TREE_LOG_SLAB = "palm tree log slab";
