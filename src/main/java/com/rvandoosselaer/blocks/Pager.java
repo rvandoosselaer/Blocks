@@ -35,7 +35,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class Pager<T> {
 
     @Getter
-    @Setter
     @NonNull
     protected final ChunkManager chunkManager;
 
