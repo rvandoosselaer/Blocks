@@ -3,7 +3,6 @@ package com.rvandoosselaer.blocks;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.math.FastMath;
 import com.simsilica.mathd.Vec3i;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -13,13 +12,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author rvandoosselaer
  */
 public class FileRepositoryTest {
 
     @BeforeAll
-    public static void setup() {
+    public static void setUp() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
     }
 
@@ -36,11 +38,11 @@ public class FileRepositoryTest {
 
         FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository"));
         boolean result = repository.save(chunk);
-        Assertions.assertTrue(result);
+        assertTrue(result);
 
         Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(loadedChunk.getLocation(), chunk.getLocation());
-        Assertions.assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
+        assertEquals(loadedChunk.getLocation(), chunk.getLocation());
+        assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
 
         cleanup(repository.getPath());
     }
@@ -50,17 +52,17 @@ public class FileRepositoryTest {
         BlocksConfig config = BlocksConfig.getInstance();
         int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        Chunk chunk = Chunk.createAt(new Vec3i(1, 1, 1));
         chunk.setBlocks(new Block[blockArrayLenght]);
         chunk.update();
 
         FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository"));
         boolean result = repository.save(chunk);
-        Assertions.assertTrue(result);
+        assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(loadedChunk.getLocation(), chunk.getLocation());
-        Assertions.assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
+        Chunk loadedChunk = repository.load(new Vec3i(1, 1, 1));
+        assertEquals(loadedChunk.getLocation(), chunk.getLocation());
+        assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
 
         cleanup(repository.getPath());
     }
@@ -70,7 +72,7 @@ public class FileRepositoryTest {
         BlocksConfig config = BlocksConfig.getInstance();
         int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        Chunk chunk = Chunk.createAt(new Vec3i(2, 2, 2));
         chunk.setBlocks(new Block[blockArrayLenght]);
         int random = FastMath.nextRandomInt(0, blockArrayLenght - 1);
         chunk.getBlocks()[random] = config.getBlockRegistry().get("grass");
@@ -78,12 +80,12 @@ public class FileRepositoryTest {
 
         FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository"));
         boolean result = repository.save(chunk);
-        Assertions.assertTrue(result);
+        assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
-        Assertions.assertEquals(loadedChunk.getLocation(), chunk.getLocation());
-        Assertions.assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
-        Assertions.assertEquals(loadedChunk.getBlocks()[random], chunk.getBlocks()[random]);
+        Chunk loadedChunk = repository.load(new Vec3i(2, 2, 2));
+        assertEquals(loadedChunk.getLocation(), chunk.getLocation());
+        assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
+        assertEquals(loadedChunk.getBlocks()[random], chunk.getBlocks()[random]);
 
         cleanup(repository.getPath());
     }

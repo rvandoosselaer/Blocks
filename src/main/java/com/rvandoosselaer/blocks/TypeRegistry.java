@@ -203,7 +203,12 @@ public class TypeRegistry {
      * @return the full path to the texture, used by the assetmanager to load the texture
      */
     private static String getTexturePath(String type, TextureType textureType, BlocksTheme theme) {
-        return Paths.get(theme.getPath(), getTextureFilename(type, textureType)).toString();
+        String path = Paths.get(theme.getPath(), getTextureFilename(type, textureType)).toString();
+        // this should be interpreted as a java path. It will look for this texture in the classpath. When this code is
+        // executed on windows, it will use backward slashes when constructing the path, and the texture will not be
+        // properly resolved.
+        path = path.replace('\\', '/');
+        return path;
     }
 
     /**
