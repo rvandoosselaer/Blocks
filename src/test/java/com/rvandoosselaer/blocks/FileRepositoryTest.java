@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author rvandoosselaer
  */
+
 public class FileRepositoryTest {
 
     @BeforeAll
@@ -36,7 +37,7 @@ public class FileRepositoryTest {
         chunk.setBlocks(blocks);
         chunk.update();
 
-        FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository"));
+        FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository-a"));
         boolean result = repository.save(chunk);
         assertTrue(result);
 
@@ -50,13 +51,13 @@ public class FileRepositoryTest {
     @Test
     public void testSaveAndLoadEmptyChunk() {
         BlocksConfig config = BlocksConfig.getInstance();
-        int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
+        int blockArrayLength = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
-        Chunk chunk = Chunk.createAt(new Vec3i(1, 1, 1));
-        chunk.setBlocks(new Block[blockArrayLenght]);
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.setBlocks(new Block[blockArrayLength]);
         chunk.update();
 
-        FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository"));
+        FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository-b"));
         boolean result = repository.save(chunk);
         assertTrue(result);
 
@@ -72,13 +73,13 @@ public class FileRepositoryTest {
         BlocksConfig config = BlocksConfig.getInstance();
         int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
-        Chunk chunk = Chunk.createAt(new Vec3i(2, 2, 2));
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.setBlocks(new Block[blockArrayLenght]);
         int random = FastMath.nextRandomInt(0, blockArrayLenght - 1);
         chunk.getBlocks()[random] = config.getBlockRegistry().get("grass");
         chunk.update();
 
-        FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository"));
+        FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository-c"));
         boolean result = repository.save(chunk);
         assertTrue(result);
 
