@@ -71,11 +71,11 @@ public class FileRepositoryTest {
     @Test
     public void testSaveAndLoadChunk() {
         BlocksConfig config = BlocksConfig.getInstance();
-        int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
+        int blockArrayLength = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.setBlocks(new Block[blockArrayLenght]);
-        int random = FastMath.nextRandomInt(0, blockArrayLenght - 1);
+        chunk.setBlocks(new Block[blockArrayLength]);
+        int random = FastMath.nextRandomInt(0, blockArrayLength - 1);
         chunk.getBlocks()[random] = config.getBlockRegistry().get("grass");
         chunk.update();
 
