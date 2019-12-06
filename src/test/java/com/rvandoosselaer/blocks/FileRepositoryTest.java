@@ -52,7 +52,7 @@ public class FileRepositoryTest {
         BlocksConfig config = BlocksConfig.getInstance();
         int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        Chunk chunk = Chunk.createAt(new Vec3i(1, 1, 1));
         chunk.setBlocks(new Block[blockArrayLenght]);
         chunk.update();
 
@@ -60,7 +60,7 @@ public class FileRepositoryTest {
         boolean result = repository.save(chunk);
         assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
+        Chunk loadedChunk = repository.load(new Vec3i(1, 1, 1));
         assertEquals(loadedChunk.getLocation(), chunk.getLocation());
         assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
 
@@ -72,7 +72,7 @@ public class FileRepositoryTest {
         BlocksConfig config = BlocksConfig.getInstance();
         int blockArrayLenght = config.getChunkSize().x * config.getChunkSize().y * config.getChunkSize().z;
 
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        Chunk chunk = Chunk.createAt(new Vec3i(2, 2, 2));
         chunk.setBlocks(new Block[blockArrayLenght]);
         int random = FastMath.nextRandomInt(0, blockArrayLenght - 1);
         chunk.getBlocks()[random] = config.getBlockRegistry().get("grass");
@@ -82,7 +82,7 @@ public class FileRepositoryTest {
         boolean result = repository.save(chunk);
         assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
+        Chunk loadedChunk = repository.load(new Vec3i(2, 2, 2));
         assertEquals(loadedChunk.getLocation(), chunk.getLocation());
         assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
         assertEquals(loadedChunk.getBlocks()[random], chunk.getBlocks()[random]);
