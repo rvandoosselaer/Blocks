@@ -61,7 +61,7 @@ public class FileRepositoryTest {
         boolean result = repository.save(chunk);
         assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(1, 1, 1));
+        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
         assertEquals(loadedChunk.getLocation(), chunk.getLocation());
         assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
 
@@ -83,7 +83,7 @@ public class FileRepositoryTest {
         boolean result = repository.save(chunk);
         assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(2, 2, 2));
+        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
         assertEquals(loadedChunk.getLocation(), chunk.getLocation());
         assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
         assertEquals(loadedChunk.getBlocks()[random], chunk.getBlocks()[random]);
