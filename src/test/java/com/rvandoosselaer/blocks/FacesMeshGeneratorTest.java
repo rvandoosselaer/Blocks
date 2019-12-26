@@ -191,6 +191,19 @@ public class FacesMeshGeneratorTest {
         testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_RIGHT));
     }
 
+    @Test
+    public void testStairCollisionShape() {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
+        Mesh mesh = chunk.createCollisionMesh(meshGenerator);
+
+        // 5 faces, 8 triangles
+        assertEquals(8, mesh.getTriangleCount());
+    }
+
     private void testEnclosedStair(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
