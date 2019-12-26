@@ -148,6 +148,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         removePlaceholder = new Geometry("remove-placeholder", new Box(0.505f, 0.505f, 0.505f));
         removePlaceholder.setMaterial(removePlaceholderMaterial);
         removePlaceholder.setQueueBucket(RenderQueue.Bucket.Transparent);
+        removePlaceholder.setLocalScale(BlocksConfig.getInstance().getBlockScale());
 
         Material addPlaceholderMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         addPlaceholderMaterial.setColor("Color", ColorRGBA.Yellow);
@@ -155,6 +156,7 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
         addPlaceholder = new Geometry("add-placeholder", new WireBox(0.5f, 0.5f, 0.5f));
         addPlaceholder.setMaterial(addPlaceholderMaterial);
         addPlaceholder.setQueueBucket(RenderQueue.Bucket.Transparent);
+        addPlaceholder.setLocalScale(BlocksConfig.getInstance().getBlockScale());
     }
 
     private CollisionResult getCollisionResult() {
@@ -169,13 +171,14 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     private void updatePlaceholders(CollisionResult result) {
         if (result != null) {
             Vec3i pointingLocation = ChunkManager.getBlockLocation(result);
-            removePlaceholder.setLocalTranslation(pointingLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
+            Vector3f offset = new Vector3f(0.5f, 0.5f, 0.5f);
+            removePlaceholder.setLocalTranslation(pointingLocation.toVector3f().addLocal(offset).multLocal(BlocksConfig.getInstance().getBlockScale()));
             if (removePlaceholder.getParent() == null) {
                 rootNode.attachChild(removePlaceholder);
             }
 
             Vec3i placingLocation = ChunkManager.getNeighbourBlockLocation(result);
-            addPlaceholder.setLocalTranslation(placingLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
+            addPlaceholder.setLocalTranslation(placingLocation.toVector3f().addLocal(offset).multLocal(BlocksConfig.getInstance().getBlockScale()));
             if (addPlaceholder.getParent() == null) {
                 rootNode.attachChild(addPlaceholder);
             }
@@ -186,11 +189,13 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     }
 
     private void addBlock() {
-        chunkManager.addBlock(addPlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f), blockRegistry.get(BlockIds.GRASS));
+        Vector3f blockLocation = addPlaceholder.getWorldTranslation().mult(1f / BlocksConfig.getInstance().getBlockScale());
+        chunkManager.addBlock(blockLocation.subtract(0.5f, 0.5f, 0.5f), blockRegistry.get(BlockIds.GRASS));
     }
 
     private void removeBlock() {
-        chunkManager.removeBlock(removePlaceholder.getWorldTranslation().subtract(0.5f, 0.5f, 0.5f));
+        Vector3f blockLocation = removePlaceholder.getWorldTranslation().mult(1f / BlocksConfig.getInstance().getBlockScale());
+        chunkManager.removeBlock(blockLocation.subtract(0.5f, 0.5f, 0.5f));
     }
 
 }

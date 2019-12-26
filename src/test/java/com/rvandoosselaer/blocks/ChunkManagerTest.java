@@ -59,6 +59,24 @@ public class ChunkManagerTest {
     }
 
     @Test
+    public void testLocationCalculationWithBlockScale() {
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(16, 16, 16));
+        BlocksConfig.getInstance().setBlockScale(2f);
+
+        Vector3f location = new Vector3f(0, 0, 0);
+        Vec3i chunkLocation = ChunkManager.getChunkLocation(location);
+
+        assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        location = new Vector3f(31, 31, 31);
+        chunkLocation = ChunkManager.getChunkLocation(location);
+
+        assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        BlocksConfig.getInstance().setBlockScale(1f);
+    }
+
+    @Test
     public void testRequestChunkWithRepository() throws InterruptedException {
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
@@ -235,16 +253,23 @@ public class ChunkManagerTest {
 
     @Test
     public void testAddBlock() throws InterruptedException {
+        BlocksConfig.getInstance().setBlockScale(2f);
         ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
 
         Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
 
         assertTrue(optionalChunk.isPresent());
         assertEquals(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+
+        chunkManager.addBlock(new Vector3f(1.8f, 1.8f, 1.8f), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+        assertEquals(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+
+        BlocksConfig.getInstance().setBlockScale(1f);
     }
 
     @Test
     public void testRemoveBlock() throws InterruptedException {
+        BlocksConfig.getInstance().setBlockScale(2f);
         ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
 
         Optional<Chunk> optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
@@ -252,11 +277,13 @@ public class ChunkManagerTest {
         assertTrue(optionalChunk.isPresent());
         assertEquals(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
 
-        chunkManager.removeBlock(new Vector3f(0.2f, 0.3f, 0.8f));
+        chunkManager.removeBlock(new Vector3f(1.2f, 1.3f, 1.8f));
 
         optionalChunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(optionalChunk.isPresent());
         assertNull(optionalChunk.get().getBlock(new Vec3i(0, 0, 0)));
+
+        BlocksConfig.getInstance().setBlockScale(1f);
     }
 
     @Test
