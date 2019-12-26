@@ -351,13 +351,15 @@ public class ChunkManager {
     private static Vector3f getAdjustedContactPoint(Vector3f contactPoint, Vector3f contactNormal) {
         // add a small offset to the contact point, so we point a bit more 'inward' into the block
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        return contactPoint.add(contactNormal.negate().multLocal(0.05f * blockScale));
+        Vector3f adjustedContactPoint = contactPoint.add(contactNormal.negate().multLocal(0.05f));
+        return adjustedContactPoint.mult(1f / blockScale);
     }
 
     private static Vector3f getNeighbourBlockLocation(Vector3f location, Vector3f normal) {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        Vector3f neighbourDirection = normal.mult(0.75f * blockScale);
-        return location.add(neighbourDirection);
+        Vector3f neighbourDirection = normal.mult(0.75f);
+        Vector3f scaledLocation = location.mult(1f / blockScale);
+        return scaledLocation.add(neighbourDirection);
     }
 
     private void addBlockToChunk(Vector3f location, Block block, Chunk chunk) {

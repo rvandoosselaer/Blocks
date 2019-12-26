@@ -118,6 +118,7 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
         Material blockPlaceholderMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         blockPlaceholderMaterial.setColor("Color", ColorRGBA.Yellow);
         blockPlaceholder.setMaterial(blockPlaceholderMaterial);
+        blockPlaceholder.setLocalScale(BlocksConfig.getInstance().getBlockScale());
     }
 
     @Override
@@ -139,7 +140,8 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
     private void updatePlaceholder(CollisionResult result) {
         if (result != null) {
             Vec3i clickedBlockLocation = ChunkManager.getBlockLocation(result);
-            blockPlaceholder.setLocalTranslation(clickedBlockLocation.toVector3f().addLocal(0.5f, 0.5f, 0.5f));
+            Vector3f offset = new Vector3f(0.5f, 0.5f, 0.5f);
+            blockPlaceholder.setLocalTranslation(clickedBlockLocation.toVector3f().addLocal(offset).multLocal(BlocksConfig.getInstance().getBlockScale()));
 
             if (blockPlaceholder.getParent() == null) {
                 rootNode.attachChild(blockPlaceholder);
