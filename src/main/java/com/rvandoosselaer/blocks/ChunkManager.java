@@ -365,7 +365,7 @@ public class ChunkManager {
     }
 
     private void addBlockToChunk(Vector3f location, Block block, Chunk chunk) {
-        Vec3i blockLocationInsideChunk = chunk.toLocalLocation(toVec3i(location));
+        Vec3i blockLocationInsideChunk = chunk.toLocalLocation(toVec3i(getScaledBlockLocation(location)));
         Block previousBlock = chunk.addBlock(blockLocationInsideChunk, block);
         if (!Objects.equals(previousBlock, block)) {
             chunk.update();
@@ -375,7 +375,7 @@ public class ChunkManager {
     }
 
     private void removeBlockFromChunk(Vector3f location, Chunk chunk) {
-        Vec3i blockLocationInsideChunk = chunk.toLocalLocation(toVec3i(location));
+        Vec3i blockLocationInsideChunk = chunk.toLocalLocation(toVec3i(getScaledBlockLocation(location)));
         Block block = chunk.removeBlock(blockLocationInsideChunk);
         if (block != null) {
             chunk.update();
