@@ -59,6 +59,24 @@ public class ChunkManagerTest {
     }
 
     @Test
+    public void testLocationCalculationWithBlockScale() {
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(16, 16, 16));
+        BlocksConfig.getInstance().setBlockScale(2f);
+
+        Vector3f location = new Vector3f(0, 0, 0);
+        Vec3i chunkLocation = ChunkManager.getChunkLocation(location);
+
+        assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        location = new Vector3f(31, 31, 31);
+        chunkLocation = ChunkManager.getChunkLocation(location);
+
+        assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        BlocksConfig.getInstance().setBlockScale(1f);
+    }
+
+    @Test
     public void testRequestChunkWithRepository() throws InterruptedException {
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(0, 0, 0, BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
