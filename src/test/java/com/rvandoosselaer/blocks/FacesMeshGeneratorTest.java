@@ -214,6 +214,20 @@ public class FacesMeshGeneratorTest {
         assertEquals(6 * 2, mesh.getTriangleCount());
     }
 
+    @Test
+    public void testRoundedCubeCollisionShape() {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.GRASS_ROUNDED));
+        chunk.createCollisionMesh(meshGenerator);
+
+        Mesh mesh = chunk.getCollisionMesh();
+        // 6 faces
+        assertEquals(6 * 2, mesh.getTriangleCount());
+    }
+
     private static class ChunkCache implements ChunkResolver {
 
         private final Map<Vec3i, Chunk> cache = new HashMap<>();
