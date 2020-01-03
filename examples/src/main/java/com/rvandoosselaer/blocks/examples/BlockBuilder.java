@@ -189,12 +189,12 @@ public class BlockBuilder extends SimpleApplication implements ActionListener {
     }
 
     private void addBlock() {
-        Vector3f blockLocation = addPlaceholder.getWorldTranslation().mult(1f / BlocksConfig.getInstance().getBlockScale());
+        Vector3f blockLocation = addPlaceholder.getWorldTranslation();
         chunkManager.addBlock(blockLocation.subtract(0.5f, 0.5f, 0.5f), blockRegistry.get(BlockIds.GRASS));
     }
 
     private void removeBlock() {
-        Vector3f blockLocation = removePlaceholder.getWorldTranslation().mult(1f / BlocksConfig.getInstance().getBlockScale());
+        Vector3f blockLocation = removePlaceholder.getWorldTranslation();
         chunkManager.removeBlock(blockLocation.subtract(0.5f, 0.5f, 0.5f));
     }
 
