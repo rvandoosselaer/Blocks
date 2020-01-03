@@ -47,6 +47,6 @@ If you have a bug or an idea, you can create a ticket for it [here.](https://git
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgements
-  - Block textures made by [Soartex](https://soartex.net) from the Soartex Fanver.
-  - Block textures made by [Faithful](https://www.curseforge.com/minecraft/texture-packs/faithful-32x).
-  - jMonkeyEngine [forum](https://hub.jmonkeyengine.org/) community. Special thanks to ALi_RS, jayfella, sgold and pspeed for their contributions.
+- Block textures made by [Soartex](https://soartex.net) from the Soartex Fanver.
+- Block textures made by [Faithful](https://www.curseforge.com/minecraft/texture-packs/faithful-32x).
+- jMonkeyEngine [forum](https://hub.jmonkeyengine.org/) community. Special thanks to ALi_RS, jayfella, sgold and pspeed for their contributions.
