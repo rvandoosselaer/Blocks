@@ -11,6 +11,7 @@ import com.jme3.app.StatsAppState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlocksConfig;
@@ -19,6 +20,7 @@ import com.rvandoosselaer.blocks.ChunkGenerator;
 import com.rvandoosselaer.blocks.ChunkManager;
 import com.rvandoosselaer.blocks.ChunkManagerState;
 import com.rvandoosselaer.blocks.ChunkPagerState;
+import com.rvandoosselaer.blocks.PagerListener;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.mathd.Vec3i;
@@ -76,6 +78,7 @@ public class ProceduralTerrain extends SimpleApplication {
                 .build();
 
         stateManager.attachAll(new ChunkManagerState(chunkManager), new ChunkPagerState(rootNode, chunkManager));
+        stateManager.getState(ChunkPagerState.class).getChunkPager().addListener(new PagerListenerOutput());
 
         hideCursor();
 
@@ -93,6 +96,25 @@ public class ProceduralTerrain extends SimpleApplication {
     private void hideCursor() {
         GuiGlobals.getInstance().setCursorEventsEnabled(false);
         inputManager.setCursorVisible(false);
+    }
+
+    private static class PagerListenerOutput implements PagerListener<Node> {
+
+        @Override
+        public void onPageDetached(Vec3i location, Node page) {
+            System.out.println("Chunk detached - " + location + " - " + page);
+        }
+
+        @Override
+        public void onPageAttached(Vec3i location, Node page) {
+            System.out.println("Chunk attached - " + location + " - " + page);
+        }
+
+        @Override
+        public void onPageUpdated(Vec3i location, Node oldPage, Node newPage) {
+            System.out.println("Chunk updated - " + location + " - " + " old page: " + oldPage + ", new page: " + newPage);
+        }
+
     }
 
     private static class ChunkNoiseGenerator implements ChunkGenerator {
