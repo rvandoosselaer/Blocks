@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * An abstract implementation of a 3D pager. Based on the given center location ({@link #setLocation(Vector3f)} the pages
@@ -59,6 +61,7 @@ public abstract class Pager<T> {
     @Setter
     protected Vec3i gridUpperBounds = new Vec3i(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
     private ChunkManagerListener listener = new ChunkPagerListener();
+    protected List<PagerListener<T>> pagerListeners = new CopyOnWriteArrayList<>();
 
     public void initialize() {
         if (log.isTraceEnabled()) {
@@ -93,6 +96,14 @@ public abstract class Pager<T> {
         requestedPages.clear();
         chunkManager.removeListener(listener);
         listener = null;
+    }
+
+    public void addListener(@NonNull PagerListener<T> listener) {
+        pagerListeners.add(listener);
+    }
+
+    public void removeListener(@NonNull PagerListener<T> listener) {
+        pagerListeners.remove(listener);
     }
 
     /**
@@ -210,6 +221,12 @@ public abstract class Pager<T> {
         // cause problems when a chunk that is attached to the scenegraph is removed from the cache. By manually
         // evicting a chunk that is safely detached, we try to counter this behaviour.
         chunkManager.removeChunk(pageLocation);
+
+        notifyListenersPageDetached(pageLocation, page);
+    }
+
+    private void notifyListenersPageDetached(Vec3i pageLocation, T page) {
+        pagerListeners.forEach(listener -> listener.onPageDetached(pageLocation, page));
     }
 
     /**
@@ -240,6 +257,12 @@ public abstract class Pager<T> {
 
         attachPage(page);
         attachedPages.put(pageLocation, page);
+
+        notifyListenersPageAttached(pageLocation, page);
+    }
+
+    private void notifyListenersPageAttached(Vec3i pageLocation, T page) {
+        pagerListeners.forEach(listener -> listener.onPageAttached(pageLocation, page));
     }
 
     private void requestPage(Vec3i pageLocation) {
@@ -287,6 +310,12 @@ public abstract class Pager<T> {
 
         attachPage(newPage);
         attachedPages.put(pageLocation, newPage);
+
+        notifyListenersPageUpdated(pageLocation, oldPage, newPage);
+    }
+
+    private void notifyListenersPageUpdated(Vec3i pageLocation, T oldPage, T newPage) {
+        pagerListeners.forEach(listener -> listener.onPageUpdated(pageLocation, oldPage, newPage));
     }
 
     private void setCenterPage(Vec3i centerPage) {
