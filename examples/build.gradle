@@ -11,8 +11,6 @@ ext {
 
 repositories {
     jcenter()
-    maven { url 'https://dl.bintray.com/stephengold/jme3utilities' } // for Minie
-    maven { url 'https://dl.bintray.com/stephengold/v-hacd' } // for v-hacd-java-bindings
 }
 
 dependencies {
@@ -26,7 +24,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-effects:${jmeVersion}"
 
     // physics
-    implementation "jme3utilities:Minie:${minieVersion}"
+    implementation "com.github.stephengold:Minie:${minieVersion}"
 
     // utilities
     compileOnly "org.projectlombok:lombok:${lombokVersion}"

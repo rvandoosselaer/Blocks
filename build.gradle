@@ -21,13 +21,11 @@ ext {
     caffeineVersion = "[2.8,)"
     protobufVersion = "[3.10,)"
     guavaVersion = "[28,)"
-    minieVersion = "1.3.0for33"
+    minieVersion = "1.4.0for33"
 }
 
 repositories {
     jcenter()
-    maven { url 'https://dl.bintray.com/stephengold/jme3utilities' } // for Minie
-    maven { url 'https://dl.bintray.com/stephengold/v-hacd' } // for v-hacd-java-bindings
 }
 
 dependencies {
@@ -35,7 +33,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
 
     // physics
-    implementation "jme3utilities:Minie:${minieVersion}"
+    implementation "com.github.stephengold:Minie:${minieVersion}"
 
     // utilities
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
