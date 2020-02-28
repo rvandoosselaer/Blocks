@@ -37,6 +37,21 @@ public class BlockRegistry {
         }
         return block;
     }
+    
+    public boolean remove(@NonNull Block block) {
+        return remove(block.getName());
+    }
+
+    public boolean remove(@NonNull String name) {
+        if (registry.containsKey(name)) {
+            Block block = registry.remove(name);
+            if (log.isTraceEnabled()) {
+                log.trace("Removed block {} -> {}", name, block);
+            }
+            return true;
+        }
+        return false;
+    }
 
     public Block get(@NonNull String name) {
         if (BlockIds.NONE.equals(name)) {
