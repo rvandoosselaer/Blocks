@@ -271,7 +271,7 @@ public class Chunk {
      * @param direction neighbour direction
      * @return the neighbouring block or null
      */
-    protected Block getNeighbour(@NonNull Vec3i location, @NonNull Direction direction) {
+    public Block getNeighbour(@NonNull Vec3i location, @NonNull Direction direction) {
         Vec3i blockLocation = location.add(direction.getVector());
 
         if (isInsideChunk(blockLocation.x, blockLocation.y, blockLocation.z)) {
@@ -297,7 +297,7 @@ public class Chunk {
      * @param direction of the face
      * @return true if the face is visible
      */
-    protected boolean isFaceVisible(@NonNull Vec3i location, @NonNull Direction direction) {
+    public boolean isFaceVisible(@NonNull Vec3i location, @NonNull Direction direction) {
         Block block = getBlock(location);
         Block neighbour = getNeighbour(location, direction);
 
