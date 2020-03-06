@@ -29,8 +29,6 @@ import static java.util.Optional.of;
 public class TypeRegistry {
 
     public static final String DEFAULT_BLOCK_MATERIAL = "Blocks/Materials/default-block.j3m";
-    public static final String WATER_MATERIAL = "Blocks/Materials/water.j3m";
-    public static final String WATER_STILL_MATERIAL = "Blocks/Materials/water-still.j3m";
     public static final BlocksTheme FAITHFUL_THEME = new BlocksTheme("Faithful", "Blocks/Themes/faithful/");
 
     private enum TextureType {
@@ -55,8 +53,8 @@ public class TypeRegistry {
         registerDefaultMaterials();
     }
 
-    public Material register(@NonNull String name, @NonNull String materialPath) {
-        return register(name, load(materialPath));
+    public Material register(@NonNull String name) {
+        return register(name, getMaterial(name));
     }
 
     public Material register(@NonNull String name, @NonNull Material material) {
@@ -64,9 +62,7 @@ public class TypeRegistry {
             throw new IllegalArgumentException("Invalid type name " + name + " specified.");
         }
 
-        Material m = setTextures(name, material.clone());
-
-        registry.put(name, m);
+        registry.put(name, material);
         if (log.isTraceEnabled()) {
             log.trace("Registered type {} -> {}", name, material);
         }
@@ -94,38 +90,90 @@ public class TypeRegistry {
     }
 
     public void registerDefaultMaterials() {
-        register(TypeIds.BIRCH_LOG, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.BIRCH_PLANKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.BRICKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.COBBLESTONE, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.MOSSY_COBBLESTONE, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.DIRT, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.GRAVEL, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.GRASS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.GRASS_SNOW, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.PALM_TREE_LOG, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.PALM_TREE_PLANKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.ROCK, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.OAK_LOG, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.OAK_PLANKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.SAND, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.SNOW, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.SPRUCE_LOG, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.SPRUCE_PLANKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.STONE_BRICKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.MOSSY_STONE_BRICKS, DEFAULT_BLOCK_MATERIAL);
-        register(TypeIds.WATER, WATER_MATERIAL);
-        register(TypeIds.WATER_STILL, WATER_STILL_MATERIAL);
+        register(TypeIds.BIRCH_LOG);
+        register(TypeIds.BIRCH_PLANKS);
+        register(TypeIds.BRICKS);
+        register(TypeIds.COBBLESTONE);
+        register(TypeIds.MOSSY_COBBLESTONE);
+        register(TypeIds.DIRT);
+        register(TypeIds.GRAVEL);
+        register(TypeIds.GRASS);
+        register(TypeIds.GRASS_SNOW);
+        register(TypeIds.PALM_TREE_LOG);
+        register(TypeIds.PALM_TREE_PLANKS);
+        register(TypeIds.ROCK);
+        register(TypeIds.OAK_LOG);
+        register(TypeIds.OAK_PLANKS);
+        register(TypeIds.SAND);
+        register(TypeIds.SNOW);
+        register(TypeIds.SPRUCE_LOG);
+        register(TypeIds.SPRUCE_PLANKS);
+        register(TypeIds.STONE_BRICKS);
+        register(TypeIds.MOSSY_STONE_BRICKS);
+        register(TypeIds.WATER);
+        register(TypeIds.WATER_STILL);
     }
 
     public void setTheme(BlocksTheme theme) {
+        if (log.isDebugEnabled()) {
+            log.debug("Setting {}", theme);
+        }
         this.theme = theme;
         reload();
     }
 
     public void setDefaultTheme(@NonNull BlocksTheme defaultTheme) {
+        if (log.isDebugEnabled()) {
+            log.debug("Setting {} as default theme", theme);
+        }
         this.defaultTheme = defaultTheme;
         reload();
+    }
+
+    /**
+     * Retrieves a material for the block type. When a material file isn't found, the default material will be used and
+     * the textures found in the theme or default theme folder will be added to the material.
+     *
+     * @param name block type (grass, rock, ...)
+     * @return the material of the block type
+     */
+    private Material getMaterial(String name) {
+        // don't use .orElse() ! The parameter in .orElse() is evaluated even if the optional is present
+        return loadMaterial(name).orElseGet(() -> setTextures(name, load(DEFAULT_BLOCK_MATERIAL)));
+    }
+
+    /**
+     * Retrieves the material for the block type in the current theme. When a theme isn't specified, the default theme
+     * is used.
+     *
+     * @param name block type (grass, rock, ...)
+     * @return an optional of the Material
+     */
+    private Optional<Material> loadMaterial(String name) {
+        return loadMaterial(name, usingTheme() ? theme : defaultTheme);
+    }
+
+    /**
+     * Load the material in the given theme.
+     *
+     * @param name  block type
+     * @param theme
+     * @return an optional of the material
+     */
+    private Optional<Material> loadMaterial(String name, BlocksTheme theme) {
+        String materialPath = getMaterialPath(name, theme);
+        try {
+            if (log.isTraceEnabled()) {
+                log.trace("Loading material {}", materialPath);
+            }
+            return of(assetManager.loadMaterial(materialPath));
+        } catch (AssetNotFoundException e) {
+            if (log.isTraceEnabled()) {
+                log.trace("Material {} not found in theme {}", materialPath, theme);
+            }
+        }
+
+        return empty();
     }
 
     /**
@@ -148,10 +196,13 @@ public class TypeRegistry {
      * Reload all the materials in the registry.
      */
     private void reload() {
-        registry.keySet().forEach(type -> setTextures(type, get(type)));
+        registry.keySet().forEach(this::register);
     }
 
     private Material load(String materialPath) {
+        if (log.isTraceEnabled()) {
+            log.trace("Loading material {}", materialPath);
+        }
         return assetManager.loadMaterial(materialPath);
     }
 
@@ -186,12 +237,17 @@ public class TypeRegistry {
     private Optional<Texture> getTexture(String type, TextureType textureType, BlocksTheme theme) {
         String texture = getTexturePath(type, textureType, theme);
         try {
+            if (log.isTraceEnabled()) {
+                log.trace("Loading {}", texture);
+            }
             return of(assetManager.loadTexture(new TextureKey(texture)));
         } catch (AssetNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Texture {} not found in theme {}", texture, theme);
+            if (log.isTraceEnabled()) {
+                log.trace("Texture {} not found in theme {}", texture, theme);
             }
         }
+
+        // construct a combined texture
 
         return empty();
     }
@@ -209,6 +265,20 @@ public class TypeRegistry {
         // properly resolved.
         path = path.replace('\\', '/');
         return path;
+    }
+
+    private static String getMaterialPath(String type, BlocksTheme theme) {
+        String path = Paths.get(theme.getPath(), getMaterialFilename(type)).toString();
+        // this should be interpreted as a java path. It will look for this texture in the classpath. When this code is
+        // executed on windows, it will use backward slashes when constructing the path, and the texture will not be
+        // properly resolved.
+        path = path.replace('\\', '/');
+        return path;
+    }
+
+    private static String getMaterialFilename(String type) {
+        String fileExtension = ".j3m";
+        return type + fileExtension;
     }
 
     /**

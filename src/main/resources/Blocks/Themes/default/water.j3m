@@ -13,6 +13,9 @@ Material water : Blocks/MatDefs/Water.j3md {
         numTilesX : 1
         numTilesY : 64
         OffsetY : -0.1
+        DiffuseMap: Blocks/Themes/default/water.png
+        NormalMap: Blocks/Themes/default/water-normal.png
+        ParallaxMap: Blocks/Themes/default/water-parallax.png
     }
 
     AdditionalRenderState {

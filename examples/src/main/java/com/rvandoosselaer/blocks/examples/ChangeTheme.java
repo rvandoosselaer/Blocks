@@ -38,6 +38,7 @@ import com.simsilica.util.LogAdapter;
  */
 public class ChangeTheme extends SimpleApplication implements ActionListener {
 
+    private Chunk chunk;
     private TypeRegistry typeRegistry;
     private BlocksTheme sampleTheme = new BlocksTheme("A new theme", "/sample-theme");
 
@@ -71,7 +72,7 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
         typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
 
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         for (int x = 0; x < chunkSize.x; x++) {
             for (int z = 0; z < chunkSize.z; z++) {
                 if (x > 8 && x < 20 && z > 6 && z < 23) {
@@ -107,6 +108,8 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
             } else {
                 typeRegistry.setTheme(null);
             }
+            chunk.getNode().removeFromParent();
+            rootNode.attachChild(chunk.createNode(BlocksConfig.getInstance().getChunkMeshGenerator()));
             System.out.println("Setting theme: " + typeRegistry.getTheme());
         }
     }
