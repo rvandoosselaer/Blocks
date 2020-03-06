@@ -1,0 +1,18 @@
+Material water : Common/MatDefs/Light/PBRLighting.j3md {
+
+    MaterialParameters {
+        Metallic: 0.95
+        Roughness: 0.05
+        BaseColor: 1.0 1.0 1.0 1.0
+        SteepParallax: true
+        BaseColorMap: water-pbr/water_base_color.png
+        NormalMap: water-pbr/water_normal.png
+        RoughnessMap: water-pbr/water_roughness.png
+        ParallaxMap: water-pbr/water_parallax.png
+        EmissiveMap: water-pbr/water_emissive.png
+    }
+
+    AdditionalRenderState {
+        Blend Alpha
+    }
+}

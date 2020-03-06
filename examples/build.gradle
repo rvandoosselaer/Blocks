@@ -7,10 +7,14 @@ ext {
     jmeFastNoise = "[1.,)"
     log4j2Version = "[2.11,)"
     jacksonVersion = "[2.9,)"
+    commonsLang3Version = "[3.9,)"
 }
 
 repositories {
     jcenter()
+    maven {
+        url  "https://dl.bintray.com/stephengold/org.jmonkeyengine"
+    }
 }
 
 dependencies {
@@ -22,6 +26,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-desktop:${jmeVersion}"
     implementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
     implementation "org.jmonkeyengine:jme3-effects:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-testdata:${jmeVersion}"
 
     // physics
     implementation "com.github.stephengold:Minie:${minieVersion}"

@@ -8,10 +8,12 @@ import com.jme3.post.filters.FXAAFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.EdgeFilteringMode;
+import lombok.Getter;
 
 /**
  * @author rvandoosselaer
  */
+@Getter
 public class PostProcessingState extends BaseAppState {
 
     private FilterPostProcessor filterPostProcessor;
