@@ -5,6 +5,8 @@ import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
+import com.jme3.texture.image.ColorSpace;
+import jme3tools.optimize.TextureAtlas;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -247,9 +249,100 @@ public class TypeRegistry {
             }
         }
 
-        // construct a combined texture
+        return getCombinedTexture(type, textureType, theme);
+    }
+
+    private Optional<Texture> getCombinedTexture(String type, TextureType textureType, BlocksTheme theme) {
+        String topTexturePath = getTopTexturePath(type, textureType, theme);
+        String sideTexturePath = getSideTexturePath(type, textureType, theme);
+        String bottomTexturePath = getBottomTexturePath(type, textureType, theme);
+        try {
+            if (log.isTraceEnabled()) {
+                log.trace("Loading {}, {}, {}", topTexturePath, sideTexturePath, bottomTexturePath);
+            }
+            Texture topTexture = assetManager.loadTexture(new TextureKey(topTexturePath));
+            Texture sideTexture = assetManager.loadTexture(new TextureKey(sideTexturePath));
+            Texture bottomTexture = assetManager.loadTexture(new TextureKey(bottomTexturePath));
+
+            return of(combineTextures(topTexture, sideTexture, bottomTexture));
+        } catch (AssetNotFoundException e) {
+            if (log.isTraceEnabled()) {
+                log.trace("Texture {} not found in theme {}", e.getMessage(), theme);
+            }
+        } catch (IllegalArgumentException e) {
+            log.warn(e.getMessage());
+        }
 
         return empty();
+    }
+
+    private static Texture combineTextures(Texture topTexture, Texture sideTexture, Texture bottomTexture) {
+        boolean widthEqual = assertValuesAreEqual(topTexture.getImage().getWidth(), sideTexture.getImage().getWidth(), bottomTexture.getImage().getWidth());
+        boolean heightEqual = assertValuesAreEqual(topTexture.getImage().getHeight(), sideTexture.getImage().getHeight(), bottomTexture.getImage().getHeight());
+
+        if (!widthEqual || !heightEqual) {
+            String message = String.format("Textures (%s, %s, %s) have different sizes! The widths and heights of the textures should be equal.",
+                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
+            throw new IllegalArgumentException(message);
+        }
+
+        boolean colorSpacesEqual = assertColorSpacesAreEqual(topTexture.getImage().getColorSpace(), sideTexture.getImage().getColorSpace(), bottomTexture.getImage().getColorSpace());
+        if (!colorSpacesEqual) {
+            String message = String.format("Textures (%s, %s, %s) have different colorspaces! Colorspaces of the textures should be equal.",
+                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
+            throw new IllegalArgumentException(message);
+        }
+
+        TextureAtlas textureAtlas = new TextureAtlas(topTexture.getImage().getWidth(), topTexture.getImage().getHeight() * 3);
+        textureAtlas.addTexture(bottomTexture, "main");
+        textureAtlas.addTexture(sideTexture, "main");
+        textureAtlas.addTexture(topTexture, "main");
+
+        Texture texture = textureAtlas.getAtlasTexture("main");
+        texture.getImage().setColorSpace(topTexture.getImage().getColorSpace());
+        return texture;
+    }
+
+    private static boolean assertValuesAreEqual(int... values) {
+        if (values.length == 0) {
+            return true;
+        }
+
+        int checkValue = values[0];
+        for (int i : values) {
+            if (i != checkValue) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean assertColorSpacesAreEqual(ColorSpace... colorSpaces) {
+        if (colorSpaces.length == 0) {
+            return true;
+        }
+
+        ColorSpace colorSpace = colorSpaces[0];
+        for (ColorSpace c : colorSpaces) {
+            if (colorSpace != c) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private String getTopTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_top", textureType, theme);
+    }
+
+    private String getSideTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_side", textureType, theme);
+    }
+
+    private String getBottomTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_bottom", textureType, theme);
     }
 
     /**
