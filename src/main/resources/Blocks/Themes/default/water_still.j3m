@@ -1,4 +1,4 @@
-Material water-still : Blocks/MatDefs/Water.j3md {
+Material water_still : Blocks/MatDefs/Water.j3md {
 
     MaterialParameters {
         Shininess: 128
@@ -13,6 +13,9 @@ Material water-still : Blocks/MatDefs/Water.j3md {
         numTilesX : 1
         numTilesY : 64
         OffsetY : -0.1
+        DiffuseMap: Blocks/Themes/default/water_still.png
+        NormalMap: Blocks/Themes/default/water_still-normal.png
+        ParallaxMap: Blocks/Themes/default/water_still-parallax.png
     }
 
     AdditionalRenderState {
