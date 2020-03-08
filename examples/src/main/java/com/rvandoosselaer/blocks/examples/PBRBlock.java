@@ -9,11 +9,14 @@ import com.jme3.environment.EnvironmentCamera;
 import com.jme3.environment.LightProbeFactory;
 import com.jme3.environment.generation.JobProgressAdapter;
 import com.jme3.light.LightProbe;
+import com.jme3.material.Material;
+import com.jme3.material.TechniqueDef;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.filters.ToneMapFilter;
+import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockRegistry;
@@ -22,8 +25,20 @@ import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
 import com.rvandoosselaer.blocks.TypeIds;
 import com.rvandoosselaer.blocks.TypeRegistry;
+import com.simsilica.lemur.Axis;
+import com.simsilica.lemur.Checkbox;
+import com.simsilica.lemur.Container;
+import com.simsilica.lemur.DefaultCheckboxModel;
+import com.simsilica.lemur.DefaultRangedValueModel;
+import com.simsilica.lemur.FillMode;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.Label;
+import com.simsilica.lemur.Slider;
+import com.simsilica.lemur.component.QuadBackgroundComponent;
+import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.style.BaseStyles;
+import com.simsilica.lemur.style.ElementId;
 import com.simsilica.mathd.Vec3i;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +59,22 @@ public class PBRBlock extends SimpleApplication {
     private int frame = 0;
     private Chunk chunk;
     private LightProbe lightProbe;
+    private Material waterMaterial;
+    private VersionedReference<Double> metallicValue;
+    private Label metallicLabel;
+    private VersionedReference<Double> roughnessValue;
+    private Label roughnessLabel;
+    private VersionedReference<Double> parallaxHeightValue;
+    private Label parallaxHeightLabel;
+    private VersionedReference<Boolean> steepParallaxValue;
+    private Texture normalMapValue;
+    private VersionedReference<Boolean> normalMapCheckBoxRef;
+    private Texture roughnessMapValue;
+    private VersionedReference<Boolean> roughnessMapCheckBoxRef;
+    private Texture parallaxMapValue;
+    private VersionedReference<Boolean> parallaxMapCheckBoxRef;
+    private Texture emissiveMapValue;
+    private VersionedReference<Boolean> emissiveMapCheckBoxRef;
 
     public static void main(String[] args) {
         PBRBlock pbrBlock = new PBRBlock();
@@ -67,10 +98,14 @@ public class PBRBlock extends SimpleApplication {
         BaseStyles.loadGlassStyle();
         GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
 
+        renderManager.setPreferredLightMode(TechniqueDef.LightMode.SinglePassAndImageBased);
+        renderManager.setSinglePassLightBatchSize(3);
+
         BlocksConfig.initialize(assetManager);
 
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
         typeRegistry.register(TypeIds.WATER, assetManager.loadMaterial("water-pbr/water.j3m"));
+        waterMaterial = typeRegistry.get(TypeIds.WATER);
 
         chunk = createChunk();
 
@@ -82,7 +117,14 @@ public class PBRBlock extends SimpleApplication {
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
 
-        hideCursor();
+        cam.setLocation(new Vector3f(36, 7, -5));
+        cam.lookAt(new Vector3f(16, 1, 16), Vector3f.UNIT_Y);
+
+        flyCam.setDragToRotate(true);
+
+        Container materialDebug = createMaterialDebugContainer();
+        materialDebug.setLocalTranslation(0, getContext().getSettings().getHeight(), 1);
+        guiNode.attachChild(materialDebug);
     }
 
     @Override
@@ -106,11 +148,37 @@ public class PBRBlock extends SimpleApplication {
                 }
             });
         }
-    }
 
-    private void hideCursor() {
-        GuiGlobals.getInstance().setCursorEventsEnabled(false);
-        inputManager.setCursorVisible(false);
+        if (metallicValue.needsUpdate()) {
+            float newMetallicValue = metallicValue.get().floatValue();
+            metallicLabel.setText(String.format("%.2f", newMetallicValue));
+            waterMaterial.setFloat("Metallic", newMetallicValue);
+        }
+        if (roughnessValue.needsUpdate()) {
+            float newRoughnessValue = roughnessValue.get().floatValue();
+            roughnessLabel.setText(String.format("%.2f", newRoughnessValue));
+            waterMaterial.setFloat("Roughness", newRoughnessValue);
+        }
+        if (parallaxHeightValue.needsUpdate()) {
+            float newParallaxHeightValue = parallaxHeightValue.get().floatValue();
+            parallaxHeightLabel.setText(String.format("%.3f", newParallaxHeightValue));
+            waterMaterial.setFloat("ParallaxHeight", newParallaxHeightValue);
+        }
+        if (steepParallaxValue.needsUpdate()) {
+            waterMaterial.setBoolean("SteepParallax", steepParallaxValue.get());
+        }
+        if (normalMapCheckBoxRef.needsUpdate()) {
+            waterMaterial.setTexture("NormalMap", normalMapCheckBoxRef.get() ? normalMapValue : null);
+        }
+        if (roughnessMapCheckBoxRef.needsUpdate()) {
+            waterMaterial.setTexture("RoughnessMap", roughnessMapCheckBoxRef.get() ? roughnessMapValue : null);
+        }
+        if (parallaxMapCheckBoxRef.needsUpdate()) {
+            waterMaterial.setTexture("ParallaxMap", parallaxMapCheckBoxRef.get() ? parallaxMapValue : null);
+        }
+        if (emissiveMapCheckBoxRef.needsUpdate()) {
+            waterMaterial.setTexture("EmissiveMap", emissiveMapCheckBoxRef.get() ? emissiveMapValue : null);
+        }
     }
 
     private Chunk createChunk() {
@@ -135,5 +203,78 @@ public class PBRBlock extends SimpleApplication {
         chunk.update();
         return chunk;
     }
+
+    private Container createMaterialDebugContainer() {
+        Container container = new Container(new SpringGridLayout(Axis.Y, Axis.X, FillMode.Even, FillMode.Even));
+        container.setBackground(new QuadBackgroundComponent(new ColorRGBA(0, 0, 0, 0.9f)));
+        container.addChild(new Label("PBR Material debug", new ElementId(Container.ELEMENT_ID).child("title")));
+
+        // metallic
+        float currentMetallicValue = waterMaterial.getParamValue("Metallic");
+        Container metallic = container.addChild(createRow());
+        metallic.addChild(new Label("Metallic"));
+        Slider metallicSlider = metallic.addChild(createSlider(currentMetallicValue, 0.05));
+        metallicValue = metallicSlider.getModel().createReference();
+        metallicLabel = metallic.addChild(new Label(String.format("%.2f", currentMetallicValue)));
+
+        // roughness
+        float currentRoughnessValue = waterMaterial.getParamValue("Roughness");
+        Container roughness = container.addChild(createRow());
+        roughness.addChild(new Label("Roughness"));
+        Slider roughnessSlider = roughness.addChild(createSlider(currentRoughnessValue, 0.05));
+        roughnessValue = roughnessSlider.getModel().createReference();
+        roughnessLabel = roughness.addChild(new Label(String.format("%.2f", currentRoughnessValue)));
+
+        // parallax height
+        float currentParallaxHeightValue = waterMaterial.getParamValue("ParallaxHeight");
+        Container parallaxHeight = container.addChild(createRow());
+        parallaxHeight.addChild(new Label("ParallaxHeight"));
+        Slider parallaxHeightSlider = parallaxHeight.addChild(createSlider(currentParallaxHeightValue, 0.005));
+        parallaxHeightValue = parallaxHeightSlider.getModel().createReference();
+        parallaxHeightLabel = parallaxHeight.addChild(new Label(String.format("%.3f", currentParallaxHeightValue)));
+
+        // steep parallax
+        boolean currentSteepParallaxValue = waterMaterial.getParamValue("SteepParallax");
+        Container steepParallax = container.addChild(createRow());
+        Checkbox steepParallaxCheckBox = steepParallax.addChild(new Checkbox("Steep Parallax", new DefaultCheckboxModel(currentSteepParallaxValue)));
+        steepParallaxValue = steepParallaxCheckBox.getModel().createReference();
+
+        // normal map
+        normalMapValue = waterMaterial.getParamValue("NormalMap");
+        Container normalMap = container.addChild(createRow());
+        Checkbox normalMapCheckBox = normalMap.addChild(new Checkbox("NormalMap", new DefaultCheckboxModel(normalMapValue != null)));
+        normalMapCheckBoxRef = normalMapCheckBox.getModel().createReference();
+
+        // roughness map
+        roughnessMapValue = waterMaterial.getParamValue("RoughnessMap");
+        Container roughnessMap = container.addChild(createRow());
+        Checkbox roughnessMapCheckBox = roughnessMap.addChild(new Checkbox("RoughnessMap", new DefaultCheckboxModel(roughnessMapValue != null)));
+        roughnessMapCheckBoxRef = roughnessMapCheckBox.getModel().createReference();
+
+        // parallax map
+        parallaxMapValue = waterMaterial.getParamValue("ParallaxMap");
+        Container parallaxMap = container.addChild(createRow());
+        Checkbox parallaxMapCheckBox = parallaxMap.addChild(new Checkbox("ParallaxMap", new DefaultCheckboxModel(parallaxMapValue != null)));
+        parallaxMapCheckBoxRef = parallaxMapCheckBox.getModel().createReference();
+
+        // parallax map
+        emissiveMapValue = waterMaterial.getParamValue("EmissiveMap");
+        Container emissiveMap = container.addChild(createRow());
+        Checkbox emissiveMapCheckBox = emissiveMap.addChild(new Checkbox("EmissiveMap", new DefaultCheckboxModel(emissiveMapValue != null)));
+        emissiveMapCheckBoxRef = emissiveMapCheckBox.getModel().createReference();
+
+        return container;
+    }
+
+    private Container createRow() {
+        return new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Even, FillMode.Even));
+    }
+
+    private Slider createSlider(float value, double delta) {
+        Slider slider = new Slider(new DefaultRangedValueModel(0, 1, value), Axis.X);
+        slider.setDelta(delta);
+        return slider;
+    }
+
 
 }

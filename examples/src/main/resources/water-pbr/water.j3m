@@ -2,9 +2,10 @@ Material water-pbr : Blocks/MatDefs/Water-pbr.j3md {
 
     MaterialParameters {
         // PBR
-        Metallic: 0.95
-        Roughness: 0.05
+        Metallic: 0.5
+        Roughness: 0.0
         BaseColor: 1.0 1.0 1.0 1.0
+        ParallaxHeight: 0.05
         SteepParallax: true
         BaseColorMap: water-pbr/water_base_color.png
         NormalMap: water-pbr/water_normal.png
