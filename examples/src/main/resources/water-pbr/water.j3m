@@ -1,6 +1,7 @@
-Material water : Common/MatDefs/Light/PBRLighting.j3md {
+Material water-pbr : Blocks/MatDefs/Water-pbr.j3md {
 
     MaterialParameters {
+        // PBR
         Metallic: 0.95
         Roughness: 0.05
         BaseColor: 1.0 1.0 1.0 1.0
@@ -10,6 +11,15 @@ Material water : Common/MatDefs/Light/PBRLighting.j3md {
         RoughnessMap: water-pbr/water_roughness.png
         ParallaxMap: water-pbr/water_parallax.png
         EmissiveMap: water-pbr/water_emissive.png
+
+        // custom
+        WaveSpeed : 1.5
+        WaveHeight : 0.03
+        WaveSize : 5
+        TextureScrollSpeed : 0
+        numTilesX : 1
+        numTilesY : 1
+        OffsetY: -0.1
     }
 
     AdditionalRenderState {

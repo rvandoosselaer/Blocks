@@ -8,16 +8,14 @@ import com.jme3.app.StatsAppState;
 import com.jme3.environment.EnvironmentCamera;
 import com.jme3.environment.LightProbeFactory;
 import com.jme3.environment.generation.JobProgressAdapter;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.LightProbe;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.filters.ToneMapFilter;
 import com.jme3.util.SkyFactory;
-import com.rvandoosselaer.blocks.BlockIds;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
@@ -41,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author rvandoosselaer
  */
 @Slf4j
-public class PBRBlock extends SimpleApplication implements ActionListener {
+public class PBRBlock extends SimpleApplication {
 
     private int frame = 0;
     private Chunk chunk;
@@ -74,25 +72,17 @@ public class PBRBlock extends SimpleApplication implements ActionListener {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
         typeRegistry.register(TypeIds.WATER, assetManager.loadMaterial("water-pbr/water.j3m"));
 
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-
-        chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(new Vec3i(0, 0, 0), blockRegistry.get(BlockIds.WATER));
-        chunk.update();
+        chunk = createChunk();
 
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(meshGenerator);
+
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Path.hdr", SkyFactory.EnvMapType.EquirectMap));
 
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
 
         hideCursor();
-
-        createSky();
-
-        inputManager.addMapping("metallic", new KeyTrigger(KeyInput.KEY_T));
-        inputManager.addMapping("roughness", new KeyTrigger(KeyInput.KEY_R));
-        inputManager.addListener(this, "metallic", "roughness");
     }
 
     @Override
@@ -106,36 +96,15 @@ public class PBRBlock extends SimpleApplication implements ActionListener {
                     log.info("Environment map rendered");
                     enqueue(() -> {
                         result.getArea().setRadius(100);
-                        getStateManager().getState(PostProcessingState.class).getFilterPostProcessor().addFilter(new BloomFilter(BloomFilter.GlowMode.Scene));
                         rootNode.addLight(result);
                         rootNode.attachChild(chunk.getNode());
+
+                        FilterPostProcessor fpp = getStateManager().getState(PostProcessingState.class).getFilterPostProcessor();
+                        fpp.addFilter(new BloomFilter(BloomFilter.GlowMode.Scene));
+                        fpp.addFilter(new ToneMapFilter(Vector3f.UNIT_XYZ.mult(4.0f)));
                     });
                 }
             });
-        }
-    }
-
-    @Override
-    public void onAction(String name, boolean isPressed, float tpf) {
-        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
-        Material waterPbr = typeRegistry.get(TypeIds.WATER);
-
-        if ("metallic".equals(name) && isPressed) {
-            float metallic = (float) waterPbr.getParam("Metallic").getValue();
-            metallic += 0.05f;
-            if (metallic > 1) {
-                metallic = 0;
-            }
-            waterPbr.setFloat("Metallic", metallic);
-            System.out.println("Metallic value: " + metallic);
-        } else if ("roughness".equals(name) && isPressed) {
-            float roughness = (float) waterPbr.getParam("Roughness").getValue();
-            roughness += 0.05f;
-            if (roughness > 1) {
-                roughness = 0;
-            }
-            waterPbr.setFloat("Roughness", roughness);
-            System.out.println("Roughness value: " + roughness);
         }
     }
 
@@ -144,8 +113,27 @@ public class PBRBlock extends SimpleApplication implements ActionListener {
         inputManager.setCursorVisible(false);
     }
 
-    private void createSky() {
-        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Path.hdr", SkyFactory.EnvMapType.EquirectMap));
+    private Chunk createChunk() {
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(32, 2, 32));
+
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+
+        for (int x = 0; x < 32; x++) {
+            for (int y = 0; y < 2; y++) {
+                for (int z = 0; z < 32; z++) {
+                    if (y == 0) {
+                        chunk.addBlock(x, y, z, blockRegistry.get(TypeIds.DIRT));
+                    } else {
+                        Block block = x > 3 && x < 28 && z > 3 && z < 28 ? blockRegistry.get(TypeIds.WATER) : blockRegistry.get(TypeIds.GRASS);
+                        chunk.addBlock(x, y, z, block);
+                    }
+                }
+            }
+        }
+
+        chunk.update();
+        return chunk;
     }
 
 }
