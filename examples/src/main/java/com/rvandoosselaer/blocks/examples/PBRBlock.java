@@ -183,7 +183,7 @@ public class PBRBlock extends SimpleApplication {
 
     private Chunk createChunk() {
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        BlocksConfig.getInstance().setChunkSize(new Vec3i(32, 2, 32));
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(32, 7, 32));
 
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
@@ -199,6 +199,8 @@ public class PBRBlock extends SimpleApplication {
                 }
             }
         }
+
+        chunk.addBlock(16, 6, 16, blockRegistry.get(TypeIds.WATER));
 
         chunk.update();
         return chunk;
