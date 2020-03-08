@@ -259,7 +259,7 @@ public class PBRBlock extends SimpleApplication {
         Checkbox parallaxMapCheckBox = parallaxMap.addChild(new Checkbox("ParallaxMap", new DefaultCheckboxModel(parallaxMapValue != null)));
         parallaxMapCheckBoxRef = parallaxMapCheckBox.getModel().createReference();
 
-        // parallax map
+        // emissive map
         emissiveMapValue = waterMaterial.getParamValue("EmissiveMap");
         Container emissiveMap = container.addChild(createRow());
         Checkbox emissiveMapCheckBox = emissiveMap.addChild(new Checkbox("EmissiveMap", new DefaultCheckboxModel(emissiveMapValue != null)));
