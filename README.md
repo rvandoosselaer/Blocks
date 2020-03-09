@@ -9,12 +9,12 @@ Blocks is a voxel engine created for [jMonkeyEngine](https://jmonkeyengine.org).
 
 ### Multiple shapes
 
-Next to the default cube shape, Blocks also supports more complicated shapes like pyramids, wedges, slabs, stairs, ...
+Next to the default cube shape, Blocks also supports more complicated shapes like pyramids, rounded blocks, wedges, slabs, stairs, ...
 This will make your creations feel even more vibrant!
 
-### Theming support
+### Theming and PBR support
 
-Don't like the look and feel of the blocks? You can easily change the default textures by creating and using a different theme. 
+Don't like the look and feel of the blocks? You can easily change the default textures by creating and using a different theme. You can even supply your own custom jMonkeyEngine material files.
 
 ### Endless terrain
 
@@ -22,7 +22,7 @@ Blocks comes with a fully fledged pager implementation that will load the blocks
 
 ### Physics support
 
-Add the generated collision meshes to the physics space of your application to create and simulate solid environments.
+Add the generated collision meshes to the physics space of your application to create and simulate solid environments. Blocks uses the [Minie](https://jmonkeystore.com/38308161-c3cf-4e23-8754-528ca8387c11) physics library for real-time physics simulation.
 
 ### Optimized for performance
  
