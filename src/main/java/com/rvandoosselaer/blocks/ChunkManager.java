@@ -177,9 +177,7 @@ public class ChunkManager {
     public void removeChunk(Vec3i location) {
         assertInitialized();
 
-        if (location != null) {
-            cache.evict(location);
-        }
+        getChunk(location).ifPresent(this::removeChunk);
     }
 
     /**
