@@ -189,6 +189,8 @@ public class ChunkManager {
         assertInitialized();
 
         if (chunk != null) {
+            cancelAllPendingOperations(chunk);
+
             cache.evict(chunk.getLocation());
         }
     }
@@ -573,6 +575,20 @@ public class ChunkManager {
             cache.maintain();
             lastCacheMaintenanceTimestamp = System.currentTimeMillis();
         }
+    }
+
+    /**
+     * Cancel all pending operations for this chunk. When invoked, the chunk will be remove from all queues.
+     *
+     * @param chunk to cancel operations for
+     */
+    private void cancelAllPendingOperations(Chunk chunk) {
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping pending tasks for {}", chunk);
+        }
+        loadingQueue.remove(chunk.getLocation());
+        generatorQueue.remove(chunk.getLocation());
+        meshQueue.remove(chunk);
     }
 
     /**
