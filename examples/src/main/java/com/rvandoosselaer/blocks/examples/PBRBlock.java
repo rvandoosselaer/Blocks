@@ -67,6 +67,8 @@ public class PBRBlock extends SimpleApplication {
     private VersionedReference<Double> parallaxHeightValue;
     private Label parallaxHeightLabel;
     private VersionedReference<Boolean> steepParallaxValue;
+    private Texture baseColorMapValue;
+    private VersionedReference<Boolean> baseColorMapCheckBoxRef;
     private Texture normalMapValue;
     private VersionedReference<Boolean> normalMapCheckBoxRef;
     private Texture roughnessMapValue;
@@ -167,6 +169,9 @@ public class PBRBlock extends SimpleApplication {
         if (steepParallaxValue.needsUpdate()) {
             waterMaterial.setBoolean("SteepParallax", steepParallaxValue.get());
         }
+        if (baseColorMapCheckBoxRef.needsUpdate()) {
+            waterMaterial.setTexture("BaseColorMap", baseColorMapCheckBoxRef.get() ? baseColorMapValue : null);
+        }
         if (normalMapCheckBoxRef.needsUpdate()) {
             waterMaterial.setTexture("NormalMap", normalMapCheckBoxRef.get() ? normalMapValue : null);
         }
@@ -240,6 +245,12 @@ public class PBRBlock extends SimpleApplication {
         Container steepParallax = container.addChild(createRow());
         Checkbox steepParallaxCheckBox = steepParallax.addChild(new Checkbox("Steep Parallax", new DefaultCheckboxModel(currentSteepParallaxValue)));
         steepParallaxValue = steepParallaxCheckBox.getModel().createReference();
+
+        // basecolor map
+        baseColorMapValue = waterMaterial.getParamValue("BaseColorMap");
+        Container baseColorMap = container.addChild(createRow());
+        Checkbox baseColorMapCheckBox = baseColorMap.addChild(new Checkbox("BaseColorMap", new DefaultCheckboxModel(baseColorMapValue != null)));
+        baseColorMapCheckBoxRef = baseColorMapCheckBox.getModel().createReference();
 
         // normal map
         normalMapValue = waterMaterial.getParamValue("NormalMap");
