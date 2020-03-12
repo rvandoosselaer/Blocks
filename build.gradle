@@ -21,7 +21,7 @@ ext {
     caffeineVersion = "[2.8,)"
     protobufVersion = "[3.10,)"
     guavaVersion = "[28,)"
-    minieVersion = "1.4.0for33"
+    minieVersion = "1.5.0for33"
 }
 
 repositories {
