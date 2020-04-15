@@ -7,9 +7,13 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.environment.EnvironmentCamera;
+import com.jme3.environment.LightProbeFactory;
+import com.jme3.environment.generation.JobProgressAdapter;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.LightProbe;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -52,6 +56,7 @@ import java.util.List;
  */
 public class BlockPicking extends SimpleApplication implements ActionListener {
 
+    private int frame;
     private Chunk chunk;
     private Geometry blockPlaceholder;
     private Label clickedBlock;
@@ -72,7 +77,8 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
                 new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
-                new MemoryDebugState());
+                new MemoryDebugState(),
+                new EnvironmentCamera(32));
     }
 
     @Override
@@ -128,6 +134,20 @@ public class BlockPicking extends SimpleApplication implements ActionListener {
         hoveredBlock = result != null ? getHoveredBlock(result) : null;
 
         updatePlaceholder(result);
+
+        frame++;
+
+        if (frame == 2) {
+            LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode, new JobProgressAdapter<LightProbe>() {
+                @Override
+                public void done(LightProbe result) {
+                    enqueue(() -> {
+                        result.getArea().setRadius(100);
+                        rootNode.addLight(result);
+                    });
+                }
+            });
+        }
     }
 
     @Override

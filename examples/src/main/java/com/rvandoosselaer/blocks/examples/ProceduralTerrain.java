@@ -8,6 +8,10 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.environment.EnvironmentCamera;
+import com.jme3.environment.LightProbeFactory;
+import com.jme3.environment.generation.JobProgressAdapter;
+import com.jme3.light.LightProbe;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -41,6 +45,8 @@ import java.util.Random;
  */
 public class ProceduralTerrain extends SimpleApplication {
 
+    private int frame;
+
     public static void main(String[] args) {
         LogAdapter.initialize();
 
@@ -56,7 +62,8 @@ public class ProceduralTerrain extends SimpleApplication {
                 new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
-                new MemoryDebugState());
+                new MemoryDebugState(),
+                new EnvironmentCamera(32));
     }
 
     @Override
@@ -90,6 +97,20 @@ public class ProceduralTerrain extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+        frame++;
+
+        if (frame == 2) {
+            LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode, new JobProgressAdapter<LightProbe>() {
+                @Override
+                public void done(LightProbe result) {
+                    enqueue(() -> {
+                        result.getArea().setRadius(500);
+                        rootNode.addLight(result);
+                    });
+                }
+            });
+        }
+
         stateManager.getState(ChunkPagerState.class).setLocation(new Vector3f(cam.getLocation().x, 255, cam.getLocation().z));
     }
 
