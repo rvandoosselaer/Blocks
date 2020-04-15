@@ -7,5 +7,6 @@ Material normal-block : Common/MatDefs/Light/Lighting.j3md {
         Ambient: 1.0 1.0 1.0 1.0
         Diffuse: 1.0 1.0 1.0 1.0
         Specular: 0 0 0 1.0
+        VertexLighting: true
     }
 }
