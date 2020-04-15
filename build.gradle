@@ -12,7 +12,7 @@ version = "1.5.0-SNAPSHOT"
 sourceCompatibility = 1.8
 
 ext {
-    jmeVersion = "[3.2,)"
+    jmeVersion = "[3.3,)"
     lombokVersion = "[1.18,)"
     slf4jVersion = "[1.8,)"
     simMathVersion = "[1.4,)"
@@ -21,7 +21,7 @@ ext {
     caffeineVersion = "[2.8,)"
     protobufVersion = "[3.10,)"
     guavaVersion = "[28,)"
-    minieVersion = "1.5.0for33"
+    minieVersion = "[1.6,)"
 }
 
 repositories {
