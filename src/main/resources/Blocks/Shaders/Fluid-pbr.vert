@@ -52,7 +52,7 @@ void main(){
     //
 
     //
-    // add an offset to the y-coordinate, to have a 'better' water effect. The block itself should behave like a cube,
+    // add an offset to the y-coordinate, to have a 'better' fluid effect. The block itself should behave like a cube,
     // it's only a visual aid. That's why it's done in the shader.
     //
     modelSpacePos.y += m_OffsetY;

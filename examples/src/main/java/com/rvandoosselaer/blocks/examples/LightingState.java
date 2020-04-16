@@ -5,6 +5,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.TechniqueDef;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -27,6 +28,9 @@ public class LightingState extends BaseAppState {
 
     @Override
     protected void initialize(Application app) {
+        app.getRenderManager().setPreferredLightMode(TechniqueDef.LightMode.SinglePass);
+        app.getRenderManager().setSinglePassLightBatchSize(2);
+
         ambientLight = new AmbientLight(ambientLightColor);
         directionalLight = new DirectionalLight(directionalLightDir, directionalLightColor);
     }

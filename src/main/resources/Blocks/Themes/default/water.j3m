@@ -1,0 +1,28 @@
+Material water : Blocks/MatDefs/Fluid.j3md {
+
+    MaterialParameters {
+        VertexLighting: false
+        UseMaterialColors: true
+        Ambient: 0.223 0.536 0.653 0.75
+        Diffuse: 0.223 0.536 0.653 0.75
+        Specular: 0.3 0.3 0.3 1.0
+        Shininess: 96
+        NormalMap: Flip WrapRepeat_S WrapRepeat_T Blocks/Themes/default/water-normal.png
+        ParallaxMap: Flip WrapRepeat_S WrapRepeat_T Blocks/Themes/default/water-parallax.png
+        ParallaxHeight: 0.05
+        SteepParallax: true
+
+        // custom
+        WaveSpeed : 1.5
+        WaveHeight : 0.03
+        WaveSize : 10
+        TextureScrollSpeedX : 0.05
+        TextureScrollSpeedY : 0.01
+        OffsetY: -0.1
+    }
+
+    AdditionalRenderState {
+        Blend Alpha
+    }
+
+}
