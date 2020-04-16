@@ -152,7 +152,13 @@ public class TypeRegistry {
      * @return an optional of the Material
      */
     private Optional<Material> loadMaterial(String name) {
-        return loadMaterial(name, usingTheme() ? theme : defaultTheme);
+        if (usingTheme()) {
+            // when using a theme, fallback to loading the material in the default theme when not found
+            Optional<Material> optionalMaterial = loadMaterial(name, theme);
+            return optionalMaterial.isPresent() ? optionalMaterial : loadMaterial(name, defaultTheme);
+        }
+
+        return loadMaterial(name, defaultTheme);
     }
 
     /**
