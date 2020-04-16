@@ -11,13 +11,9 @@ import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.environment.EnvironmentCamera;
-import com.jme3.environment.LightProbeFactory;
-import com.jme3.environment.generation.JobProgressAdapter;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.LightProbe;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -39,7 +35,7 @@ import com.simsilica.util.LogAdapter;
 
 /**
  * An application where you can shoot a ball using the space bar.
- * <p>
+ *
  * Default key mappings:
  * print camera position:            c
  * print direct memory information:  m
@@ -50,7 +46,6 @@ import com.simsilica.util.LogAdapter;
  */
 public class PhysicsScene extends SimpleApplication implements ActionListener {
 
-    private int frame;
     private Material ballMaterial;
     private Chunk chunk;
     private boolean chunkAttached = false;
@@ -70,8 +65,7 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
                 new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
-                new MemoryDebugState(),
-                new EnvironmentCamera(32));
+                new MemoryDebugState());
     }
 
     @Override
@@ -91,10 +85,10 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
                 for (int z = 0; z < chunkSize.z; z++) {
                     if (y == 0) {
                         chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.GRASS));
-                    } else if ((y == 1 || y == 2) && ((x == 10 && z >= 10 && z <= 20) || (x == 20 && z >= 10 && z <= 20) || (z == 10 && x >= 10 && x <= 20) || (z == 20 && x >= 10 && x <= 20))) {
+                    } else if ((y == 1 || y == 2 ) && ((x == 10 && z >= 10 && z <= 20) || (x == 20 && z >= 10 && z <= 20) || (z == 10 && x >= 10 && x <= 20) || (z == 20 && x >= 10 && x <= 20))) {
                         chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.STONE_BRICKS));
                     } else if ((y == 1 || y == 2) && (x > 10 && x < 20 && z > 10 && z < 20)) {
-                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.WATER_STILL));
+                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.WATER));
                     } else if (y == 1) {
                         int random = FastMath.nextRandomInt(0, 9);
                         if (random == 0) {
@@ -128,27 +122,13 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
     @Override
     public void simpleUpdate(float tpf) {
         BulletAppState bulletAppState = stateManager.getState(BulletAppState.class);
-        if (bulletAppState.isInitialized() && !chunkAttached) {
-            getPhysicsSpace().setGravity(new Vector3f(0, -20, 0));
-            PhysicsRigidBody physicsChunk = new PhysicsRigidBody(new MeshCollisionShape(chunk.getCollisionMesh()), 0);
-            physicsChunk.setPhysicsLocation(chunk.getWorldLocation());
-            bulletAppState.getPhysicsSpace().addCollisionObject(physicsChunk);
-            chunkAttached = true;
-        }
-
-        frame++;
-
-        if (frame == 2) {
-            LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode, new JobProgressAdapter<LightProbe>() {
-                @Override
-                public void done(LightProbe result) {
-                    enqueue(() -> {
-                        result.getArea().setRadius(100);
-                        rootNode.addLight(result);
-                    });
-                }
-            });
-        }
+            if (bulletAppState.isInitialized() && !chunkAttached) {
+                getPhysicsSpace().setGravity(new Vector3f(0, -20, 0));
+                PhysicsRigidBody physicsChunk = new PhysicsRigidBody(new MeshCollisionShape(chunk.getCollisionMesh()), 0);
+                physicsChunk.setPhysicsLocation(chunk.getWorldLocation());
+                bulletAppState.getPhysicsSpace().addCollisionObject(physicsChunk);
+                chunkAttached = true;
+            }
     }
 
     @Override

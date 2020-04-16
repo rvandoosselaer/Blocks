@@ -1,18 +1,19 @@
-Material water-still : Blocks/MatDefs/Fluid-pbr.j3md {
+Material water_still : Blocks/MatDefs/Water.j3md {
 
     MaterialParameters {
-        Metallic: 1.0
-        Roughness: 0.1
-        BaseColor: 0.223 0.536 0.653 0.9
-
-        // custom
+        Shininess: 128
+        UseMaterialColors: true
+        Ambient: 1.0 1.0 1.0 1.0
+        Diffuse: 1.0 1.0 1.0 1.0
+        Specular: 0.2 0.2 0.2 1.0
         WaveSpeed : 0
         WaveHeight : 0
         WaveSize : 0
-        TextureScrollSpeedX : 0.01
-        TextureScrollSpeedY : 0.01
-        OffsetY: -0.1
-
+        TextureScrollSpeed : 23
+        numTilesX : 1
+        numTilesY : 64
+        OffsetY : -0.1
+        DiffuseMap: Blocks/Themes/faithful/water_still.png
     }
 
     AdditionalRenderState {

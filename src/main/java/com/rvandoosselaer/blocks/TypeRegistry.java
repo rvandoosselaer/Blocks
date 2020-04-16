@@ -171,7 +171,7 @@ public class TypeRegistry {
             return of(assetManager.loadMaterial(materialPath));
         } catch (AssetNotFoundException e) {
             if (log.isTraceEnabled()) {
-                log.trace("Material {} could not be loaded from theme {}. Reason: {} not found.", materialPath, theme, e.getMessage());
+                log.trace("Material {} not found in theme {}", materialPath, theme);
             }
         }
 

@@ -5,13 +5,9 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
-import com.jme3.environment.EnvironmentCamera;
-import com.jme3.environment.LightProbeFactory;
-import com.jme3.environment.generation.JobProgressAdapter;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.LightProbe;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -31,7 +27,7 @@ import com.simsilica.util.LogAdapter;
 /**
  * An application that toggles between a new theme and the default theme.
  * When pressing the space bar, the theme changes.
- * <p>
+ *
  * Default key mappings:
  * print camera position:            c
  * print direct memory information:  m
@@ -42,7 +38,6 @@ import com.simsilica.util.LogAdapter;
  */
 public class ChangeTheme extends SimpleApplication implements ActionListener {
 
-    private int frame;
     private Chunk chunk;
     private TypeRegistry typeRegistry;
     private BlocksTheme sampleTheme = new BlocksTheme("A new theme", "/sample-theme");
@@ -62,8 +57,7 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
                 new WireframeState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
-                new MemoryDebugState(),
-                new EnvironmentCamera(32));
+                new MemoryDebugState());
     }
 
     @Override
@@ -80,15 +74,11 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
 
         chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         for (int x = 0; x < chunkSize.x; x++) {
-            for (int y = 0; y < 2; y++) {
-                for (int z = 0; z < chunkSize.z; z++) {
-                    if (y == 0) {
-                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.DIRT));
-                    } else if (x > 8 && x < 20 && z > 6 && z < 23) {
-                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.WATER));
-                    } else {
-                        chunk.addBlock(x, y, z, getRandomBlock(blockRegistry));
-                    }
+            for (int z = 0; z < chunkSize.z; z++) {
+                if (x > 8 && x < 20 && z > 6 && z < 23) {
+                    chunk.addBlock(x, 0, z, blockRegistry.get(BlockIds.WATER));
+                } else {
+                    chunk.addBlock(x, 0, z, getRandomBlock(blockRegistry));
                 }
             }
         }
@@ -108,23 +98,6 @@ public class ChangeTheme extends SimpleApplication implements ActionListener {
         flyCam.setMoveSpeed(10f);
         cam.setLocation(new Vector3f(25, 6, 30));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-    }
-
-    @Override
-    public void simpleUpdate(float tpf) {
-        frame++;
-
-        if (frame == 2) {
-            LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode, new JobProgressAdapter<LightProbe>() {
-                @Override
-                public void done(LightProbe result) {
-                    enqueue(() -> {
-                        result.getArea().setRadius(100);
-                        rootNode.addLight(result);
-                    });
-                }
-            });
-        }
     }
 
     @Override
