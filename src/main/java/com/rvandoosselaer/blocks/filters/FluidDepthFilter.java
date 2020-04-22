@@ -19,7 +19,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture2D;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -36,17 +35,25 @@ public class FluidDepthFilter extends Filter {
     private final GeometryList fluidGeometryList = new GeometryList(new TransparentComparator());
 
     @Getter
-    @Setter
     private ColorRGBA fadeColor = new ColorRGBA(0.0289f, 0.136f, 0.453f, 1.0f);
     @Getter
-    @Setter
     private float fadeDepth = 6.0f;
     @Getter
-    @Setter
     private float shorelineSize = 0.5f;
     @Getter
-    @Setter
     private ColorRGBA shorelineColor = new ColorRGBA(0.406f, 0.615f, 1.0f, 1f);
+    @Getter
+    private boolean distortion = true;
+    @Getter
+    private float distortionStrengthX = 0.003f;
+    @Getter
+    private float distortionStrengthY = 0.001f;
+    @Getter
+    private float distortionAmplitudeX = 15f;
+    @Getter
+    private float distortionAmplitudeY = 15f;
+    @Getter
+    private float distortionSpeed = 1.5f;
 
     @Override
     protected boolean isRequiresSceneTexture() {
@@ -69,6 +76,12 @@ public class FluidDepthFilter extends Filter {
         material.setFloat("FadeDepth", fadeDepth);
         material.setFloat("ShorelineSize", shorelineSize);
         material.setColor("ShorelineColor", shorelineColor);
+        material.setBoolean("UseDistortion", distortion);
+        material.setFloat("DistortionStrengthX", distortionStrengthX);
+        material.setFloat("DistortionStrengthY", distortionStrengthY);
+        material.setFloat("DistortionAmplitudeX", distortionAmplitudeX);
+        material.setFloat("DistortionAmplitudeY", distortionAmplitudeY);
+        material.setFloat("DistortionSpeed", distortionSpeed);
 
         fluidDepthBuffer = new FrameBuffer(w, h, 1);
         sceneDepthBuffer = new FrameBuffer(w, h, 1);
@@ -117,6 +130,56 @@ public class FluidDepthFilter extends Filter {
 
     public void clearFluidGeometries() {
         fluidGeometryList.clear();
+    }
+
+    public void setFadeColor(ColorRGBA fadeColor) {
+        this.fadeColor = fadeColor;
+        material.setColor("FadeColor", fadeColor);
+    }
+
+    public void setFadeDepth(float fadeDepth) {
+        this.fadeDepth = fadeDepth;
+        material.setFloat("FadeDepth", fadeDepth);
+    }
+
+    public void setShorelineSize(float shorelineSize) {
+        this.shorelineSize = shorelineSize;
+        material.setFloat("ShorelineSize", shorelineSize);
+    }
+
+    public void setShorelineColor(ColorRGBA shorelineColor) {
+        this.shorelineColor = shorelineColor;
+        material.setColor("ShorelineColor", shorelineColor);
+    }
+
+    public void setDistortion(boolean distortion) {
+        this.distortion = distortion;
+        material.setBoolean("UseDistortion", distortion);
+    }
+
+    public void setDistortionStrengthX(float distortionStrengthX) {
+        this.distortionStrengthX = distortionStrengthX;
+        material.setFloat("DistortionStrengthX", distortionStrengthX);
+    }
+
+    public void setDistortionStrengthY(float distortionStrengthY) {
+        this.distortionStrengthY = distortionStrengthY;
+        material.setFloat("DistortionStrengthY", distortionStrengthY);
+    }
+
+    public void setDistortionAmplitudeX(float distortionAmplitudeX) {
+        this.distortionAmplitudeX = distortionAmplitudeX;
+        material.setFloat("DistortionAmplitudeX", distortionAmplitudeX);
+    }
+
+    public void setDistortionAmplitudeY(float distortionAmplitudeY) {
+        this.distortionAmplitudeY = distortionAmplitudeY;
+        material.setFloat("DistortionAmplitudeY", distortionAmplitudeY);
+    }
+
+    public void setDistortionSpeed(float distortionSpeed) {
+        this.distortionSpeed = distortionSpeed;
+        material.setFloat("DistortionSpeed", distortionSpeed);
     }
 
     /**

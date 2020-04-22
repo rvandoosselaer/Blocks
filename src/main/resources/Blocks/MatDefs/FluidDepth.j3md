@@ -24,6 +24,20 @@ MaterialDef WaterDepth Textured {
 
         // the depth texture of the scene without the geometries that fade
         Texture2D SceneDepthTexture
+
+        // Enable water distortion to simulate the effect of light going through water
+        Boolean UseDistortion
+
+        // The strength of the distortion effect on the X and Y axes
+        Float DistortionStrengthX
+        Float DistortionStrengthY
+
+        // The amplitude of the distortion effect on the X and Y axes
+        Float DistortionAmplitudeX
+        Float DistortionAmplitudeY
+
+        // The speed of the distortion effect
+        Float DistortionSpeed
     }
 
     Technique {
@@ -31,7 +45,12 @@ MaterialDef WaterDepth Textured {
     	FragmentShader GLSL310 GLSL300 GLSL100 GLSL150: Blocks/Shaders/FluidDepth.frag
 
     	WorldParameters {
+    	    Time
     	    FrustumNearFar
+    	}
+
+    	Defines {
+    	    DISTORTION : UseDistortion
     	}
     }
 

@@ -7,7 +7,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
@@ -17,9 +16,17 @@ import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
 import com.rvandoosselaer.blocks.TypeIds;
 import com.rvandoosselaer.blocks.filters.FluidDepthFilter;
+import com.simsilica.lemur.Axis;
+import com.simsilica.lemur.Checkbox;
+import com.simsilica.lemur.Container;
+import com.simsilica.lemur.FillMode;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
+import com.simsilica.lemur.Slider;
+import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.style.BaseStyles;
+import com.simsilica.lemur.style.ElementId;
 import com.simsilica.mathd.Vec3i;
 import com.simsilica.util.LogAdapter;
 
@@ -37,6 +44,21 @@ import com.simsilica.util.LogAdapter;
 public class WaterDepthTest extends SimpleApplication {
 
     private Chunk chunk;
+    private FluidDepthFilter fluidDepthFilter;
+    private VersionedReference<Double> depthReference;
+    private Label depthValue;
+    private VersionedReference<Double> shorelineReference;
+    private Label shorelineValue;
+    private VersionedReference<Double> distStrengthXReference;
+    private Label distStrengthXValue;
+    private VersionedReference<Double> distStrengthYReference;
+    private Label distStrengthYValue;
+    private Label distAmplitudeXValue;
+    private VersionedReference<Double> distAmplitudeXReference;
+    private Label distAmplitudeYValue;
+    private VersionedReference<Double> distAmplitudeYReference;
+    private Label distortionSpeedValue;
+    private VersionedReference<Double> distSpeedReference;
 
     public static void main(String[] args) {
         LogAdapter.initialize();
@@ -74,8 +96,7 @@ public class WaterDepthTest extends SimpleApplication {
 
         rootNode.attachChild(chunk.getNode());
 
-        hideCursor();
-        createCrossHair();
+        flyCam.setDragToRotate(true);
 
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
@@ -88,9 +109,46 @@ public class WaterDepthTest extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         PostProcessingState postProcessingState = getStateManager().getState(PostProcessingState.class);
         if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidDepthFilter.class) == null) {
-            FluidDepthFilter fluidDepthFilter = new FluidDepthFilter();
+            fluidDepthFilter = new FluidDepthFilter();
             fluidDepthFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
             postProcessingState.getFilterPostProcessor().addFilter(fluidDepthFilter);
+
+            guiNode.attachChild(createFilterPanel());
+        }
+
+        if (depthReference.update()) {
+            fluidDepthFilter.setFadeDepth(depthReference.get().floatValue());
+            depthValue.setText(String.format("%.1f", depthReference.get()));
+        }
+
+        if (shorelineReference.update()) {
+            fluidDepthFilter.setShorelineSize(shorelineReference.get().floatValue());
+            shorelineValue.setText(String.format("%.1f", shorelineReference.get()));
+        }
+
+        if (distStrengthXReference.update()) {
+            fluidDepthFilter.setDistortionStrengthX(distStrengthXReference.get().floatValue());
+            distStrengthXValue.setText(String.format("%.3f", distStrengthXReference.get()));
+        }
+
+        if (distStrengthYReference.update()) {
+            fluidDepthFilter.setDistortionStrengthY(distStrengthYReference.get().floatValue());
+            distStrengthYValue.setText(String.format("%.3f", distStrengthYReference.get()));
+        }
+
+        if (distAmplitudeXReference.update()) {
+            fluidDepthFilter.setDistortionAmplitudeX(distAmplitudeXReference.get().floatValue());
+            distAmplitudeXValue.setText(String.format("%.0f", distAmplitudeXReference.get()));
+        }
+
+        if (distAmplitudeYReference.update()) {
+            fluidDepthFilter.setDistortionAmplitudeY(distAmplitudeYReference.get().floatValue());
+            distAmplitudeYValue.setText(String.format("%.0f", distAmplitudeYReference.get()));
+        }
+
+        if (distSpeedReference.update()) {
+            fluidDepthFilter.setDistortionSpeed(distSpeedReference.get().floatValue());
+            distortionSpeedValue.setText(String.format("%.1f", distSpeedReference.get()));
         }
     }
 
@@ -122,21 +180,73 @@ public class WaterDepthTest extends SimpleApplication {
         return chunk;
     }
 
-    private void createCrossHair() {
-        Label label = new Label("+");
-        label.setColor(ColorRGBA.White);
+    private Container createFilterPanel() {
+        Container container = new Container(new SpringGridLayout(Axis.Y, Axis.X));
+        container.addChild(new Label("FluidDepthFilter", new ElementId("title")));
 
-        Camera cam = getCamera();
-        int width = cam.getWidth();
-        int height = cam.getHeight();
-        label.setLocalTranslation((width / 2) - (label.getPreferredSize().getX() / 2), (height / 2) + (label.getPreferredSize().getY() / 2), label.getLocalTranslation().getZ());
+        Container depthRow = container.addChild(createRow());
+        depthRow.addChild(new Label("Fade depth: "));
+        depthValue = depthRow.addChild(new Label(Float.toString(fluidDepthFilter.getFadeDepth())));
+        Slider depth = depthRow.addChild(createSlider(0.1f, 0, 20, fluidDepthFilter.getFadeDepth()));
+        depthReference = depth.getModel().createReference();
 
-        guiNode.attachChild(label);
+        Container shorelineRow = container.addChild(createRow());
+        shorelineRow.addChild(new Label("Shoreline size: "));
+        shorelineValue = shorelineRow.addChild(new Label(Float.toString(fluidDepthFilter.getShorelineSize())));
+        Slider shoreline = shorelineRow.addChild(createSlider(0.1f, 0, 20, fluidDepthFilter.getShorelineSize()));
+        shorelineReference = shoreline.getModel().createReference();
+
+        Checkbox distortion = container.addChild(new Checkbox("Distortion"));
+        distortion.setChecked(fluidDepthFilter.isDistortion());
+        distortion.addClickCommands(button -> fluidDepthFilter.setDistortion(distortion.isChecked()));
+
+        Container distortionStrengthX = container.addChild(createRow());
+        distortionStrengthX.addChild(new Label("Strength x: "));
+        distStrengthXValue = distortionStrengthX.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionStrengthX())));
+        Slider distStrengthX = distortionStrengthX.addChild(createSlider(0.001f, 0, 0.1f, fluidDepthFilter.getDistortionStrengthX()));
+        distStrengthXReference = distStrengthX.getModel().createReference();
+
+        Container distortionStrengthY = container.addChild(createRow());
+        distortionStrengthY.addChild(new Label("Strength y: "));
+        distStrengthYValue = distortionStrengthY.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionStrengthY())));
+        Slider distStrengthY = distortionStrengthY.addChild(createSlider(0.001f, 0, 0.1f, fluidDepthFilter.getDistortionStrengthY()));
+        distStrengthYReference = distStrengthY.getModel().createReference();
+
+        Container distortionOffsetX = container.addChild(createRow());
+        distortionOffsetX.addChild(new Label("Amplitude x: "));
+        distAmplitudeXValue = distortionOffsetX.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionAmplitudeX())));
+        Slider distOffsetX = distortionOffsetX.addChild(createSlider(1f, 0, 50f, fluidDepthFilter.getDistortionAmplitudeX()));
+        distAmplitudeXReference = distOffsetX.getModel().createReference();
+
+        Container distortionAmplitudeY = container.addChild(createRow());
+        distortionAmplitudeY.addChild(new Label("Amplitude y: "));
+        distAmplitudeYValue = distortionAmplitudeY.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionAmplitudeY())));
+        Slider distOffsetY = distortionAmplitudeY.addChild(createSlider(1f, 0, 50f, fluidDepthFilter.getDistortionAmplitudeY()));
+        distAmplitudeYReference = distOffsetY.getModel().createReference();
+
+        Container distortionSpeed = container.addChild(createRow());
+        distortionSpeed.addChild(new Label("Speed: "));
+        distortionSpeedValue = distortionSpeed.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionSpeed())));
+        Slider distSpeed = distortionSpeed.addChild(createSlider(0.1f, 0f, 10f, fluidDepthFilter.getDistortionSpeed()));
+        distSpeedReference = distSpeed.getModel().createReference();
+
+        container.setLocalTranslation(0, cam.getHeight(), 99);
+
+        return container;
     }
 
-    private void hideCursor() {
-        GuiGlobals.getInstance().setCursorEventsEnabled(false);
-        inputManager.setCursorVisible(false);
+    private Container createRow() {
+        return new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Last, FillMode.Even));
+    }
+
+    private Slider createSlider(float delta, float min, float max, float value) {
+        Slider slider = new Slider(Axis.X);
+        slider.setDelta(delta);
+        slider.getModel().setMinimum(min);
+        slider.getModel().setMaximum(max);
+        slider.getModel().setValue(value);
+
+        return slider;
     }
 
 }

@@ -1,6 +1,7 @@
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 #import "Common/ShaderLib/MultiSample.glsllib"
 
+uniform float g_Time;
 uniform vec4 m_FadeColor;
 uniform float m_FadeDepth;
 uniform float m_ShorelineSize;
@@ -9,6 +10,11 @@ uniform sampler2D m_Texture;
 uniform vec2 g_FrustumNearFar;
 uniform sampler2D m_WaterDepthTexture;
 uniform sampler2D m_SceneDepthTexture;
+uniform float m_DistortionStrengthX;
+uniform float m_DistortionStrengthY;
+uniform float m_DistortionAmplitudeX;
+uniform float m_DistortionAmplitudeY;
+uniform float m_DistortionSpeed;
 
 varying vec2 texCoord;
 
@@ -16,6 +22,19 @@ void main(){
     vec4 scene = getColor(m_Texture, texCoord);
     float depth = getDepth(m_SceneDepthTexture, texCoord).r;
     float waterDepth = getDepth(m_WaterDepthTexture, texCoord).r;
+
+    // when distortion is enabled, we simulate the underwater effect. We should also apply this effect to the depth
+    // textures, and not only on the scene texture!
+    #ifdef DISTORTION
+        float X = texCoord.x * m_DistortionAmplitudeX + g_Time * m_DistortionSpeed;
+        float Y = texCoord.y * m_DistortionAmplitudeY + g_Time * m_DistortionSpeed;
+        vec2 texCoordDistorted = vec2(texCoord);
+        texCoordDistorted.x += sin(X - Y) * m_DistortionStrengthX * sin(Y);
+        texCoordDistorted.y += cos(X + Y) * m_DistortionStrengthY * cos(Y);
+
+        depth = getDepth(m_SceneDepthTexture, texCoordDistorted).r;
+        waterDepth = getDepth(m_WaterDepthTexture, texCoordDistorted).r;
+    #endif
 
     // logic from DepthOfField.frag:
     // z_buffer_value = a + b / z;
@@ -41,6 +60,18 @@ void main(){
     // depthMixFactor = 1 == bottom (m_FadeDepth)
 
     if (distanceWater < distanceScene) {
+
+        // when distortion is enabled, we simulate the underwater effect. We displace the scene texture
+        #ifdef DISTORTION
+            float X = texCoord.x * m_DistortionAmplitudeX + g_Time * m_DistortionSpeed;
+            float Y = texCoord.y * m_DistortionAmplitudeY + g_Time * m_DistortionSpeed;
+            vec2 texCoordDistorted = vec2(texCoord);
+            texCoordDistorted.x += sin(X - Y) * m_DistortionStrengthX * sin(Y);
+            texCoordDistorted.y += cos(X + Y) * m_DistortionStrengthY * cos(Y);
+
+            scene = getColor(m_Texture, texCoordDistorted);
+        #endif
+
         // calculate the depth difference between the water and the scene (aka shore). When this is small, we are at
         // the shoreline.
         //float shore = abs(distanceWater - distanceScene);
