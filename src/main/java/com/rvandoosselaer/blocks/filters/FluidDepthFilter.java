@@ -39,7 +39,7 @@ public class FluidDepthFilter extends Filter {
     @Getter
     private float fadeDepth = 6.0f;
     @Getter
-    private float shorelineSize = 0.5f;
+    private float shorelineSize = 0.1f;
     @Getter
     private ColorRGBA shorelineColor = new ColorRGBA(0.406f, 0.615f, 1.0f, 1f);
     @Getter
@@ -139,47 +139,65 @@ public class FluidDepthFilter extends Filter {
 
     public void setFadeDepth(float fadeDepth) {
         this.fadeDepth = fadeDepth;
-        material.setFloat("FadeDepth", fadeDepth);
+        if (material != null) {
+            material.setFloat("FadeDepth", fadeDepth);
+        }
     }
 
     public void setShorelineSize(float shorelineSize) {
         this.shorelineSize = shorelineSize;
-        material.setFloat("ShorelineSize", shorelineSize);
+        if (material != null) {
+            material.setFloat("ShorelineSize", shorelineSize);
+        }
     }
 
     public void setShorelineColor(ColorRGBA shorelineColor) {
         this.shorelineColor = shorelineColor;
-        material.setColor("ShorelineColor", shorelineColor);
+        if (material != null) {
+            material.setColor("ShorelineColor", shorelineColor);
+        }
     }
 
     public void setDistortion(boolean distortion) {
         this.distortion = distortion;
-        material.setBoolean("UseDistortion", distortion);
+        if (material != null) {
+            material.setBoolean("UseDistortion", distortion);
+        }
     }
 
     public void setDistortionStrengthX(float distortionStrengthX) {
         this.distortionStrengthX = distortionStrengthX;
-        material.setFloat("DistortionStrengthX", distortionStrengthX);
+        if (material != null) {
+            material.setFloat("DistortionStrengthX", distortionStrengthX);
+        }
     }
 
     public void setDistortionStrengthY(float distortionStrengthY) {
         this.distortionStrengthY = distortionStrengthY;
-        material.setFloat("DistortionStrengthY", distortionStrengthY);
+        if (material != null) {
+            material.setFloat("DistortionStrengthY", distortionStrengthY);
+        }
     }
 
     public void setDistortionAmplitudeX(float distortionAmplitudeX) {
         this.distortionAmplitudeX = distortionAmplitudeX;
-        material.setFloat("DistortionAmplitudeX", distortionAmplitudeX);
+        if (material != null) {
+            material.setFloat("DistortionAmplitudeX", distortionAmplitudeX);
+        }
     }
 
     public void setDistortionAmplitudeY(float distortionAmplitudeY) {
         this.distortionAmplitudeY = distortionAmplitudeY;
-        material.setFloat("DistortionAmplitudeY", distortionAmplitudeY);
+        if (material != null) {
+            material.setFloat("DistortionAmplitudeY", distortionAmplitudeY);
+        }
     }
 
     public void setDistortionSpeed(float distortionSpeed) {
         this.distortionSpeed = distortionSpeed;
-        material.setFloat("DistortionSpeed", distortionSpeed);
+        if (material != null) {
+            material.setFloat("DistortionSpeed", distortionSpeed);
+        }
     }
 
     /**

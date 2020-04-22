@@ -27,6 +27,8 @@ import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
+import com.rvandoosselaer.blocks.TypeIds;
+import com.rvandoosselaer.blocks.filters.FluidDepthFilter;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.style.BaseStyles;
@@ -35,7 +37,7 @@ import com.simsilica.util.LogAdapter;
 
 /**
  * An application where you can shoot a ball using the space bar.
- *
+ * <p>
  * Default key mappings:
  * print camera position:            c
  * print direct memory information:  m
@@ -85,7 +87,7 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
                 for (int z = 0; z < chunkSize.z; z++) {
                     if (y == 0) {
                         chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.GRASS));
-                    } else if ((y == 1 || y == 2 ) && ((x == 10 && z >= 10 && z <= 20) || (x == 20 && z >= 10 && z <= 20) || (z == 10 && x >= 10 && x <= 20) || (z == 20 && x >= 10 && x <= 20))) {
+                    } else if ((y == 1 || y == 2) && ((x == 10 && z >= 10 && z <= 20) || (x == 20 && z >= 10 && z <= 20) || (z == 10 && x >= 10 && x <= 20) || (z == 20 && x >= 10 && x <= 20))) {
                         chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.STONE_BRICKS));
                     } else if ((y == 1 || y == 2) && (x > 10 && x < 20 && z > 10 && z < 20)) {
                         chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.WATER));
@@ -122,13 +124,20 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
     @Override
     public void simpleUpdate(float tpf) {
         BulletAppState bulletAppState = stateManager.getState(BulletAppState.class);
-            if (bulletAppState.isInitialized() && !chunkAttached) {
-                getPhysicsSpace().setGravity(new Vector3f(0, -20, 0));
-                PhysicsRigidBody physicsChunk = new PhysicsRigidBody(new MeshCollisionShape(chunk.getCollisionMesh()), 0);
-                physicsChunk.setPhysicsLocation(chunk.getWorldLocation());
-                bulletAppState.getPhysicsSpace().addCollisionObject(physicsChunk);
-                chunkAttached = true;
-            }
+        if (bulletAppState.isInitialized() && !chunkAttached) {
+            getPhysicsSpace().setGravity(new Vector3f(0, -20, 0));
+            PhysicsRigidBody physicsChunk = new PhysicsRigidBody(new MeshCollisionShape(chunk.getCollisionMesh()), 0);
+            physicsChunk.setPhysicsLocation(chunk.getWorldLocation());
+            bulletAppState.getPhysicsSpace().addCollisionObject(physicsChunk);
+            chunkAttached = true;
+        }
+
+        PostProcessingState postProcessingState = getStateManager().getState(PostProcessingState.class);
+        if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidDepthFilter.class) == null) {
+            FluidDepthFilter fluidDepthFilter = new FluidDepthFilter();
+            fluidDepthFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
+            postProcessingState.getFilterPostProcessor().addFilter(fluidDepthFilter);
+        }
     }
 
     @Override
