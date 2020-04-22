@@ -1,0 +1,38 @@
+MaterialDef WaterDepth Textured {
+
+    MaterialParameters {
+        // the depth when the FadeColor is fully visible
+        Float FadeDepth
+
+        // the color the fluid will blend to
+        Vector4 FadeColor
+
+        // the shoreline size. Set to 0 to disable
+        Float ShorelineSize
+
+        // the color of the shoreline
+        Vector4 ShorelineColor
+
+        // samples for aa
+        Int NumSamples
+
+        // the rendered scene
+        Texture2D Texture
+
+        // the depth texture of the fluid geometries that fade
+        Texture2D FluidDepthTexture
+
+        // the depth texture of the scene without the geometries that fade
+        Texture2D SceneDepthTexture
+    }
+
+    Technique {
+    	VertexShader GLSL310 GLSL300 GLSL100 GLSL150:   Common/MatDefs/Post/Post.vert
+    	FragmentShader GLSL310 GLSL300 GLSL100 GLSL150: Blocks/Shaders/FluidDepth.frag
+
+    	WorldParameters {
+    	    FrustumNearFar
+    	}
+    }
+
+}
