@@ -1,0 +1,10 @@
+Material grass : Common/MatDefs/Light/Lighting.j3md {
+    MaterialParameters {
+        Shininess: 0
+        UseMaterialColors: true
+        Ambient: 0.0 1.0 0.0 1.0
+        Diffuse: 0.0 1.0 0.0 1.0
+        Specular: 0 0 0 1.0
+        VertexLighting: true
+    }
+}
