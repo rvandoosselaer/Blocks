@@ -18,6 +18,11 @@ uniform float m_DistortionSpeed;
 
 varying vec2 texCoord;
 
+// an overlay function. Put the foreground color above the background color.
+vec4 layer(vec4 foreground, vec4 background) {
+    return foreground * foreground.a + background * (1.0 - foreground.a);
+}
+
 void main(){
     vec4 scene = getColor(m_Texture, texCoord);
     float depth = getDepth(m_SceneDepthTexture, texCoord).r;
@@ -77,9 +82,15 @@ void main(){
         //float shore = abs(distanceWater - distanceScene);
         if (depthDifference >= 0 && depthDifference <= m_ShorelineSize) {
             float shorelineMixFactor = clamp(depthDifference / m_ShorelineSize, 0, 1.0);
-            gl_FragColor = mix(m_ShorelineColor, scene, shorelineMixFactor);
+            // 0 = Shore start
+            // 1 = Shore end / deep water
+            // blend the shoreline color with the scene
+            vec4 color = mix(m_ShorelineColor, scene, shorelineMixFactor);
+            gl_FragColor = layer(color, scene);
         } else {
-            gl_FragColor = mix(scene, m_FadeColor, depthMixFactor);
+            // blend the scene with the fade color in the depth
+            vec4 color = mix(scene, m_FadeColor, depthMixFactor);
+            gl_FragColor = layer(color, scene);
         }
     } else {
         gl_FragColor = scene;

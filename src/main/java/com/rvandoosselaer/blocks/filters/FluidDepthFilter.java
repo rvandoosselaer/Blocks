@@ -39,7 +39,7 @@ public class FluidDepthFilter extends Filter {
     @Getter
     private float fadeDepth = 6.0f;
     @Getter
-    private float shorelineSize = 0.1f;
+    private float shorelineSize = 0.2f;
     @Getter
     private ColorRGBA shorelineColor = new ColorRGBA(0.406f, 0.615f, 1.0f, 1f);
     @Getter
@@ -134,7 +134,9 @@ public class FluidDepthFilter extends Filter {
 
     public void setFadeColor(ColorRGBA fadeColor) {
         this.fadeColor = fadeColor;
-        material.setColor("FadeColor", fadeColor);
+        if (material != null) {
+            material.setColor("FadeColor", fadeColor);
+        }
     }
 
     public void setFadeDepth(float fadeDepth) {
