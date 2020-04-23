@@ -74,4 +74,5 @@ public class BlockRegistryTest {
         size = blockRegistry.getAll().size();
         Assertions.assertEquals(0, size);
     }
+
 }

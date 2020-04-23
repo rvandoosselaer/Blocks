@@ -42,6 +42,17 @@ public class ShapeRegistry {
         return s;
     }
 
+    public boolean remove(@NonNull String name) {
+        if (shapeRegistry.containsKey(name)) {
+            Shape shape = shapeRegistry.remove(name);
+            if (log.isTraceEnabled()) {
+                log.trace("Removed shape {} -> {}", name, shape);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public void clear() {
         shapeRegistry.clear();
     }
