@@ -4,12 +4,16 @@ import com.jme3.asset.DesktopAssetManager;
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author: rvandoosselaer
@@ -35,10 +39,10 @@ public class TypeRegistryTest {
     public void testTheme() {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
 
-        Assertions.assertFalse(typeRegistry.usingTheme());
+        assertFalse(typeRegistry.usingTheme());
         BlocksTheme blocksTheme = new BlocksTheme("my-new-theme", "/my-new-theme");
         typeRegistry.setTheme(blocksTheme);
-        Assertions.assertTrue(typeRegistry.usingTheme());
+        assertTrue(typeRegistry.usingTheme());
     }
 
     @Test
@@ -49,7 +53,7 @@ public class TypeRegistryTest {
         Material newMaterial = new Material(BlocksConfig.getInstance().getAssetManager(), "/Common/MatDefs/Misc/Unshaded.j3md");
         typeRegistry.register(TypeIds.GRASS, newMaterial);
 
-        Assertions.assertEquals(typeRegistry.get(TypeIds.GRASS), newMaterial);
+        assertEquals(typeRegistry.get(TypeIds.GRASS), newMaterial);
     }
 
     @Test
@@ -63,7 +67,7 @@ public class TypeRegistryTest {
         typeRegistry.setTheme(blocksTheme);
 
         Material newMaterial = typeRegistry.get(TypeIds.GRASS);
-        Assertions.assertNotEquals(defaultMaterial.getName(), newMaterial.getName());
+        assertNotEquals(defaultMaterial.getName(), newMaterial.getName());
     }
 
     @Test
@@ -76,7 +80,7 @@ public class TypeRegistryTest {
         BlocksTheme blocksTheme = new BlocksTheme("my-new-theme", "/my-new-theme");
         typeRegistry.setTheme(blocksTheme);
 
-        Assertions.assertEquals(defaultMaterial.getName(), typeRegistry.get(TypeIds.DIRT).getName());
+        assertEquals(defaultMaterial.getName(), typeRegistry.get(TypeIds.DIRT).getName());
     }
 
     @Test
@@ -97,8 +101,8 @@ public class TypeRegistryTest {
         Texture newSandDiffuseTexture = newSandMaterial.getTextureParam("DiffuseMap").getTextureValue();
         Texture newRockDiffuseTexture = newRockMaterial.getTextureParam("DiffuseMap").getTextureValue();
 
-        Assertions.assertNotEquals(sandDiffuseTexture.getName(), newSandDiffuseTexture.getName());
-        Assertions.assertEquals(rockDiffuseTexture.getName(), newRockDiffuseTexture.getName());
+        assertNotEquals(sandDiffuseTexture.getName(), newSandDiffuseTexture.getName());
+        assertEquals(rockDiffuseTexture.getName(), newRockDiffuseTexture.getName());
     }
 
     @Test
@@ -121,8 +125,8 @@ public class TypeRegistryTest {
         Material material = typeRegistry.get("custom");
         Texture diffuseMap = material.getTextureParam("DiffuseMap").getTextureValue();
 
-        Assertions.assertEquals(w, diffuseMap.getImage().getWidth());
-        Assertions.assertEquals(h, diffuseMap.getImage().getHeight());
+        assertEquals(w, diffuseMap.getImage().getWidth());
+        assertEquals(h, diffuseMap.getImage().getHeight());
     }
 
     @Test
@@ -130,11 +134,11 @@ public class TypeRegistryTest {
     public void testClear() {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
         int size = typeRegistry.getAll().size();
-        Assertions.assertNotEquals(0, size);
+        assertNotEquals(0, size);
 
         typeRegistry.clear();
         size = typeRegistry.getAll().size();
-        Assertions.assertEquals(0, size);
+        assertEquals(0, size);
     }
 
 }

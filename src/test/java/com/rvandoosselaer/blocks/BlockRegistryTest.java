@@ -2,9 +2,13 @@ package com.rvandoosselaer.blocks;
 
 import com.jme3.asset.DesktopAssetManager;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author: rvandoosselaer
@@ -22,8 +26,8 @@ public class BlockRegistryTest {
         int size = blockRegistry.getAll().size();
 
         Block block = blockRegistry.register(Block.create("test", "custom-type"));
-        Assertions.assertEquals(size + 1, blockRegistry.getAll().size());
-        Assertions.assertEquals(block, blockRegistry.get("test"));
+        assertEquals(size + 1, blockRegistry.getAll().size());
+        assertEquals(block, blockRegistry.get("test"));
     }
 
     @Test
@@ -32,15 +36,15 @@ public class BlockRegistryTest {
         int size = blockRegistry.getAll().size();
 
         Block block = blockRegistry.register("custom-block", Block.create("test", "custom-type"));
-        Assertions.assertEquals(size + 1, blockRegistry.getAll().size());
-        Assertions.assertEquals(block, blockRegistry.get("custom-block"));
+        assertEquals(size + 1, blockRegistry.getAll().size());
+        assertEquals(block, blockRegistry.get("custom-block"));
     }
 
     @Test
     public void testGetDefaultBlock() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
-        Assertions.assertNotNull(blockRegistry.get(BlockIds.WATER));
+        assertNotNull(blockRegistry.get(BlockIds.WATER));
     }
 
     @Test
@@ -49,8 +53,8 @@ public class BlockRegistryTest {
         int size = blockRegistry.getAll().size();
 
         blockRegistry.remove(BlockIds.BIRCH_LOG);
-        Assertions.assertEquals(size - 1, blockRegistry.getAll().size());
-        Assertions.assertNull(blockRegistry.get(BlockIds.BIRCH_LOG));
+        assertEquals(size - 1, blockRegistry.getAll().size());
+        assertNull(blockRegistry.get(BlockIds.BIRCH_LOG));
     }
 
     @Test
@@ -60,8 +64,8 @@ public class BlockRegistryTest {
 
         Block block = blockRegistry.get(BlockIds.PALM_TREE_PLANKS);
         blockRegistry.remove(block);
-        Assertions.assertEquals(size - 1, blockRegistry.getAll().size());
-        Assertions.assertNull(blockRegistry.get(BlockIds.PALM_TREE_PLANKS));
+        assertEquals(size - 1, blockRegistry.getAll().size());
+        assertNull(blockRegistry.get(BlockIds.PALM_TREE_PLANKS));
     }
 
     @AfterAll
@@ -69,10 +73,10 @@ public class BlockRegistryTest {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
         int size = blockRegistry.getAll().size();
 
-        Assertions.assertNotEquals(0, size);
+        assertNotEquals(0, size);
         blockRegistry.clear();
         size = blockRegistry.getAll().size();
-        Assertions.assertEquals(0, size);
+        assertEquals(0, size);
     }
 
 }
