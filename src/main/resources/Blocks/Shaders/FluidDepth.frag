@@ -60,7 +60,7 @@ void main(){
     float distanceWater = b / (waterDepth - a);
 
     float depthDifference = distanceScene - distanceWater;
-    float depthMixFactor = clamp(depthDifference / m_FadeDepth, 0, 1.0);
+    float depthMixFactor = clamp(depthDifference / m_FadeDepth, 0.0, 1.0);
     // depthMixFactor = 0 == surface
     // depthMixFactor = 1 == bottom (m_FadeDepth)
 
@@ -80,8 +80,8 @@ void main(){
         // calculate the depth difference between the water and the scene (aka shore). When this is small, we are at
         // the shoreline.
         //float shore = abs(distanceWater - distanceScene);
-        if (depthDifference >= 0 && depthDifference <= m_ShorelineSize) {
-            float shorelineMixFactor = clamp(depthDifference / m_ShorelineSize, 0, 1.0);
+        if (depthDifference >= 0.0 && depthDifference <= m_ShorelineSize) {
+            float shorelineMixFactor = clamp(depthDifference / m_ShorelineSize, 0.0, 1.0);
             // 0 = Shore start
             // 1 = Shore end / deep water
             // blend the shoreline color with the scene

@@ -16,6 +16,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.filters.ToneMapFilter;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import com.rvandoosselaer.blocks.Block;
@@ -80,6 +81,9 @@ public class PBRBlock extends SimpleApplication {
 
     public static void main(String[] args) {
         PBRBlock pbrBlock = new PBRBlock();
+        AppSettings settings = new AppSettings(true);
+        settings.setRenderer(AppSettings.LWJGL_OPENGL32);
+        pbrBlock.setSettings(settings);
         pbrBlock.start();
     }
 

@@ -22,6 +22,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.system.AppSettings;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
@@ -56,6 +57,9 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
         LogAdapter.initialize();
 
         PhysicsScene physicsScene = new PhysicsScene();
+        AppSettings settings = new AppSettings(true);
+        settings.setRenderer(AppSettings.LWJGL_OPENGL32);
+        physicsScene.setSettings(settings);
         physicsScene.start();
     }
 

@@ -8,6 +8,7 @@ import com.jme3.app.StatsAppState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.system.AppSettings;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
@@ -64,6 +65,9 @@ public class WaterDepthTest extends SimpleApplication {
         LogAdapter.initialize();
 
         WaterDepthTest waterDepthTest = new WaterDepthTest();
+        AppSettings settings = new AppSettings(true);
+        settings.setRenderer(AppSettings.LWJGL_OPENGL32);
+        waterDepthTest.setSettings(settings);
         waterDepthTest.start();
     }
 
