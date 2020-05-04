@@ -18,9 +18,22 @@ uniform float m_DistortionSpeed;
 
 varying vec2 texCoord;
 
+uniform sampler2D m_ReflectionMap;
+uniform mat4 g_ViewProjectionMatrixInverse;
+uniform mat4 m_TextureProjMatrix;
+uniform vec3 m_CameraPosition;
+uniform float m_WaterHeight;
+uniform float m_ReflectionStrength;
+
 // an overlay function. Put the foreground color above the background color.
 vec4 layer(vec4 foreground, vec4 background) {
     return foreground * foreground.a + background * (1.0 - foreground.a);
+}
+
+vec3 getPosition(in float depth, in vec2 uv){
+    vec4 pos = vec4(uv, depth, 1.0) * 2.0 - 1.0;
+    pos = g_ViewProjectionMatrixInverse * pos;
+    return pos.xyz / pos.w;
 }
 
 void main(){
@@ -28,9 +41,26 @@ void main(){
     float depth = getDepth(m_SceneDepthTexture, texCoord).r;
     float waterDepth = getDepth(m_FluidDepthTexture, texCoord).r;
 
+    vec3 position = getPosition(depth, texCoord);
+
+    vec3 eyeVec = position - m_CameraPosition;
+    vec3 eyeVecNorm = normalize(eyeVec);
+
+    float t = (m_WaterHeight - m_CameraPosition.y) / eyeVecNorm.y;
+    vec3 surfacePoint = m_CameraPosition + eyeVecNorm * t;
+
+    vec3 waterPosition = surfacePoint.xyz;
+
+    vec4 texCoordProj = m_TextureProjMatrix * vec4(waterPosition, 1.0);
+    texCoordProj /= texCoordProj.w;
+    texCoordProj.y = 1.0 - texCoordProj.y;
+
+    vec3 reflection = getColor(m_ReflectionMap, texCoordProj.xy).rgb;
+
     // when distortion is enabled, we simulate the underwater effect. We should also apply this effect to the depth
     // textures, and not only on the scene texture!
     #ifdef DISTORTION
+        // distortion for depth and waterDepth textures
         float X = texCoord.x * m_DistortionAmplitudeX + g_Time * m_DistortionSpeed;
         float Y = texCoord.y * m_DistortionAmplitudeY + g_Time * m_DistortionSpeed;
         vec2 texCoordDistorted = vec2(texCoord);
@@ -39,6 +69,15 @@ void main(){
 
         depth = getDepth(m_SceneDepthTexture, texCoordDistorted).r;
         waterDepth = getDepth(m_FluidDepthTexture, texCoordDistorted).r;
+
+        // distortion for reflection texture
+        float xReflection = texCoordProj.x * m_DistortionAmplitudeX + g_Time * m_DistortionSpeed;
+        float yReflection = texCoordProj.y * m_DistortionAmplitudeY + g_Time * m_DistortionSpeed;
+        vec2 texCoordDistortedReflection = vec2(texCoordProj);
+        texCoordDistortedReflection.x += sin(xReflection - yReflection) * m_DistortionStrengthX * sin(yReflection);
+        texCoordDistortedReflection.y += cos(xReflection + yReflection) * m_DistortionStrengthY * cos(yReflection);
+
+        reflection = getColor(m_ReflectionMap, texCoordDistortedReflection.xy).rgb;
     #endif
 
     // logic from DepthOfField.frag:
@@ -75,6 +114,9 @@ void main(){
 
             scene = getColor(m_Texture, texCoordDistorted);
         #endif
+
+        scene.a += m_ReflectionStrength;
+        scene = layer(vec4(reflection, m_ReflectionStrength), scene);
 
         // calculate the depth difference between the water and the scene (aka shore). When this is small, we are at
         // the shoreline.

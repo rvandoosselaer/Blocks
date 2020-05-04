@@ -21,6 +21,7 @@ import com.rvandoosselaer.blocks.ChunkMeshGenerator;
 import com.rvandoosselaer.blocks.TypeIds;
 import com.rvandoosselaer.blocks.filters.FluidFilter;
 import com.simsilica.lemur.Axis;
+import com.simsilica.lemur.Button;
 import com.simsilica.lemur.Checkbox;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.FillMode;
@@ -63,6 +64,10 @@ public class WaterDepthTest extends SimpleApplication {
     private VersionedReference<Double> distAmplitudeYReference;
     private Label distortionSpeedValue;
     private VersionedReference<Double> distSpeedReference;
+    private Label reflectionValue;
+    private VersionedReference<Double> reflectionReference;
+    private Label waterHeightValue;
+    private VersionedReference<Double> waterHeightReference;
 
     public static void main(String[] args) {
         LogAdapter.initialize();
@@ -120,6 +125,8 @@ public class WaterDepthTest extends SimpleApplication {
         if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidFilter.class) == null) {
             fluidFilter = new FluidFilter();
             fluidFilter.setFadeDepth(8);
+            fluidFilter.setWaterHeight(7);
+            fluidFilter.setReflectionMapSize(1024);
             fluidFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
             postProcessingState.getFilterPostProcessor().addFilter(fluidFilter);
 
@@ -159,6 +166,16 @@ public class WaterDepthTest extends SimpleApplication {
         if (distSpeedReference.update()) {
             fluidFilter.setDistortionSpeed(distSpeedReference.get().floatValue());
             distortionSpeedValue.setText(String.format("%.1f", distSpeedReference.get()));
+        }
+
+        if (reflectionReference.update()) {
+            fluidFilter.setReflectionStrength(reflectionReference.get().floatValue());
+            reflectionValue.setText(String.format("%.2f", reflectionReference.get()));
+        }
+
+        if (waterHeightReference.update()) {
+            fluidFilter.setWaterHeight(waterHeightReference.get().floatValue());
+            waterHeightValue.setText(String.format("%.1f", waterHeightReference.get()));
         }
     }
 
@@ -244,6 +261,32 @@ public class WaterDepthTest extends SimpleApplication {
         distortionSpeedValue = distortionSpeed.addChild(new Label(Float.toString(fluidFilter.getDistortionSpeed())));
         Slider distSpeed = distortionSpeed.addChild(createSlider(0.1f, 0f, 10f, fluidFilter.getDistortionSpeed()));
         distSpeedReference = distSpeed.getModel().createReference();
+
+        Container reflectionStrength = container.addChild(createRow());
+        reflectionStrength.addChild(new Label("Reflection: "));
+        reflectionValue = reflectionStrength.addChild(new Label(Float.toString(fluidFilter.getReflectionStrength())));
+        Slider reflection = reflectionStrength.addChild(createSlider(0.01f, 0, 1, fluidFilter.getReflectionStrength()));
+        reflectionReference = reflection.getModel().createReference();
+
+        Container waterHeight = container.addChild(createRow());
+        waterHeight.addChild(new Label("Fluid height: "));
+        waterHeightValue = waterHeight.addChild(new Label(Float.toString(fluidFilter.getWaterHeight())));
+        Slider waterHeightSlider = waterHeight.addChild(createSlider(0.1f, 0, 10, fluidFilter.getWaterHeight()));
+        waterHeightReference = waterHeightSlider.getModel().createReference();
+
+        Container reflectionTextureSize = container.addChild(createRow());
+        reflectionTextureSize.addChild(new Label("Reflection texture size: "));
+        Label reflectionTextureSizeValue = reflectionTextureSize.addChild(new Label(Float.toString(fluidFilter.getReflectionMapSize())));
+        Button minus = reflectionTextureSize.addChild(new Button(" - "));
+        minus.addClickCommands(source -> {
+            fluidFilter.setReflectionMapSize((int) (fluidFilter.getReflectionMapSize() * 0.5));
+            reflectionTextureSizeValue.setText(Float.toString(fluidFilter.getReflectionMapSize()));
+        });
+        Button add = reflectionTextureSize.addChild(new Button(" + "));
+        add.addClickCommands(source -> {
+            fluidFilter.setReflectionMapSize((int) (fluidFilter.getReflectionMapSize() * 2));
+            reflectionTextureSizeValue.setText(Float.toString(fluidFilter.getReflectionMapSize()));
+        });
 
         container.setLocalTranslation(0, cam.getHeight(), 99);
 

@@ -45,8 +45,12 @@ MaterialDef WaterDepth Textured {
         // water height needed to calculate the reflection
         Float WaterHeight
 
-        // offset of the reflection texture
-        Float ReflectionDisplace
+        // the strength of the reflection in the water
+        Float ReflectionStrength
+
+        // needed to calculate texture position
+        Matrix4 TextureProjMatrix
+        Vector3 CameraPosition
     }
 
     Technique {
@@ -56,6 +60,7 @@ MaterialDef WaterDepth Textured {
     	WorldParameters {
     	    Time
     	    FrustumNearFar
+    	    ViewProjectionMatrixInverse
     	}
 
     	Defines {

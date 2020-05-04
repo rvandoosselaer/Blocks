@@ -4,6 +4,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix4f;
 import com.jme3.math.Plane;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
@@ -21,7 +22,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture2D;
-import com.jme3.ui.Picture;
 import com.jme3.water.ReflectionProcessor;
 import com.jme3.water.WaterUtils;
 import lombok.Getter;
@@ -40,18 +40,25 @@ public class FluidFilter extends Filter {
     private FrameBuffer sceneDepthBuffer;
     private final GeometryList fluidGeometryList = new GeometryList(new TransparentComparator());
     private Pass reflectionPass;
-    private Spatial reflectionScene;
     private Spatial rootScene;
     private ViewPort reflectionView;
     private Camera reflectionCam;
     private ReflectionProcessor reflectionProcessor;
-    private float waterHeight = 0.0f;
-    private Plane plane = new Plane(Vector3f.UNIT_Y, waterHeight);
-    private int reflectionMapSize = 512;
-    private boolean underWater;
-    private float reflectionDisplace = 30;
-    private Picture dispReflection;
+    private Plane plane = new Plane(Vector3f.UNIT_Y, 0);
+    private final Matrix4f biasMatrix = new Matrix4f(0.5f, 0.0f, 0.0f, 0.5f,
+            0.0f, 0.5f, 0.0f, 0.5f,
+            0.0f, 0.0f, 0.0f, 0.5f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+    private final Matrix4f textureProjMatrix = new Matrix4f();
 
+    @Getter
+    private float waterHeight = 0.0f;
+    @Getter
+    private Spatial reflectionScene;
+    @Getter
+    private int reflectionMapSize = 512;
+    @Getter
+    private float reflectionStrength = 0.3f;
     @Getter
     private ColorRGBA fadeColor = new ColorRGBA(0.0289f, 0.136f, 0.453f, 1.0f);
     @Getter
@@ -72,6 +79,8 @@ public class FluidFilter extends Filter {
     private float distortionAmplitudeY = 30f;
     @Getter
     private float distortionSpeed = 3.0f;
+    @Getter
+    private boolean underwater;
 
     public FluidFilter() {
         super("Fluid filter");
@@ -123,8 +132,8 @@ public class FluidFilter extends Filter {
         material.setFloat("DistortionAmplitudeY", distortionAmplitudeY);
         material.setFloat("DistortionSpeed", distortionSpeed);
         material.setTexture("ReflectionMap", reflectionPass.getRenderedTexture());
-        material.setFloat("ReflectionDisplace", reflectionDisplace);
         material.setFloat("WaterHeight", waterHeight);
+        material.setFloat("ReflectionStrength", reflectionStrength);
 
         fluidDepthBuffer = new FrameBuffer(w, h, 1);
         sceneDepthBuffer = new FrameBuffer(w, h, 1);
@@ -138,9 +147,6 @@ public class FluidFilter extends Filter {
 
         this.renderManager = renderManager;
         this.viewPort = vp;
-
-        dispReflection = new Picture("dispReflection");
-        dispReflection.setTexture(manager, reflectionPass.getRenderedTexture(), false);
     }
 
     @Override
@@ -151,12 +157,11 @@ public class FluidFilter extends Filter {
     @Override
     protected void preFrame(float tpf) {
         Camera sceneCam = viewPort.getCamera();
-//        biasMatrix.mult(sceneCam.getViewProjectionMatrix(), textureProjMatrix);
-//        material.setMatrix4("TextureProjMatrix", textureProjMatrix);
-//        material.setVector3("CameraPosition", sceneCam.getLocation());
+        biasMatrix.mult(sceneCam.getViewProjectionMatrix(), textureProjMatrix);
+        material.setMatrix4("TextureProjMatrix", textureProjMatrix);
+        material.setVector3("CameraPosition", sceneCam.getLocation());
 
         WaterUtils.updateReflectionCam(reflectionCam, plane, sceneCam);
-
 
         //if we're under water no need to compute reflection
         if (sceneCam.getLocation().y >= waterHeight) {
@@ -171,12 +176,9 @@ public class FluidFilter extends Filter {
             }
             renderManager.setCamera(sceneCam, false);
             renderManager.getRenderer().setFrameBuffer(viewPort.getOutputFrameBuffer());
-
-
-            underWater = false;
-        } else {
-            underWater = true;
         }
+
+        underwater = sceneCam.getLocation().y < waterHeight;
     }
 
     @Override
@@ -198,29 +200,12 @@ public class FluidFilter extends Filter {
         renderer.clearBuffers(true, true, true);
         renderManager.renderGeometryList(filteredSceneGeometries);
         renderer.setFrameBuffer(viewPort.getOutputFrameBuffer());
-
-        displayMap(renderer, dispReflection, 256);
     }
 
     @Override
     protected void cleanUpFilter(Renderer r) {
         reflectionPass.cleanup(r);
     }
-
-    protected void displayMap(Renderer r, Picture pic, int left) {
-        Camera cam = viewPort.getCamera();
-        renderManager.setCamera(cam, true);
-        int h = cam.getHeight();
-
-        pic.setPosition(left, h / 20f);
-
-        pic.setWidth(128);
-        pic.setHeight(128);
-        pic.updateGeometricState();
-        renderManager.renderGeometry(pic);
-        renderManager.setCamera(cam, false);
-    }
-
 
     public void addFluidGeometry(Geometry fluidGeometry) {
         fluidGeometryList.add(fluidGeometry);
@@ -298,6 +283,49 @@ public class FluidFilter extends Filter {
         this.distortionSpeed = distortionSpeed;
         if (material != null) {
             material.setFloat("DistortionSpeed", distortionSpeed);
+        }
+    }
+
+    public void setReflectionStrength(float reflectionStrength) {
+        this.reflectionStrength = reflectionStrength;
+        if (material != null) {
+            material.setFloat("ReflectionStrength", reflectionStrength);
+        }
+    }
+
+    public void setReflectionMapSize(int reflectionMapSize) {
+        this.reflectionMapSize = reflectionMapSize;
+        //if reflection pass is already initialized we must update it
+        if(reflectionPass !=  null){
+            reflectionPass.init(renderManager.getRenderer(), reflectionMapSize, reflectionMapSize, Image.Format.RGBA8, Image.Format.Depth);
+            reflectionCam.resize(reflectionMapSize, reflectionMapSize, true);
+            reflectionProcessor.setReflectionBuffer(reflectionPass.getRenderFrameBuffer());
+            material.setTexture("ReflectionMap", reflectionPass.getRenderedTexture());
+        }
+    }
+
+    public void setReflectionScene(Spatial reflectionScene) {
+        // detach the current scene
+        if (reflectionView != null) {
+            reflectionView.detachScene(this.reflectionScene);
+        }
+
+        this.reflectionScene = reflectionScene == null ? rootScene : reflectionScene;
+
+        // attach the new scene
+        if (reflectionView != null) {
+            reflectionView.attachScene(reflectionScene);
+        }
+    }
+
+    public void setWaterHeight(float waterHeight) {
+        this.waterHeight = waterHeight;
+        this.plane = new Plane(Vector3f.UNIT_Y, waterHeight);
+        if (material != null) {
+            material.setFloat("WaterHeight", waterHeight);
+        }
+        if (reflectionProcessor != null) {
+            reflectionProcessor.setReflectionClipPlane(plane);
         }
     }
 
