@@ -392,6 +392,7 @@ public class Chunk {
      * - the neighbour block is not set
      * - the neighbour block is transparent and the asking block is not transparent
      * - neighbour block is not a cube
+     * - the neighbour block are leaves and the asking block are also leaves
      */
     private static class DefaultFaceVisibleFunction implements BiFunction<Block, Block, Boolean> {
 
@@ -404,6 +405,9 @@ public class Chunk {
                 return true;
             }
             if (!ShapeIds.CUBE.equals(neighbour.getShape())) {
+                return true;
+            }
+            if (block.getName().contains("leaves") && neighbour.getName().contains("leaves")) {
                 return true;
             }
             return false;

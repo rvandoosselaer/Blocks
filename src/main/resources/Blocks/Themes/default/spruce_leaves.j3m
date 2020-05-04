@@ -10,7 +10,7 @@ Material spruce_leaves : Common/MatDefs/Light/Lighting.j3md {
         Specular: 0 0 0 1.0
         VertexLighting: true
         DiffuseMap: MagNearest MinNearestNoMipMaps Blocks/Themes/default/spruce_leaves.png
-        AlphaDiscardThreshold : 0.05
+        AlphaDiscardThreshold : 0.1
     }
 
     AdditionalRenderState {

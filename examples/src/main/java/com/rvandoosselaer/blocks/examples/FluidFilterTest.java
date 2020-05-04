@@ -8,7 +8,6 @@ import com.jme3.app.StatsAppState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -19,9 +18,7 @@ import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
-import com.rvandoosselaer.blocks.ShapeIds;
 import com.rvandoosselaer.blocks.TypeIds;
-import com.rvandoosselaer.blocks.TypeRegistry;
 import com.rvandoosselaer.blocks.filters.FluidFilter;
 import com.simsilica.lemur.Axis;
 import com.simsilica.lemur.Button;
@@ -39,8 +36,6 @@ import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.mathd.Vec3i;
 import com.simsilica.util.LogAdapter;
-
-import java.util.function.BiFunction;
 
 /**
  * An application that renders a coastline scene to test the FluidDepthFilter.
@@ -110,9 +105,6 @@ public class FluidFilterTest extends SimpleApplication {
 
         ChunkMeshGenerator chunkMeshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(chunkMeshGenerator);
-
-        Geometry leaves = (Geometry) chunk.getNode().getChild("oak_leaves");
-        leaves.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 
         rootNode.attachChild(chunk.getNode());
 
@@ -194,6 +186,8 @@ public class FluidFilterTest extends SimpleApplication {
         Block sand = blockRegistry.get(BlockIds.SAND);
         Block water = blockRegistry.get(BlockIds.WATER);
         Block grass = blockRegistry.get(BlockIds.GRASS);
+        Block trunk = blockRegistry.get(BlockIds.OAK_LOG);
+        Block leaves = blockRegistry.get(BlockIds.OAK_LEAVES);
 
         Vector3f center = new Vector3f(15, 1, 15);
         float radius = 9;
@@ -221,47 +215,11 @@ public class FluidFilterTest extends SimpleApplication {
             }
         }
 
-        Block oak = blockRegistry.get(BlockIds.OAK_LOG);
-        Block oakLeaves = Block.builder()
-                .name("oak-leaves")
-                .shape(ShapeIds.CUBE)
-                .solid(true)
-                .transparent(true)
-                .type("oak_leaves")
-                .usingMultipleImages(false)
-                .build();
-
-        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
-        typeRegistry.register("oak_leaves");
-
-        renderer.setAlphaToCoverage(true);
-
-        blockRegistry.register(oakLeaves);
-
-        chunk.setFaceVisibleFunction(new BiFunction<Block, Block, Boolean>() {
-            @Override
-            public Boolean apply(Block block, Block neighbour) {
-                if (neighbour == null) {
-                    return true;
-                }
-                if (neighbour.isTransparent() && !block.isTransparent()) {
-                    return true;
-                }
-                if (!ShapeIds.CUBE.equals(neighbour.getShape())) {
-                    return true;
-                }
-                if ("oak_leaves".equals(neighbour.getType()) && "oak_leaves".equals(block.getType())) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
         // create a tree
         Vec3i treeLocation = new Vec3i(15, 9, 15);
-        chunk.addBlock(treeLocation, oak);
-        chunk.addBlock(treeLocation.addLocal(0, 1, 0), oak);
-        chunk.addBlock(treeLocation.addLocal(0, 1, 0), oak);
+        chunk.addBlock(treeLocation, trunk);
+        chunk.addBlock(treeLocation.addLocal(0, 1, 0), trunk);
+        chunk.addBlock(treeLocation.addLocal(0, 1, 0), trunk);
 
         int canopyRadius = 3;
         Vec3i canopyCenter = treeLocation.addLocal(0, canopyRadius, 0);
@@ -271,7 +229,7 @@ public class FluidFilterTest extends SimpleApplication {
                     Vector3f location = new Vector3f(x, y, z);
                     float distance = location.distance(canopyCenter.toVector3f());
                     if (distance <= canopyRadius && y > canopyCenter.y - canopyRadius) {
-                        chunk.addBlock(x, y, z, oakLeaves);
+                        chunk.addBlock(x, y, z, leaves);
                     }
                 }
             }
