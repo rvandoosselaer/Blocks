@@ -6,9 +6,6 @@ import com.jme3.light.Light;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix4f;
-import com.jme3.math.Plane;
-import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -26,8 +23,6 @@ import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture2D;
 import com.jme3.ui.Picture;
-import com.jme3.water.ReflectionProcessor;
-import com.jme3.water.WaterUtils;
 import lombok.Getter;
 
 import java.util.List;
@@ -43,22 +38,6 @@ public class FluidDepthFilter extends Filter {
     private FrameBuffer fluidDepthBuffer;
     private FrameBuffer sceneDepthBuffer;
     private final GeometryList fluidGeometryList = new GeometryList(new TransparentComparator());
-
-    private Pass reflectionPass;
-    private Spatial reflectionScene;
-    private Spatial rootScene;
-    private ViewPort reflectionViewPort;
-    private Camera reflectionCamera;
-    private Plane plane = new Plane(Vector3f.UNIT_Y, 0);
-    private Vector3f lightDirection = new Vector3f(0, -1, 0);
-    private int reflectionMapSize = 1024;
-    private ReflectionProcessor reflectionProcessor;
-    private Matrix4f biasMatrix = new Matrix4f(0.5f, 0.0f, 0.0f, 0.5f,
-            0.0f, 0.5f, 0.0f, 0.5f,
-            0.0f, 0.0f, 0.0f, 0.5f,
-            0.0f, 0.0f, 0.0f, 1.0f);
-    private Matrix4f textureProjMatrix = new Matrix4f();
-    private Picture dispReflection;
 
     @Getter
     private ColorRGBA fadeColor = new ColorRGBA(0.0289f, 0.136f, 0.453f, 1.0f);
@@ -100,27 +79,6 @@ public class FluidDepthFilter extends Filter {
 
     @Override
     protected void initFilter(AssetManager manager, RenderManager renderManager, ViewPort vp, int w, int h) {
-        if (reflectionScene == null) {
-            rootScene = vp.getScenes().get(0);
-            reflectionScene = rootScene;
-            DirectionalLight directionalLight = findLight((Node) reflectionScene);
-            if (directionalLight != null && useDirectionLightFromScene()) {
-                lightDirection = directionalLight.getDirection();
-            }
-        }
-
-        reflectionPass = new Pass();
-        reflectionPass.init(renderManager.getRenderer(), reflectionMapSize, reflectionMapSize, Image.Format.RGBA8, Image.Format.Depth);
-        reflectionCamera = new Camera(reflectionMapSize, reflectionMapSize);
-        reflectionViewPort = new ViewPort("reflectionView", reflectionCamera);
-        reflectionViewPort.setClearFlags(true, true, true);
-        reflectionViewPort.attachScene(reflectionScene);
-        reflectionViewPort.setOutputFrameBuffer(reflectionPass.getRenderFrameBuffer());
-        plane = new Plane(Vector3f.UNIT_Y, new Vector3f(0, 6.8f, 0).dot(Vector3f.UNIT_Y));
-        reflectionProcessor = new ReflectionProcessor(reflectionCamera, reflectionPass.getRenderFrameBuffer(), plane);
-        reflectionProcessor.setReflectionClipPlane(plane);
-        reflectionViewPort.addProcessor(reflectionProcessor);
-
         material = new Material(manager, "Blocks/MatDefs/FluidDepth.j3md");
         material.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         material.setColor("FadeColor", fadeColor);
@@ -134,9 +92,6 @@ public class FluidDepthFilter extends Filter {
         material.setFloat("DistortionAmplitudeY", distortionAmplitudeY);
         material.setFloat("DistortionSpeed", distortionSpeed);
 
-        material.setTexture("ReflectionMap", reflectionPass.getRenderedTexture());
-        material.setFloat("ReflectionDisplace", 10);
-
         fluidDepthBuffer = new FrameBuffer(w, h, 1);
         sceneDepthBuffer = new FrameBuffer(w, h, 1);
         Texture2D fluidDepthTexture = new Texture2D(w, h, 1, Image.Format.Depth);
@@ -149,37 +104,11 @@ public class FluidDepthFilter extends Filter {
 
         this.renderManager = renderManager;
         this.viewPort = vp;
-
-        dispReflection = new Picture("dispRefraction");
-        dispReflection.setTexture(manager, reflectionPass.getRenderedTexture(), false);
     }
 
     @Override
     protected Material getMaterial() {
         return material;
-    }
-
-    @Override
-    protected void preFrame(float tpf) {
-        Camera sceneCamera = viewPort.getCamera();
-
-        biasMatrix.mult(sceneCamera.getViewProjectionMatrix(), textureProjMatrix);
-        material.setMatrix4("TextureProjMatrix", textureProjMatrix);
-        material.setVector3("CameraPosition", sceneCamera.getLocation());
-
-        WaterUtils.updateReflectionCam(reflectionCamera, plane, sceneCamera);
-
-        boolean rtb = true;
-        if (!renderManager.isHandleTranslucentBucket()) {
-            renderManager.setHandleTranslucentBucket(true);
-            rtb = false;
-        }
-        renderManager.renderViewPort(reflectionViewPort, tpf);
-        if (!rtb) {
-            renderManager.setHandleTranslucentBucket(false);
-        }
-        renderManager.setCamera(sceneCamera, false);
-        renderManager.getRenderer().setFrameBuffer(viewPort.getOutputFrameBuffer());
     }
 
     @Override
@@ -201,8 +130,6 @@ public class FluidDepthFilter extends Filter {
         renderer.clearBuffers(true, true, true);
         renderManager.renderGeometryList(filteredSceneGeometries);
         renderer.setFrameBuffer(viewPort.getOutputFrameBuffer());
-
-        displayMap(renderer, dispReflection, 256);
     }
 
     protected void displayMap(Renderer r, Picture pic, int left) {
@@ -220,33 +147,9 @@ public class FluidDepthFilter extends Filter {
     }
 
 
-    @Override
-    protected void cleanUpFilter(Renderer r) {
-        reflectionPass.cleanup(r);
-    }
-
     public void addFluidGeometry(Geometry fluidGeometry) {
         fluidGeometryList.add(fluidGeometry);
         fluidGeometryList.sort();
-    }
-
-    public void setReflectionScene(final Spatial reflectionScene) {
-
-        final Spatial currentScene = getReflectionScene();
-
-        if (reflectionViewPort != null) {
-            reflectionViewPort.detachScene(currentScene == null? rootScene : currentScene);
-        }
-
-        this.reflectionScene = reflectionScene;
-
-        if (reflectionViewPort != null) {
-            reflectionViewPort.attachScene(reflectionScene == null? rootScene : reflectionScene);
-        }
-    }
-
-    public Spatial getReflectionScene() {
-        return reflectionScene;
     }
 
     public void clearFluidGeometries() {
