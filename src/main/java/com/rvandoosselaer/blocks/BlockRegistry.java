@@ -169,6 +169,8 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+
+        register(Block.builder().name(BlockIds.SPRUCE_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.SPRUCE_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
 
     private void registerSnowBlocks() {
@@ -210,6 +212,8 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.OAK_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+
+        register(Block.builder().name(BlockIds.OAK_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.OAK_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
 
     private void registerRockBlocks() {
@@ -253,6 +257,8 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+
+        register(Block.builder().name(BlockIds.PALM_TREE_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.PALM_TREE_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
 
     private void registerGrassBlocks() {
@@ -349,6 +355,8 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+
+        register(Block.builder().name(BlockIds.BIRCH_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.BIRCH_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
 
 }
