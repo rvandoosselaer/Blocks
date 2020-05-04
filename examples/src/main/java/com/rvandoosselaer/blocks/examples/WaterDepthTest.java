@@ -9,7 +9,9 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.util.SkyFactory;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
@@ -98,6 +100,11 @@ public class WaterDepthTest extends SimpleApplication {
         chunk.createNode(chunkMeshGenerator);
 
         rootNode.attachChild(chunk.getNode());
+
+        Spatial sky = SkyFactory.createSky(assetManager,
+                "Scenes/Beach/FullskiesSunset0068.dds", SkyFactory.EnvMapType.CubeMap);
+        sky.setLocalScale(350);
+        rootNode.attachChild(sky);
 
         flyCam.setDragToRotate(true);
 

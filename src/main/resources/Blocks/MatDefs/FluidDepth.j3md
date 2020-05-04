@@ -38,6 +38,15 @@ MaterialDef WaterDepth Textured {
 
         // The speed of the distortion effect
         Float DistortionSpeed
+
+        // the reflection texture
+        Texture2D ReflectionMap
+
+        // water height needed to calculate the reflection
+        Float WaterHeight
+
+        // offset of the reflection texture
+        Float ReflectionDisplace
     }
 
     Technique {
