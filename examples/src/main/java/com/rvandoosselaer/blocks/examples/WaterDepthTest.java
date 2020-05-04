@@ -6,6 +6,7 @@ import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.system.AppSettings;
@@ -102,9 +103,8 @@ public class WaterDepthTest extends SimpleApplication {
 
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
-        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
-        cam.setLocation(new Vector3f(-15.381589f, 24.353018f, 30.988268f));
-        cam.lookAt(new Vector3f(chunkSize.x * 0.5f, 0, chunkSize.z * 0.5f), Vector3f.UNIT_Y);
+        cam.setLocation(new Vector3f(-1.3989371f, 13.492569f, 30.279642f));
+        cam.setRotation(new Quaternion(0.08451398f, 0.8909429f, -0.18557356f, 0.40575933f));
     }
 
     @Override
@@ -112,6 +112,7 @@ public class WaterDepthTest extends SimpleApplication {
         PostProcessingState postProcessingState = getStateManager().getState(PostProcessingState.class);
         if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidDepthFilter.class) == null) {
             fluidDepthFilter = new FluidDepthFilter();
+            fluidDepthFilter.setFadeDepth(8);
             fluidDepthFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
             postProcessingState.getFilterPostProcessor().addFilter(fluidDepthFilter);
 

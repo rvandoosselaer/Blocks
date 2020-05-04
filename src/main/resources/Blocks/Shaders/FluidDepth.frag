@@ -16,12 +16,6 @@ uniform float m_DistortionAmplitudeX;
 uniform float m_DistortionAmplitudeY;
 uniform float m_DistortionSpeed;
 
-uniform sampler2D m_ReflectionMap;
-uniform mat4 m_TextureProjMatrix;
-uniform vec3 m_CameraPosition;
-uniform mat4 g_ViewProjectionMatrixInverse;
-uniform float m_ReflectionDisplace;
-
 varying vec2 texCoord;
 
 // an overlay function. Put the foreground color above the background color.
@@ -29,36 +23,10 @@ vec4 layer(vec4 foreground, vec4 background) {
     return foreground * foreground.a + background * (1.0 - foreground.a);
 }
 
-vec3 getPosition(in float depth, in vec2 uv){
-    vec4 pos = vec4(uv, depth, 1.0) * 2.0 - 1.0;
-    pos = g_ViewProjectionMatrixInverse * pos;
-    return pos.xyz / pos.w;
-}
-
 void main(){
     vec4 scene = getColor(m_Texture, texCoord);
     float depth = getDepth(m_SceneDepthTexture, texCoord).r;
     float waterDepth = getDepth(m_FluidDepthTexture, texCoord).r;
-
-    vec3 position = getPosition(depth, texCoord);
-    vec3 eyeVec = position - m_CameraPosition;
-    vec3 eyeVecNorm = normalize(eyeVec);
-    float level = 7.0;
-    float t = (level - m_CameraPosition.y) / eyeVecNorm.y;
-    vec3 surfacePoint = m_CameraPosition + eyeVecNorm * t;
-
-    vec3 waterPosition = surfacePoint.xyz;
-    waterPosition.y -= (level - 7.0);
-    vec4 texCoordProj = m_TextureProjMatrix * vec4(waterPosition, 1.0);
-
-    vec3 normal = vec3(0.0);
-
-    texCoordProj.x = texCoordProj.x + m_ReflectionDisplace * normal.x;
-    texCoordProj.z = texCoordProj.z + m_ReflectionDisplace * normal.z;
-    texCoordProj /= texCoordProj.w;
-    texCoordProj.y = 1.0 - texCoordProj.y;
-
-    vec4 reflectionScene = getColor(m_ReflectionMap, texCoordProj.xy);
 
     // when distortion is enabled, we simulate the underwater effect. We should also apply this effect to the depth
     // textures, and not only on the scene texture!
@@ -96,8 +64,7 @@ void main(){
     // depthMixFactor = 0 == surface
     // depthMixFactor = 1 == bottom (m_FadeDepth)
 
-    if (distanceWater < distanceScene) {
-
+    if (waterDepth > 0.01 && distanceWater < distanceScene) {
         // when distortion is enabled, we simulate the underwater effect. We displace the scene texture
         #ifdef DISTORTION
             float X = texCoord.x * m_DistortionAmplitudeX + g_Time * m_DistortionSpeed;
@@ -125,8 +92,6 @@ void main(){
             gl_FragColor = layer(color, scene);
         }
 
-        gl_FragColor = mix(scene, reflectionScene, 0.7);
-
     } else {
         gl_FragColor = scene;
     }
@@ -148,7 +113,4 @@ void main(){
 
     // render the scene
     //gl_FragColor = scene;
-
-    // render the reflection scene
-    //gl_FragColor = reflectionScene;
 }
