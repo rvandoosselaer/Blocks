@@ -26,14 +26,12 @@ import com.rvandoosselaer.blocks.filters.FluidFilter;
 import com.simsilica.lemur.Axis;
 import com.simsilica.lemur.Button;
 import com.simsilica.lemur.Checkbox;
-import com.simsilica.lemur.ColorChooser;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.FillMode;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.Slider;
 import com.simsilica.lemur.component.SpringGridLayout;
-import com.simsilica.lemur.core.VersionedHolder;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.CursorEventControl;
 import com.simsilica.lemur.event.DragHandler;
@@ -55,7 +53,7 @@ import java.util.function.BiFunction;
  *
  * @author: rvandoosselaer
  */
-public class WaterDepthTest extends SimpleApplication {
+public class FluidFilterTest extends SimpleApplication {
 
     private Chunk chunk;
     private FluidFilter fluidFilter;
@@ -77,21 +75,18 @@ public class WaterDepthTest extends SimpleApplication {
     private VersionedReference<Double> reflectionReference;
     private Label waterHeightValue;
     private VersionedReference<Double> waterHeightReference;
-    private VersionedReference<ColorRGBA> fadeColorReference;
-    private Label fadeAlphaValue;
-    private VersionedReference<Double> fadeAlphaReference;
 
     public static void main(String[] args) {
         LogAdapter.initialize();
 
-        WaterDepthTest waterDepthTest = new WaterDepthTest();
+        FluidFilterTest fluidFilterTest = new FluidFilterTest();
         AppSettings settings = new AppSettings(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL32);
-        waterDepthTest.setSettings(settings);
-        waterDepthTest.start();
+        fluidFilterTest.setSettings(settings);
+        fluidFilterTest.start();
     }
 
-    public WaterDepthTest() {
+    public FluidFilterTest() {
         super(new StatsAppState(),
                 new FlyCamAppState(),
                 new DebugKeysAppState(),
@@ -121,9 +116,7 @@ public class WaterDepthTest extends SimpleApplication {
 
         rootNode.attachChild(chunk.getNode());
 
-        Spatial sky = SkyFactory.createSky(assetManager,
-                "Scenes/Beach/FullskiesSunset0068.dds", SkyFactory.EnvMapType.CubeMap);
-        sky.setLocalScale(350);
+        Spatial sky = SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", SkyFactory.EnvMapType.CubeMap);
         rootNode.attachChild(sky);
 
         flyCam.setDragToRotate(true);
@@ -193,17 +186,6 @@ public class WaterDepthTest extends SimpleApplication {
             waterHeightValue.setText(String.format("%.1f", waterHeightReference.get()));
         }
 
-        if (fadeColorReference.update()) {
-            fluidFilter.setFadeColor(fadeColorReference.get());
-            System.out.println("Color: " + fluidFilter.getFadeColor());
-        }
-
-        if (fadeAlphaReference.update()) {
-            ColorRGBA color = fluidFilter.getFadeColor();
-            color.a = fadeAlphaReference.get().floatValue();
-            fluidFilter.setFadeColor(color);
-            fadeAlphaValue.setText(String.format("%.2f", fadeAlphaReference.get()));
-        }
     }
 
     private Chunk createChunk() {
@@ -300,12 +282,12 @@ public class WaterDepthTest extends SimpleApplication {
 
     private Container createFilterPanel() {
         Container container = new Container(new SpringGridLayout(Axis.Y, Axis.X));
-        Label title = container.addChild(new Label("FluidDepthFilter", new ElementId("title")));
+        Label title = container.addChild(new Label("FluidFilter", new ElementId("title")));
         DragHandler dragHandler = new DragHandler(input -> container);
         CursorEventControl.addListenersToSpatial(title, dragHandler);
 
         Container fade = container.addChild(createRow());
-        Checkbox fadeCheckBox = fade.addChild(new Checkbox("Use fade"));
+        Checkbox fadeCheckBox = fade.addChild(new Checkbox("Enable depth fading"));
         fadeCheckBox.setChecked(fluidFilter.isEnableFading());
         fadeCheckBox.addClickCommands(button -> fluidFilter.setEnableFading(fadeCheckBox.isChecked()));
 
@@ -315,27 +297,16 @@ public class WaterDepthTest extends SimpleApplication {
         Slider depth = depthRow.addChild(createSlider(0.1f, 0, 100, fluidFilter.getFadeDepth()));
         depthReference = depth.getModel().createReference();
 
-        Container fadeColor = container.addChild(createRow());
-        fadeColor.addChild(new Label("Fade color: "));
-        ColorChooser colorChooser = fadeColor.addChild(new ColorChooser());
-        colorChooser.setModel(new VersionedHolder<>(fluidFilter.getFadeColor()));
-        fadeColorReference = colorChooser.getModel().createReference();
-        Container fadeAlpha = container.addChild(createRow());
-        fadeAlpha.addChild(new Label("Fade color alpha:"));
-        fadeAlphaValue = fadeAlpha.addChild(new Label(Float.toString(fluidFilter.getFadeColor().getAlpha())));
-        Slider fideAlphaSlider = fadeAlpha.addChild(createSlider(0.05f, 0, 1, fluidFilter.getFadeColor().getAlpha()));
-        fadeAlphaReference = fideAlphaSlider.getModel().createReference();
-
-
         Container shorelineRow = container.addChild(createRow());
         shorelineRow.addChild(new Label("Shoreline size: "));
         shorelineValue = shorelineRow.addChild(new Label(Float.toString(fluidFilter.getShorelineSize())));
         Slider shoreline = shorelineRow.addChild(createSlider(0.1f, 0, 20, fluidFilter.getShorelineSize()));
         shorelineReference = shoreline.getModel().createReference();
 
-        Checkbox distortion = container.addChild(new Checkbox("Distortion"));
-        distortion.setChecked(fluidFilter.isDistortion());
-        distortion.addClickCommands(button -> fluidFilter.setDistortion(distortion.isChecked()));
+        Container distortion = container.addChild(createRow());
+        Checkbox distortionCheckBox = distortion.addChild(new Checkbox("Enable distortion"));
+        distortionCheckBox.setChecked(fluidFilter.isDistortion());
+        distortionCheckBox.addClickCommands(button -> fluidFilter.setDistortion(distortionCheckBox.isChecked()));
 
         Container distortionStrengthX = container.addChild(createRow());
         distortionStrengthX.addChild(new Label("Strength x: "));
@@ -399,7 +370,7 @@ public class WaterDepthTest extends SimpleApplication {
     }
 
     private Container createRow() {
-        return new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Last, FillMode.Even));
+        return new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Even, FillMode.Even));
     }
 
     private Slider createSlider(float delta, float min, float max, float value) {
