@@ -7,6 +7,9 @@ MaterialDef WaterDepth Textured {
         // the color the fluid will blend to
         Vector4 FadeColor
 
+        // Enable fading of the fluid
+        Boolean EnableFading
+
         // the shoreline size. Set to 0 to disable
         Float ShorelineSize
 
@@ -38,6 +41,19 @@ MaterialDef WaterDepth Textured {
 
         // The speed of the distortion effect
         Float DistortionSpeed
+
+        // the reflection texture
+        Texture2D ReflectionMap
+
+        // water height needed to calculate the reflection
+        Float WaterHeight
+
+        // the strength of the reflection in the water
+        Float ReflectionStrength
+
+        // needed to calculate texture position
+        Matrix4 TextureProjMatrix
+        Vector3 CameraPosition
     }
 
     Technique {
@@ -47,10 +63,12 @@ MaterialDef WaterDepth Textured {
     	WorldParameters {
     	    Time
     	    FrustumNearFar
+    	    ViewProjectionMatrixInverse
     	}
 
     	Defines {
     	    DISTORTION : UseDistortion
+    	    FADE: EnableFading
     	}
     }
 
