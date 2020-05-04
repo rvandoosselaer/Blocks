@@ -45,15 +45,15 @@ public class FluidDepthFilter extends Filter {
     @Getter
     private boolean distortion = true;
     @Getter
-    private float distortionStrengthX = 0.002f;
+    private float distortionStrengthX = 0.0015f;
     @Getter
-    private float distortionStrengthY = 0.001f;
+    private float distortionStrengthY = 0.0f;
     @Getter
     private float distortionAmplitudeX = 15f;
     @Getter
-    private float distortionAmplitudeY = 15f;
+    private float distortionAmplitudeY = 30f;
     @Getter
-    private float distortionSpeed = 1.5f;
+    private float distortionSpeed = 3.0f;
 
     @Override
     protected boolean isRequiresSceneTexture() {

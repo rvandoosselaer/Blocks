@@ -132,12 +132,12 @@ public class WaterDepthTest extends SimpleApplication {
 
         if (distStrengthXReference.update()) {
             fluidDepthFilter.setDistortionStrengthX(distStrengthXReference.get().floatValue());
-            distStrengthXValue.setText(String.format("%.3f", distStrengthXReference.get()));
+            distStrengthXValue.setText(String.format("%.4f", distStrengthXReference.get()));
         }
 
         if (distStrengthYReference.update()) {
             fluidDepthFilter.setDistortionStrengthY(distStrengthYReference.get().floatValue());
-            distStrengthYValue.setText(String.format("%.3f", distStrengthYReference.get()));
+            distStrengthYValue.setText(String.format("%.4f", distStrengthYReference.get()));
         }
 
         if (distAmplitudeXReference.update()) {
@@ -207,13 +207,13 @@ public class WaterDepthTest extends SimpleApplication {
         Container distortionStrengthX = container.addChild(createRow());
         distortionStrengthX.addChild(new Label("Strength x: "));
         distStrengthXValue = distortionStrengthX.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionStrengthX())));
-        Slider distStrengthX = distortionStrengthX.addChild(createSlider(0.001f, 0, 0.1f, fluidDepthFilter.getDistortionStrengthX()));
+        Slider distStrengthX = distortionStrengthX.addChild(createSlider(0.0001f, 0, 0.01f, fluidDepthFilter.getDistortionStrengthX()));
         distStrengthXReference = distStrengthX.getModel().createReference();
 
         Container distortionStrengthY = container.addChild(createRow());
         distortionStrengthY.addChild(new Label("Strength y: "));
         distStrengthYValue = distortionStrengthY.addChild(new Label(Float.toString(fluidDepthFilter.getDistortionStrengthY())));
-        Slider distStrengthY = distortionStrengthY.addChild(createSlider(0.001f, 0, 0.1f, fluidDepthFilter.getDistortionStrengthY()));
+        Slider distStrengthY = distortionStrengthY.addChild(createSlider(0.0001f, 0, 0.01f, fluidDepthFilter.getDistortionStrengthY()));
         distStrengthYReference = distStrengthY.getModel().createReference();
 
         Container distortionOffsetX = container.addChild(createRow());
