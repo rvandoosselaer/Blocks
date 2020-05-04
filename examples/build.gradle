@@ -36,6 +36,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     implementation "com.simsilica:sim-math:${simMathVersion}"
     implementation "com.simsilica:sio2:${sio2Version}"
+    implementation "com.simsilica:lemur-proto:+"
     implementation ("com.jayfella:jme-fastnoise:${jmeFastNoise}") {
         exclude group: "org.jmonkeyengine", module: "jme3-lwjgl3"
     }

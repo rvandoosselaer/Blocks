@@ -52,6 +52,8 @@ public class FluidFilter extends Filter {
     private final Matrix4f textureProjMatrix = new Matrix4f();
 
     @Getter
+    private boolean enableFading = true;
+    @Getter
     private float waterHeight = 0.0f;
     @Getter
     private Spatial reflectionScene;
@@ -60,7 +62,7 @@ public class FluidFilter extends Filter {
     @Getter
     private float reflectionStrength = 0.3f;
     @Getter
-    private ColorRGBA fadeColor = new ColorRGBA(0.0289f, 0.136f, 0.453f, 1.0f);
+    private ColorRGBA fadeColor = new ColorRGBA(0.0289f, 0.136f, 0.453f, 0.95f);
     @Getter
     private float fadeDepth = 6.0f;
     @Getter
@@ -72,11 +74,11 @@ public class FluidFilter extends Filter {
     @Getter
     private float distortionStrengthX = 0.0015f;
     @Getter
-    private float distortionStrengthY = 0.0f;
+    private float distortionStrengthY = 0.001f;
     @Getter
-    private float distortionAmplitudeX = 15f;
+    private float distortionAmplitudeX = 25f;
     @Getter
-    private float distortionAmplitudeY = 30f;
+    private float distortionAmplitudeY = 25f;
     @Getter
     private float distortionSpeed = 3.0f;
     @Getter
@@ -123,6 +125,7 @@ public class FluidFilter extends Filter {
         material.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         material.setColor("FadeColor", fadeColor);
         material.setFloat("FadeDepth", fadeDepth);
+        material.setBoolean("EnableFading", enableFading);
         material.setFloat("ShorelineSize", shorelineSize);
         material.setColor("ShorelineColor", shorelineColor);
         material.setBoolean("UseDistortion", distortion);
@@ -326,6 +329,13 @@ public class FluidFilter extends Filter {
         }
         if (reflectionProcessor != null) {
             reflectionProcessor.setReflectionClipPlane(plane);
+        }
+    }
+
+    public void setEnableFading(boolean enableFading) {
+        this.enableFading = enableFading;
+        if (material != null) {
+            material.setBoolean("EnableFading", enableFading);
         }
     }
 

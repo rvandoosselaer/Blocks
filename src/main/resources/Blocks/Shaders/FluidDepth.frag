@@ -129,8 +129,12 @@ void main(){
             vec4 color = mix(m_ShorelineColor, scene, shorelineMixFactor);
             gl_FragColor = layer(color, scene);
         } else {
-            // blend the scene with the fade color in the depth
-            vec4 color = mix(scene, m_FadeColor, depthMixFactor);
+            #ifdef FADE
+                // blend the scene with the fade color in the depth
+                vec4 color = mix(scene, m_FadeColor, depthMixFactor);
+            #else
+                vec4 color = scene;
+            #endif
             gl_FragColor = layer(color, scene);
         }
 

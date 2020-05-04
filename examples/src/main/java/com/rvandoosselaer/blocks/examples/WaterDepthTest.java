@@ -8,6 +8,7 @@ import com.jme3.app.StatsAppState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -18,22 +19,28 @@ import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
+import com.rvandoosselaer.blocks.ShapeIds;
 import com.rvandoosselaer.blocks.TypeIds;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.rvandoosselaer.blocks.filters.FluidFilter;
 import com.simsilica.lemur.Axis;
 import com.simsilica.lemur.Button;
 import com.simsilica.lemur.Checkbox;
+import com.simsilica.lemur.ColorChooser;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.FillMode;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.Slider;
 import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.core.VersionedHolder;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.mathd.Vec3i;
 import com.simsilica.util.LogAdapter;
+
+import java.util.function.BiFunction;
 
 /**
  * An application that renders a coastline scene to test the FluidDepthFilter.
@@ -68,6 +75,9 @@ public class WaterDepthTest extends SimpleApplication {
     private VersionedReference<Double> reflectionReference;
     private Label waterHeightValue;
     private VersionedReference<Double> waterHeightReference;
+    private VersionedReference<ColorRGBA> fadeColorReference;
+    private Label fadeAlphaValue;
+    private VersionedReference<Double> fadeAlphaReference;
 
     public static void main(String[] args) {
         LogAdapter.initialize();
@@ -104,6 +114,9 @@ public class WaterDepthTest extends SimpleApplication {
         ChunkMeshGenerator chunkMeshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
         chunk.createNode(chunkMeshGenerator);
 
+        Geometry leaves = (Geometry) chunk.getNode().getChild("oak_leaves");
+        leaves.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+
         rootNode.attachChild(chunk.getNode());
 
         Spatial sky = SkyFactory.createSky(assetManager,
@@ -115,8 +128,8 @@ public class WaterDepthTest extends SimpleApplication {
 
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
-        cam.setLocation(new Vector3f(-1.3989371f, 13.492569f, 30.279642f));
-        cam.setRotation(new Quaternion(0.08451398f, 0.8909429f, -0.18557356f, 0.40575933f));
+        cam.setLocation(new Vector3f(-4.6468897f, 13.349939f, 33.132538f));
+        cam.setRotation(new Quaternion(0.042314883f, 0.9045431f, -0.092438444f, 0.41408485f));
     }
 
     @Override
@@ -177,6 +190,18 @@ public class WaterDepthTest extends SimpleApplication {
             fluidFilter.setWaterHeight(waterHeightReference.get().floatValue());
             waterHeightValue.setText(String.format("%.1f", waterHeightReference.get()));
         }
+
+        if (fadeColorReference.update()) {
+            fluidFilter.setFadeColor(fadeColorReference.get());
+            System.out.println("Color: " + fluidFilter.getFadeColor());
+        }
+
+        if (fadeAlphaReference.update()) {
+            ColorRGBA color = fluidFilter.getFadeColor();
+            color.a = fadeAlphaReference.get().floatValue();
+            fluidFilter.setFadeColor(color);
+            fadeAlphaValue.setText(String.format("%.2f", fadeAlphaReference.get()));
+        }
     }
 
     private Chunk createChunk() {
@@ -192,6 +217,9 @@ public class WaterDepthTest extends SimpleApplication {
         for (int x = 0; x < chunkSize.x; x++) {
             for (int y = 0; y < chunkSize.y; y++) {
                 for (int z = 0; z < chunkSize.z; z++) {
+                    if ((x == 0 || z == 0 || x == 31 || z == 31) && y < 7 ) {
+                        chunk.addBlock(x, y, z, sand);
+                    } else
                     if (y == 0) {
                         chunk.addBlock(x, y, z, sand);
                     } else {
@@ -209,6 +237,63 @@ public class WaterDepthTest extends SimpleApplication {
                 }
             }
         }
+
+        Block oak = blockRegistry.get(BlockIds.OAK_LOG);
+        Block oakLeaves = Block.builder()
+                .name("oak-leaves")
+                .shape(ShapeIds.CUBE)
+                .solid(true)
+                .transparent(true)
+                .type("oak_leaves")
+                .usingMultipleImages(false)
+                .build();
+
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        typeRegistry.register("oak_leaves");
+
+        renderer.setAlphaToCoverage(true);
+
+        blockRegistry.register(oakLeaves);
+
+        chunk.setFaceVisibleFunction(new BiFunction<Block, Block, Boolean>() {
+            @Override
+            public Boolean apply(Block block, Block neighbour) {
+                if (neighbour == null) {
+                    return true;
+                }
+                if (neighbour.isTransparent() && !block.isTransparent()) {
+                    return true;
+                }
+                if (!ShapeIds.CUBE.equals(neighbour.getShape())) {
+                    return true;
+                }
+                if ("oak_leaves".equals(neighbour.getType()) && "oak_leaves".equals(block.getType())) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // create a tree
+        Vec3i treeLocation = new Vec3i(15, 9, 15);
+        chunk.addBlock(treeLocation, oak);
+        chunk.addBlock(treeLocation.addLocal(0, 1, 0), oak);
+        chunk.addBlock(treeLocation.addLocal(0, 1, 0), oak);
+
+        int canopyRadius = 3;
+        Vec3i canopyCenter = treeLocation.addLocal(0, canopyRadius, 0);
+        for (int x = canopyCenter.x - canopyRadius; x <= canopyCenter.x + canopyRadius; x++) {
+            for (int y = canopyCenter.y - canopyRadius; y <= canopyCenter.y + canopyRadius; y++) {
+                for (int z = canopyCenter.z - canopyRadius; z <= canopyCenter.z + canopyRadius; z++) {
+                    Vector3f location = new Vector3f(x, y, z);
+                    float distance = location.distance(canopyCenter.toVector3f());
+                    if (distance <= canopyRadius && y > canopyCenter.y - canopyRadius) {
+                        chunk.addBlock(x, y, z, oakLeaves);
+                    }
+                }
+            }
+        }
+
         return chunk;
     }
 
@@ -216,11 +301,28 @@ public class WaterDepthTest extends SimpleApplication {
         Container container = new Container(new SpringGridLayout(Axis.Y, Axis.X));
         container.addChild(new Label("FluidDepthFilter", new ElementId("title")));
 
+        Container fade = container.addChild(createRow());
+        Checkbox fadeCheckBox = fade.addChild(new Checkbox("Use fade"));
+        fadeCheckBox.setChecked(fluidFilter.isEnableFading());
+        fadeCheckBox.addClickCommands(button -> fluidFilter.setEnableFading(fadeCheckBox.isChecked()));
+
         Container depthRow = container.addChild(createRow());
         depthRow.addChild(new Label("Fade depth: "));
         depthValue = depthRow.addChild(new Label(Float.toString(fluidFilter.getFadeDepth())));
-        Slider depth = depthRow.addChild(createSlider(0.1f, 0, 20, fluidFilter.getFadeDepth()));
+        Slider depth = depthRow.addChild(createSlider(0.1f, 0, 100, fluidFilter.getFadeDepth()));
         depthReference = depth.getModel().createReference();
+
+        Container fadeColor = container.addChild(createRow());
+        fadeColor.addChild(new Label("Fade color: "));
+        ColorChooser colorChooser = fadeColor.addChild(new ColorChooser());
+        colorChooser.setModel(new VersionedHolder<>(fluidFilter.getFadeColor()));
+        fadeColorReference = colorChooser.getModel().createReference();
+        Container fadeAlpha = container.addChild(createRow());
+        fadeAlpha.addChild(new Label("Fade color alpha:"));
+        fadeAlphaValue = fadeAlpha.addChild(new Label(Float.toString(fluidFilter.getFadeColor().getAlpha())));
+        Slider fideAlphaSlider = fadeAlpha.addChild(createSlider(0.05f, 0, 1, fluidFilter.getFadeColor().getAlpha()));
+        fadeAlphaReference = fideAlphaSlider.getModel().createReference();
+
 
         Container shorelineRow = container.addChild(createRow());
         shorelineRow.addChild(new Label("Shoreline size: "));
