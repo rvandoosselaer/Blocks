@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author: rvandoosselaer
  */
-public class FluidDepthFilter extends Filter {
+public class FluidFilter extends Filter {
 
     private RenderManager renderManager;
     private ViewPort viewPort;
@@ -60,7 +60,7 @@ public class FluidDepthFilter extends Filter {
     @Getter
     private float distortionSpeed = 3.0f;
 
-    public FluidDepthFilter() {
+    public FluidFilter() {
         super("Fluid filter");
     }
 

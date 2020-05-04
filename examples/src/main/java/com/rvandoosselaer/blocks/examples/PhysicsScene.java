@@ -29,7 +29,7 @@ import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
 import com.rvandoosselaer.blocks.TypeIds;
-import com.rvandoosselaer.blocks.filters.FluidDepthFilter;
+import com.rvandoosselaer.blocks.filters.FluidFilter;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.style.BaseStyles;
@@ -137,10 +137,10 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
         }
 
         PostProcessingState postProcessingState = getStateManager().getState(PostProcessingState.class);
-        if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidDepthFilter.class) == null) {
-            FluidDepthFilter fluidDepthFilter = new FluidDepthFilter();
-            fluidDepthFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
-            postProcessingState.getFilterPostProcessor().addFilter(fluidDepthFilter);
+        if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidFilter.class) == null) {
+            FluidFilter fluidFilter = new FluidFilter();
+            fluidFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
+            postProcessingState.getFilterPostProcessor().addFilter(fluidFilter);
         }
     }
 
