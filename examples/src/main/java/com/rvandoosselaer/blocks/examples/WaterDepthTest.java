@@ -35,6 +35,8 @@ import com.simsilica.lemur.Slider;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.core.VersionedHolder;
 import com.simsilica.lemur.core.VersionedReference;
+import com.simsilica.lemur.event.CursorEventControl;
+import com.simsilica.lemur.event.DragHandler;
 import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.mathd.Vec3i;
@@ -217,10 +219,9 @@ public class WaterDepthTest extends SimpleApplication {
         for (int x = 0; x < chunkSize.x; x++) {
             for (int y = 0; y < chunkSize.y; y++) {
                 for (int z = 0; z < chunkSize.z; z++) {
-                    if ((x == 0 || z == 0 || x == 31 || z == 31) && y < 7 ) {
+                    if ((x == 0 || z == 0 || x == 31 || z == 31) && y < 7) {
                         chunk.addBlock(x, y, z, sand);
-                    } else
-                    if (y == 0) {
+                    } else if (y == 0) {
                         chunk.addBlock(x, y, z, sand);
                     } else {
                         Vector3f location = new Vector3f(x, y, z);
@@ -299,7 +300,9 @@ public class WaterDepthTest extends SimpleApplication {
 
     private Container createFilterPanel() {
         Container container = new Container(new SpringGridLayout(Axis.Y, Axis.X));
-        container.addChild(new Label("FluidDepthFilter", new ElementId("title")));
+        Label title = container.addChild(new Label("FluidDepthFilter", new ElementId("title")));
+        DragHandler dragHandler = new DragHandler(input -> container);
+        CursorEventControl.addListenersToSpatial(title, dragHandler);
 
         Container fade = container.addChild(createRow());
         Checkbox fadeCheckBox = fade.addChild(new Checkbox("Use fade"));
