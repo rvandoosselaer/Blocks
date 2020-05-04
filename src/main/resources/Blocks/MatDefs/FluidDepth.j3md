@@ -38,6 +38,15 @@ MaterialDef WaterDepth Textured {
 
         // The speed of the distortion effect
         Float DistortionSpeed
+
+        Texture2D ReflectionMap
+
+        Float ReflectionDisplace
+
+        Matrix4 TextureProjMatrix
+
+        Vector3 CameraPosition
+
     }
 
     Technique {
@@ -47,6 +56,7 @@ MaterialDef WaterDepth Textured {
     	WorldParameters {
     	    Time
     	    FrustumNearFar
+    	    ViewProjectionMatrixInverse
     	}
 
     	Defines {

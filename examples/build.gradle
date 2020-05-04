@@ -26,7 +26,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-desktop:${jmeVersion}"
     implementation "org.jmonkeyengine:jme3-lwjgl:${jmeVersion}"
     implementation "org.jmonkeyengine:jme3-effects:${jmeVersion}"
-    implementation "org.jmonkeyengine:jme3-testdata:${jmeVersion}"
+    //implementation "org.jmonkeyengine:jme3-testdata:${jmeVersion}"
 
     // physics
     implementation "com.github.stephengold:Minie:${minieVersion}"

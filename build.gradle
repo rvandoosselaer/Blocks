@@ -31,6 +31,7 @@ repositories {
 dependencies {
     // JME
     implementation "org.jmonkeyengine:jme3-core:${jmeVersion}"
+    implementation "org.jmonkeyengine:jme3-effects:${jmeVersion}"
 
     // physics
     implementation "com.github.stephengold:Minie:${minieVersion}"
