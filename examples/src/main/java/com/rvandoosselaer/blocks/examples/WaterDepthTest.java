@@ -65,7 +65,7 @@ public class WaterDepthTest extends SimpleApplication {
         LogAdapter.initialize();
 
         WaterDepthTest waterDepthTest = new WaterDepthTest();
-        AppSettings settings = new AppSettings(true);
+        AppSettings settings = new AppSettings(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL32);
         waterDepthTest.setSettings(settings);
         waterDepthTest.start();
@@ -90,9 +90,7 @@ public class WaterDepthTest extends SimpleApplication {
 
         BlocksConfig.initialize(assetManager);
 
-        BlocksConfig.getInstance().setChunkSize(new Vec3i(15, 7, 15));
-
-        chunk = createChunk(BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.WATER));
+        chunk = createChunk();
         chunk.update();
 
         ChunkMeshGenerator chunkMeshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
@@ -156,27 +154,32 @@ public class WaterDepthTest extends SimpleApplication {
         }
     }
 
-    private Chunk createChunk(Block waterDepthBlock) {
+    private Chunk createChunk() {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+        Block sand = blockRegistry.get(BlockIds.SAND);
+        Block water = blockRegistry.get(BlockIds.WATER);
+        Block grass = blockRegistry.get(BlockIds.GRASS);
 
+        Vector3f center = new Vector3f(15, 1, 15);
+        float radius = 9;
         Chunk chunk = Chunk.createAt(new Vec3i());
         for (int x = 0; x < chunkSize.x; x++) {
             for (int y = 0; y < chunkSize.y; y++) {
                 for (int z = 0; z < chunkSize.z; z++) {
-                    if (y > 0) {
-                        if (x == 0 || x == 1 || x == chunkSize.x - 2 || x == chunkSize.x - 1 ||
-                                z == 0 || z == 1 || z == chunkSize.z - 2 || z == chunkSize.z - 1) {
-                            chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.SAND));
-                        } else {
-                            if (x == 7 && z == 7) {
-                                chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.SAND));
-                            } else {
-                                chunk.addBlock(x, y, z, waterDepthBlock);
-                            }
-                        }
+                    if (y == 0) {
+                        chunk.addBlock(x, y, z, sand);
                     } else {
-                        chunk.addBlock(x, y, z, blockRegistry.get(BlockIds.SAND));
+                        Vector3f location = new Vector3f(x, y, z);
+                        if (location.distance(center) <= radius) {
+                            if (y < 8) {
+                                chunk.addBlock(x, y, z, sand);
+                            } else if (y == 8) {
+                                chunk.addBlock(x, y, z, grass);
+                            }
+                        } else if (y < 7) {
+                            chunk.addBlock(x, y, z, water);
+                        }
                     }
                 }
             }
