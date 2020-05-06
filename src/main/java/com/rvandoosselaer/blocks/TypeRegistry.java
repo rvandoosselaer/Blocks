@@ -136,6 +136,33 @@ public class TypeRegistry {
         reload();
     }
 
+    public static Texture combineTextures(Texture topTexture, Texture sideTexture, Texture bottomTexture) {
+        boolean widthEqual = assertValuesAreEqual(topTexture.getImage().getWidth(), sideTexture.getImage().getWidth(), bottomTexture.getImage().getWidth());
+        boolean heightEqual = assertValuesAreEqual(topTexture.getImage().getHeight(), sideTexture.getImage().getHeight(), bottomTexture.getImage().getHeight());
+
+        if (!widthEqual || !heightEqual) {
+            String message = String.format("Textures (%s, %s, %s) have different sizes! The widths and heights of the textures should be equal.",
+                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
+            throw new IllegalArgumentException(message);
+        }
+
+        boolean colorSpacesEqual = assertColorSpacesAreEqual(topTexture.getImage().getColorSpace(), sideTexture.getImage().getColorSpace(), bottomTexture.getImage().getColorSpace());
+        if (!colorSpacesEqual) {
+            String message = String.format("Textures (%s, %s, %s) have different colorspaces! Colorspaces of the textures should be equal.",
+                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
+            throw new IllegalArgumentException(message);
+        }
+
+        TextureAtlas textureAtlas = new TextureAtlas(topTexture.getImage().getWidth(), topTexture.getImage().getHeight() * 3);
+        textureAtlas.addTexture(bottomTexture, "main");
+        textureAtlas.addTexture(sideTexture, "main");
+        textureAtlas.addTexture(topTexture, "main");
+
+        Texture texture = textureAtlas.getAtlasTexture("main");
+        texture.getImage().setColorSpace(topTexture.getImage().getColorSpace());
+        return texture;
+    }
+
     /**
      * Retrieves a material for the block type. When a material file isn't found, the default material will be used and
      * the textures found in the theme or default theme folder will be added to the material.
@@ -284,33 +311,6 @@ public class TypeRegistry {
         }
 
         return empty();
-    }
-
-    private static Texture combineTextures(Texture topTexture, Texture sideTexture, Texture bottomTexture) {
-        boolean widthEqual = assertValuesAreEqual(topTexture.getImage().getWidth(), sideTexture.getImage().getWidth(), bottomTexture.getImage().getWidth());
-        boolean heightEqual = assertValuesAreEqual(topTexture.getImage().getHeight(), sideTexture.getImage().getHeight(), bottomTexture.getImage().getHeight());
-
-        if (!widthEqual || !heightEqual) {
-            String message = String.format("Textures (%s, %s, %s) have different sizes! The widths and heights of the textures should be equal.",
-                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
-            throw new IllegalArgumentException(message);
-        }
-
-        boolean colorSpacesEqual = assertColorSpacesAreEqual(topTexture.getImage().getColorSpace(), sideTexture.getImage().getColorSpace(), bottomTexture.getImage().getColorSpace());
-        if (!colorSpacesEqual) {
-            String message = String.format("Textures (%s, %s, %s) have different colorspaces! Colorspaces of the textures should be equal.",
-                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
-            throw new IllegalArgumentException(message);
-        }
-
-        TextureAtlas textureAtlas = new TextureAtlas(topTexture.getImage().getWidth(), topTexture.getImage().getHeight() * 3);
-        textureAtlas.addTexture(bottomTexture, "main");
-        textureAtlas.addTexture(sideTexture, "main");
-        textureAtlas.addTexture(topTexture, "main");
-
-        Texture texture = textureAtlas.getAtlasTexture("main");
-        texture.getImage().setColorSpace(topTexture.getImage().getColorSpace());
-        return texture;
     }
 
     private static boolean assertValuesAreEqual(int... values) {
