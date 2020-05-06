@@ -222,8 +222,8 @@ public interface BlockIds {
     String WATER = "water";
     String WATER_STILL = "water still";
 
-    String BIRCH_LEAVES = "birch_leaves";
-    String PALM_TREE_LEAVES = "palm_tree_leaves";
-    String OAK_LEAVES = "oak_leaves";
-    String SPRUCE_LEAVES = "spruce_leaves";
+    String BIRCH_LEAVES = "birch leaves";
+    String PALM_TREE_LEAVES = "palm tree leaves";
+    String OAK_LEAVES = "oak leaves";
+    String SPRUCE_LEAVES = "spruce leaves";
 }
