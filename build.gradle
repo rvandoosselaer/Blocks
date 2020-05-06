@@ -39,7 +39,7 @@ dependencies {
     // utilities
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    implementation "com.simsilica:sim-math:${simMathVersion}"
+    api "com.simsilica:sim-math:${simMathVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
     implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
     implementation "com.google.guava:guava:${guavaVersion}"
