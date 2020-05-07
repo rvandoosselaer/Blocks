@@ -142,6 +142,16 @@ public class ChunkManager {
         return toVec3i(getNeighbourBlockLocation(collisionResult.getContactPoint(), collisionResult.getContactNormal()));
     }
 
+    /**
+     * Calculate the center location of a block.
+     *
+     * @param location
+     * @return center of the block
+     */
+    public static Vector3f getBlockCenterLocation(@NonNull Vec3i location) {
+        return location.toVector3f().addLocal(0.5f, 0.5f, 0.5f).multLocal(BlocksConfig.getInstance().getBlockScale());
+    }
+
     public Optional<Chunk> getChunk(Vec3i location) {
         assertInitialized();
 

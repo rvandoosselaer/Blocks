@@ -56,6 +56,12 @@ public class ChunkManagerTest {
         chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(1, 2, 0), chunkLocation);
+
+        Vec3i blockLocation = new Vec3i(0, 0, 0);
+        assertEquals(new Vector3f(0.5f, 0.5f, 0.5f), ChunkManager.getBlockCenterLocation(blockLocation));
+
+        blockLocation = new Vec3i(-5, 3, 2);
+        assertEquals(new Vector3f(-4.5f, 3.5f, 2.5f), ChunkManager.getBlockCenterLocation(blockLocation));
     }
 
     @Test
@@ -72,6 +78,12 @@ public class ChunkManagerTest {
         chunkLocation = ChunkManager.getChunkLocation(location);
 
         assertEquals(new Vec3i(0, 0, 0), chunkLocation);
+
+        Vec3i blockLocation = new Vec3i(0, 0, 0);
+        assertEquals(new Vector3f(1, 1, 1), ChunkManager.getBlockCenterLocation(blockLocation));
+
+        blockLocation = new Vec3i(-4, 3, 5);
+        assertEquals(new Vector3f(-7, 7, 11), ChunkManager.getBlockCenterLocation(blockLocation));
 
         BlocksConfig.getInstance().setBlockScale(1f);
     }
