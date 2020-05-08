@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -158,6 +159,29 @@ public class ChunkManagerTest {
         chunk = chunkManager.getChunk(new Vec3i(0, 0, 0));
         assertTrue(chunk.isPresent());
         assertTrue(chunk.get().isEmpty());
+    }
+
+    @Test
+    public void testSetChunk() throws InterruptedException {
+        ChunkManager chunkManager = new ChunkManager();
+        chunkManager.initialize();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, Block.create("my-block", "my-shape"));
+        chunkManager.setChunk(chunk);
+
+        assertTrue(chunkManager.getChunk(new Vec3i(0, 0, 0)).isPresent());
+        assertEquals(chunkManager.getChunk(new Vec3i(0, 0, 0)).get(), chunk);
+        assertNotNull(chunkManager.getChunk(new Vec3i(0, 0, 0)).get().getBlock(new Vec3i(0, 0, 0)));
+
+        Chunk otherChunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunkManager.setChunk(otherChunk);
+
+        assertEquals(chunkManager.getChunk(new Vec3i(0, 0, 0)).get(), otherChunk);
+        assertNull(chunkManager.getChunk(new Vec3i(0, 0, 0)).get().getBlock(new Vec3i(0, 0, 0)));
+
+        Thread.sleep(100); // wait a bit for clean up operations
+        assertNull(chunk.getBlocks()); // old chunk is cleaned up
     }
 
     @Test

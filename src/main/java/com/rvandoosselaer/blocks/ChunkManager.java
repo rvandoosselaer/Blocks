@@ -158,6 +158,15 @@ public class ChunkManager {
         return location == null ? Optional.empty() : cache.get(location);
     }
 
+    public void setChunk(Chunk chunk) {
+        assertInitialized();
+
+        if (chunk != null) {
+            getChunk(chunk.getLocation()).ifPresent(this::removeChunk);
+            addToCache(chunk);
+        }
+    }
+
     public void requestChunk(Vec3i location) {
         assertInitialized();
 
