@@ -235,12 +235,25 @@ public class Chunk {
     public Vec3i toLocalLocation(@NonNull Vec3i blockWorldLocation) {
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
         Vec3i localCoord = new Vec3i(blockWorldLocation.x - (location.x * chunkSize.x), blockWorldLocation.y - (location.y * chunkSize.y), blockWorldLocation.z - (location.z * chunkSize.z));
-        if (localCoord.x < 0 || localCoord.x >= chunkSize.x || localCoord.y < 0 || localCoord.y >= chunkSize.y || localCoord.z < 0 || localCoord.z >= chunkSize.z) {
+        if (!isInsideChunk(localCoord.x, localCoord.y, localCoord.z)) {
             log.warn("Block world location {} is not part of this chunk {}!", blockWorldLocation, this);
             return null;
         }
 
         return localCoord;
+    }
+
+    /**
+     * checks if the block location in the world is part of this chunk.
+     *
+     * @param blockWorldLocation block location in the world
+     * @return true if this chunk contains the location, false otherwise
+     */
+    public boolean containsLocation(Vec3i blockWorldLocation) {
+        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+        Vec3i localCoord = new Vec3i(blockWorldLocation.x - (location.x * chunkSize.x), blockWorldLocation.y - (location.y * chunkSize.y), blockWorldLocation.z - (location.z * chunkSize.z));
+
+        return isInsideChunk(localCoord.x, localCoord.y, localCoord.z);
     }
 
     /**
@@ -387,7 +400,7 @@ public class Chunk {
      * A function that checks if the shared face between the 2 adjacent blocks should be visible (rendered).
      * The first block argument is the block that checks if it's face should be rendered, the second block argument is
      * the neighbouring block on that direction.
-     *
+     * <p>
      * The default behaviour states that the face of a block is visible when:
      * - the neighbour block is not set
      * - the neighbour block is transparent and the asking block is not transparent

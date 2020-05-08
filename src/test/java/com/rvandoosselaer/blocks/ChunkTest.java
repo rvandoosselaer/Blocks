@@ -74,6 +74,19 @@ public class ChunkTest {
     }
 
     @Test
+    public void testContainsLocation() {
+        BlocksConfig.getInstance().setChunkSize(new Vec3i(3, 3, 3));
+
+        Vec3i worldLocation = new Vec3i(7, 4, 9);
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        assertFalse(chunk.containsLocation(worldLocation));
+
+        chunk = Chunk.createAt(new Vec3i(2, 1, 3));
+        assertTrue(chunk.containsLocation(worldLocation));
+    }
+
+    @Test
     public void testUpdate() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
