@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -70,7 +71,7 @@ public class BlockRegistry {
     }
 
     public Collection<Block> getAll() {
-        return registry.values();
+        return Collections.unmodifiableCollection(registry.values());
     }
 
     public void registerDefaultBlocks() {

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -79,6 +80,17 @@ public class TypeRegistry {
         return material;
     }
 
+    public boolean remove(@NonNull String name) {
+        if (registry.containsKey(name)) {
+            Material material = registry.remove(name);
+            if (log.isTraceEnabled()) {
+                log.trace("Removed type {} -> {}", name, material);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean usingTheme() {
         return theme != null;
     }
@@ -88,7 +100,7 @@ public class TypeRegistry {
     }
 
     public Collection<String> getAll() {
-        return registry.keySet();
+        return Collections.unmodifiableCollection(registry.keySet());
     }
 
     public void registerDefaultMaterials() {

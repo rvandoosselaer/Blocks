@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -58,7 +59,7 @@ public class ShapeRegistry {
     }
 
     public Collection<String> getAll() {
-        return shapeRegistry.keySet();
+        return Collections.unmodifiableCollection(shapeRegistry.keySet());
     }
 
     public void registerDefaultShapes() {
