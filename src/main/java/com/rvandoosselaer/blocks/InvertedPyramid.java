@@ -79,8 +79,8 @@ public class InvertedPyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 0.4472136f, 0.8944272f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+                chunkMesh.getNormals().add(new Vector3f(0.0f, -0.4472136f, 0.8944272f));
+                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f));
             }
             // uvs
             if (!multipleImages) {
@@ -108,8 +108,8 @@ public class InvertedPyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.8944272f, 0.4472136f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f));
+                chunkMesh.getNormals().add(new Vector3f(0.8944272f, -0.4472136f, 0.0f));
+                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, -1.0f, -1.0f));
             }
             // uvs
             if (!multipleImages) {
@@ -137,8 +137,8 @@ public class InvertedPyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 0.4472136f, -0.8944272f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f));
+                chunkMesh.getNormals().add(new Vector3f(0.0f, -0.4472136f, -0.8944272f));
+                chunkMesh.getTangents().add(new Vector4f(-1.0f, 0.0f, 0.0f, -1.0f));
             }
             // uvs
             if (!multipleImages) {
@@ -166,8 +166,8 @@ public class InvertedPyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(-0.8944272f, 0.4472136f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, -1.0f, -1.0f));
+                chunkMesh.getNormals().add(new Vector3f(-0.8944272f, -0.4472136f, 0.0f));
+                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, 1.0f, -1.0f));
             }
             // uvs
             if (!multipleImages) {
