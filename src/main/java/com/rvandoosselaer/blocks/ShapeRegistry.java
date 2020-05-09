@@ -76,6 +76,7 @@ public class ShapeRegistry {
         register(ShapeIds.WEDGE_RIGHT, new Wedge(Direction.RIGHT));
         register(ShapeIds.PYRAMID, new Pyramid());
         register(ShapeIds.ROUNDED_CUBE, new RoundedCube());
+        register(ShapeIds.PYRAMID_INVERTED, new InvertedPyramid());
     }
 
 }

@@ -43,6 +43,7 @@ public class SingleBlock extends SimpleApplication {
                 new LightingState(),
                 new PostProcessingState(),
                 new BasicProfilerState(false),
+                new WireframeState(),
                 new MemoryDebugState());
     }
 

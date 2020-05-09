@@ -19,6 +19,7 @@ public interface BlockIds {
     String BIRCH_LOG_WEDGE_LEFT = "birch log wedge left";
     String BIRCH_LOG_WEDGE_RIGHT = "birch log wedge right";
     String BIRCH_LOG_PYRAMID = "birch log pyramid";
+    String BIRCH_LOG_PYRAMID_INVERTED = "birch log pyramid inverted";
 
     String BIRCH_PLANKS = "birch planks";
     String BIRCH_PLANKS_ROUNDED = "birch planks rounded";
@@ -34,6 +35,7 @@ public interface BlockIds {
     String BIRCH_PLANKS_WEDGE_LEFT = "birch planks wedge left";
     String BIRCH_PLANKS_WEDGE_RIGHT = "birch planks wedge right";
     String BIRCH_PLANKS_PYRAMID = "birch planks pyramid";
+    String BIRCH_PLANKS_PYRAMID_INVERTED = "birch planks pyramid inverted";
 
     String BRICKS = "bricks";
     String BRICKS_ROUNDED = "bricks rounded";
@@ -44,6 +46,7 @@ public interface BlockIds {
     String BRICK_STAIRS_LEFT = "brick stairs left";
     String BRICK_STAIRS_RIGHT = "brick stairs right";
     String BRICK_PYRAMID = "brick pyramid";
+    String BRICK_PYRAMID_INVERTED = "brick pyramid inverted";
     String BRICK_WEDGE_BACK = "brick wedge back";
     String BRICK_WEDGE_FRONT = "brick wedge front";
     String BRICK_WEDGE_LEFT = "brick wedge left";
@@ -58,6 +61,7 @@ public interface BlockIds {
     String COBBLESTONE_STAIRS_LEFT = "cobblestone stairs left";
     String COBBLESTONE_STAIRS_RIGHT = "cobblestone stairs right";
     String COBBLESTONE_PYRAMID = "cobblestone pyramid";
+    String COBBLESTONE_PYRAMID_INVERTED = "cobblestone pyramid inverted";
     String COBBLESTONE_WEDGE_BACK = "cobblestone wedge back";
     String COBBLESTONE_WEDGE_FRONT = "cobblestone wedge front";
     String COBBLESTONE_WEDGE_LEFT = "cobblestone wedge left";
@@ -72,6 +76,7 @@ public interface BlockIds {
     String MOSSY_COBBLESTONE_STAIRS_LEFT = "mossy cobblestone stairs left";
     String MOSSY_COBBLESTONE_STAIRS_RIGHT = "mossy cobblestone stairs right";
     String MOSSY_COBBLESTONE_PYRAMID = "mossy cobblestone pyramid";
+    String MOSSY_COBBLESTONE_PYRAMID_INVERTED = "mossy cobblestone pyramid inverted";
     String MOSSY_COBBLESTONE_WEDGE_BACK = "mossy cobblestone wedge back";
     String MOSSY_COBBLESTONE_WEDGE_FRONT = "mossy cobblestone wedge front";
     String MOSSY_COBBLESTONE_WEDGE_LEFT = "mossy cobblestone wedge left";
@@ -101,6 +106,7 @@ public interface BlockIds {
     String PALM_TREE_LOG_WEDGE_LEFT = "palm tree log wedge left";
     String PALM_TREE_LOG_WEDGE_RIGHT = "palm tree log wedge right";
     String PALM_TREE_LOG_PYRAMID = "palm tree log pyramid";
+    String PALM_TREE_LOG_PYRAMID_INVERTED = "palm tree log pyramid inverted";
 
     String PALM_TREE_PLANKS = "palm tree planks";
     String PALM_TREE_PLANKS_ROUNDED = "palm tree planks rounded";
@@ -116,6 +122,7 @@ public interface BlockIds {
     String PALM_TREE_PLANKS_WEDGE_LEFT = "palm tree planks wedge left";
     String PALM_TREE_PLANKS_WEDGE_RIGHT = "palm tree planks wedge right";
     String PALM_TREE_PLANKS_PYRAMID = "palm tree planks pyramid";
+    String PALM_TREE_PLANKS_PYRAMID_INVERTED = "palm tree planks pyramid inverted";
 
     String ROCK = "rock";
     String ROCK_ROUNDED = "rock rounded";
@@ -126,6 +133,7 @@ public interface BlockIds {
     String ROCK_STAIRS_LEFT = "rock stairs left";
     String ROCK_STAIRS_RIGHT = "rock stairs right";
     String ROCK_PYRAMID = "rock pyramid";
+    String ROCK_PYRAMID_INVERTED = "rock pyramid inverted";
     String ROCK_WEDGE_BACK = "rock wedge back";
     String ROCK_WEDGE_FRONT = "rock wedge front";
     String ROCK_WEDGE_LEFT = "rock wedge left";
@@ -140,6 +148,7 @@ public interface BlockIds {
     String OAK_LOG_WEDGE_LEFT = "oak log wedge left";
     String OAK_LOG_WEDGE_RIGHT = "oak log wedge right";
     String OAK_LOG_PYRAMID = "oak log pyramid";
+    String OAK_LOG_PYRAMID_INVERTED = "oak log pyramid inverted";
 
     String OAK_PLANKS = "oak planks";
     String OAK_PLANKS_ROUNDED = "oak planks rounded";
@@ -155,6 +164,7 @@ public interface BlockIds {
     String OAK_PLANKS_WEDGE_LEFT = "oak planks wedge left";
     String OAK_PLANKS_WEDGE_RIGHT = "oak planks wedge right";
     String OAK_PLANKS_PYRAMID = "oak planks pyramid";
+    String OAK_PLANKS_PYRAMID_INVERTED = "oak planks pyramid inverted";
 
     String SAND = "sand";
     String SAND_ROUNDED = "sand rounded";
@@ -175,6 +185,7 @@ public interface BlockIds {
     String SPRUCE_LOG_WEDGE_LEFT = "spruce log wedge left";
     String SPRUCE_LOG_WEDGE_RIGHT = "spruce log wedge right";
     String SPRUCE_LOG_PYRAMID = "spruce log pyramid";
+    String SPRUCE_LOG_PYRAMID_INVERTED = "spruce log pyramid inverted";
 
     String SPRUCE_PLANKS = "spruce planks";
     String SPRUCE_PLANKS_ROUNDED = "spruce planks rounded";
@@ -190,6 +201,7 @@ public interface BlockIds {
     String SPRUCE_PLANKS_WEDGE_LEFT = "spruce planks wedge left";
     String SPRUCE_PLANKS_WEDGE_RIGHT = "spruce planks wedge right";
     String SPRUCE_PLANKS_PYRAMID = "spruce planks pyramid";
+    String SPRUCE_PLANKS_PYRAMID_INVERTED = "spruce planks pyramid inverted";
 
     String STONE_BRICKS = "stone bricks";
     String STONE_BRICKS_ROUNDED = "stone bricks rounded";
@@ -200,6 +212,7 @@ public interface BlockIds {
     String STONE_BRICK_STAIRS_LEFT = "stone brick stairs left";
     String STONE_BRICK_STAIRS_RIGHT = "stone brick stairs right";
     String STONE_BRICK_PYRAMID = "stone brick pyramid";
+    String STONE_BRICK_PYRAMID_INVERTED = "stone brick pyramid inverted";
     String STONE_BRICK_WEDGE_BACK = "stone brick wedge back";
     String STONE_BRICK_WEDGE_FRONT = "stone brick wedge front";
     String STONE_BRICK_WEDGE_LEFT = "stone brick wedge left";
@@ -214,6 +227,7 @@ public interface BlockIds {
     String MOSSY_STONE_BRICK_STAIRS_LEFT = "mossy stone brick stairs left";
     String MOSSY_STONE_BRICK_STAIRS_RIGHT = "mossy stone brick stairs right";
     String MOSSY_STONE_BRICK_PYRAMID = "mossy stone brick pyramid";
+    String MOSSY_STONE_BRICK_PYRAMID_INVERTED = "mossy stone brick pyramid inverted";
     String MOSSY_STONE_BRICK_WEDGE_BACK = "mossy stone brick wedge back";
     String MOSSY_STONE_BRICK_WEDGE_FRONT = "mossy stone brick wedge front";
     String MOSSY_STONE_BRICK_WEDGE_LEFT = "mossy stone brick wedge left";

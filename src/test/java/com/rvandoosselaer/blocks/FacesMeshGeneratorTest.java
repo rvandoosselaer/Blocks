@@ -129,6 +129,33 @@ public class FacesMeshGeneratorTest {
     }
 
     @Test
+    public void testInvertedPyramidShape() {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+
+        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+
+        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED));
+        chunk.createNode(meshGenerator);
+
+        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED).getType())).getMesh();
+        // 5 faces, 6 triangles
+        assertEquals(6, mesh.getTriangleCount());
+
+        chunk.addBlock(0, 1, 0, blockRegistry.get(BlockIds.GRASS));
+        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED));
+        chunk.createNode(meshGenerator);
+
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.GRASS).getType())).getMesh();
+        // 6 faces, 10 triangles
+        assertEquals(6 * 2, mesh.getTriangleCount());
+
+        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED).getType())).getMesh();
+        // 4 faces, 4 triangles
+        assertEquals(4, mesh.getTriangleCount());
+    }
+
+    @Test
     public void testWedgeShape() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 

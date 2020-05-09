@@ -126,6 +126,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
     }
     
     private void registerStoneBrickBlocks() {
@@ -142,6 +143,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.STONE_BRICK_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.STONE_BRICK_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerSpruceBlocks() {
@@ -154,6 +156,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.SPRUCE_LOG_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SPRUCE_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.SPRUCE_PLANKS, TypeIds.SPRUCE_PLANKS, false));
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -169,6 +172,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SPRUCE_PLANKS_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
 
         register(Block.builder().name(BlockIds.SPRUCE_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.SPRUCE_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
@@ -197,6 +201,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.OAK_LOG_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.OAK_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.OAK_PLANKS, TypeIds.OAK_PLANKS, false));
         register(Block.builder().name(BlockIds.OAK_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -212,6 +217,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.OAK_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.OAK_PLANKS_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
 
         register(Block.builder().name(BlockIds.OAK_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.OAK_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
@@ -230,6 +236,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.ROCK_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.ROCK_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerPalmTreeBlocks() {
@@ -242,6 +249,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.PALM_TREE_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.PALM_TREE_PLANKS, TypeIds.PALM_TREE_PLANKS, false));
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -257,6 +265,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
 
         register(Block.builder().name(BlockIds.PALM_TREE_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.PALM_TREE_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
@@ -296,6 +305,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
     }
     
     private void registerCobbleStoneBlocks() {
@@ -312,6 +322,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.COBBLESTONE_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.COBBLESTONE_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
     }
     
     private void registerBrickBlocks() {
@@ -328,6 +339,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.BRICK_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BRICK_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerBirchBlocks() {
@@ -340,6 +352,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.BIRCH_LOG_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BIRCH_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.BIRCH_PLANKS, TypeIds.BIRCH_PLANKS, false));
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -355,6 +368,7 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_WEDGE_LEFT).shape(ShapeIds.WEDGE_LEFT).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_WEDGE_RIGHT).shape(ShapeIds.WEDGE_RIGHT).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BIRCH_PLANKS_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
 
         register(Block.builder().name(BlockIds.BIRCH_LEAVES).shape(ShapeIds.CUBE).type(TypeIds.BIRCH_LEAVES).usingMultipleImages(false).solid(true).transparent(true).build());
     }
