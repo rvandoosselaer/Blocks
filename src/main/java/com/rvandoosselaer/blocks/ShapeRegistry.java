@@ -77,6 +77,10 @@ public class ShapeRegistry {
         register(ShapeIds.PYRAMID, new Pyramid());
         register(ShapeIds.ROUNDED_CUBE, new RoundedCube());
         register(ShapeIds.PYRAMID_INVERTED, new InvertedPyramid());
+        register(ShapeIds.STAIRS_INVERTED_BACK, new InvertedStair(Direction.BACK));
+        register(ShapeIds.STAIRS_INVERTED_FRONT, new InvertedStair(Direction.FRONT));
+        register(ShapeIds.STAIRS_INVERTED_LEFT, new InvertedStair(Direction.LEFT));
+        register(ShapeIds.STAIRS_INVERTED_RIGHT, new InvertedStair(Direction.RIGHT));
     }
 
 }

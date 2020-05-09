@@ -23,5 +23,9 @@ public interface ShapeIds {
     String PYRAMID = "pyramid";
     String ROUNDED_CUBE = "rounded-cube";
     String PYRAMID_INVERTED = "pyramid-inverted";
+    String STAIRS_INVERTED_BACK = "stairs-inverted-back";
+    String STAIRS_INVERTED_FRONT = "stairs-inverted-front";
+    String STAIRS_INVERTED_LEFT = "stairs-inverted-left";
+    String STAIRS_INVERTED_RIGHT = "stairs-inverted-right";
 
 }
