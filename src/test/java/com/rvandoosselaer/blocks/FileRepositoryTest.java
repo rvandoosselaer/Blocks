@@ -83,7 +83,7 @@ public class FileRepositoryTest {
         boolean result = repository.save(chunk, "my-saved-chunk");
         assertTrue(result);
 
-        Chunk loadedChunk = repository.load("my-saved-chunk");
+        Chunk loadedChunk = repository.load("my-saved-chunk" + FileRepository.EXTENSION);
         assertEquals(loadedChunk.getLocation(), chunk.getLocation());
         assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
         assertEquals(loadedChunk.getBlocks()[random], chunk.getBlocks()[random]);

@@ -96,7 +96,7 @@ public class FileRepository implements ChunkRepository {
             return false;
         }
 
-        return save(chunk, getChunkPath(filename));
+        return save(chunk, getChunkPath(filename + EXTENSION));
     }
 
     private boolean save(Chunk chunk, Path chunkPath) {
@@ -126,7 +126,7 @@ public class FileRepository implements ChunkRepository {
     }
 
     private Path getChunkPath(String filename) {
-        return path.resolve(filename + EXTENSION);
+        return path.resolve(filename);
     }
 
     private Chunk loadChunkFromPath(Path chunkPath) {
