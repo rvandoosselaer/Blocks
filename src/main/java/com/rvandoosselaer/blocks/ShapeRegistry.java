@@ -81,6 +81,10 @@ public class ShapeRegistry {
         register(ShapeIds.STAIRS_INVERTED_FRONT, new InvertedStair(Direction.FRONT));
         register(ShapeIds.STAIRS_INVERTED_LEFT, new InvertedStair(Direction.LEFT));
         register(ShapeIds.STAIRS_INVERTED_RIGHT, new InvertedStair(Direction.RIGHT));
+        register(ShapeIds.WEDGE_INVERTED_BACK, new InvertedWedge(Direction.BACK));
+        register(ShapeIds.WEDGE_INVERTED_FRONT, new InvertedWedge(Direction.FRONT));
+        register(ShapeIds.WEDGE_INVERTED_LEFT, new InvertedWedge(Direction.LEFT));
+        register(ShapeIds.WEDGE_INVERTED_RIGHT, new InvertedWedge(Direction.RIGHT));
     }
 
 }
