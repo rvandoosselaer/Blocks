@@ -44,13 +44,25 @@ public class FileRepository implements ChunkRepository {
 
     @Override
     public Chunk load(Vec3i location) {
-        if (path == null || location == null) {
+        if (location == null) {
             return null;
         }
 
+        return loadChunkFromPath(getChunkPath(location));
+    }
+
+    public Chunk load(String filename) {
+        if (filename == null) {
+            return null;
+        }
+
+        return load(getChunkPath(filename));
+    }
+
+    private Chunk load(Path chunkPath) {
         // path doesn't exist
-        if (Files.notExists(path)) {
-            log.warn("Unable to load chunk {}, file path {} doesn't exist.", location, path.toAbsolutePath());
+        if (path == null || Files.notExists(path)) {
+            log.warn("Unable to load chunk {}, file path {} doesn't exist.", chunkPath.getFileName(), path.toAbsolutePath());
             return null;
         }
 
@@ -60,19 +72,35 @@ public class FileRepository implements ChunkRepository {
         }
 
         // chunk doesn't exist
-        if (Files.notExists(getChunkPath(location))) {
+        if (Files.notExists(chunkPath)) {
             if (log.isTraceEnabled()) {
-                log.trace("Chunk {} not found in repository", location);
+                log.trace("Chunk {} not found in repository", chunkPath);
             }
             return null;
         }
 
-        return loadChunkFromPath(getChunkPath(location));
+        return loadChunkFromPath(chunkPath);
     }
 
     @Override
     public boolean save(Chunk chunk) {
-        if (path == null || chunk == null) {
+        if (chunk == null) {
+            return false;
+        }
+
+        return save(chunk, getChunkPath(chunk));
+    }
+
+    public boolean save(Chunk chunk, String filename) {
+        if (chunk == null || filename == null) {
+            return false;
+        }
+
+        return save(chunk, getChunkPath(filename));
+    }
+
+    private boolean save(Chunk chunk, Path chunkPath) {
+        if (path == null) {
             return false;
         }
 
@@ -86,7 +114,7 @@ public class FileRepository implements ChunkRepository {
             }
         }
 
-        return writeChunkToPath(chunk, getChunkPath(chunk));
+        return writeChunkToPath(chunk, chunkPath);
     }
 
     public Path getChunkPath(@NonNull Chunk chunk) {
@@ -95,6 +123,10 @@ public class FileRepository implements ChunkRepository {
 
     public static String getChunkFilename(@NonNull Chunk chunk) {
         return getChunkFilename(chunk.getLocation());
+    }
+
+    private Path getChunkPath(String filename) {
+        return path.resolve(filename + EXTENSION);
     }
 
     private Chunk loadChunkFromPath(Path chunkPath) {

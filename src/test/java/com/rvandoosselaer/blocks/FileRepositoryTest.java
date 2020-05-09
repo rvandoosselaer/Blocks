@@ -80,10 +80,10 @@ public class FileRepositoryTest {
         chunk.update();
 
         FileRepository repository = new FileRepository(Paths.get(System.getProperty("user.home"), ".blocks", "repository-c"));
-        boolean result = repository.save(chunk);
+        boolean result = repository.save(chunk, "my-saved-chunk");
         assertTrue(result);
 
-        Chunk loadedChunk = repository.load(new Vec3i(0, 0, 0));
+        Chunk loadedChunk = repository.load("my-saved-chunk");
         assertEquals(loadedChunk.getLocation(), chunk.getLocation());
         assertEquals(loadedChunk.getBlocks().length, chunk.getBlocks().length);
         assertEquals(loadedChunk.getBlocks()[random], chunk.getBlocks()[random]);
