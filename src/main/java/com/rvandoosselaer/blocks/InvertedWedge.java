@@ -147,11 +147,11 @@ public class InvertedWedge implements Shape {
             if (!multipleImages) {
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
             } else {
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
             }
         }
     }
@@ -180,11 +180,11 @@ public class InvertedWedge implements Shape {
             if (!multipleImages) {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
             } else {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
             }
         }
     }
