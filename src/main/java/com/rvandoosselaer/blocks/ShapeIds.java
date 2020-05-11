@@ -31,5 +31,9 @@ public interface ShapeIds {
     String WEDGE_INVERTED_FRONT = "wedge-inverted-front";
     String WEDGE_INVERTED_LEFT = "wedge-inverted-left";
     String WEDGE_INVERTED_RIGHT = "wedge-inverted-right";
+    String STAIRS_INNER_CORNER_FRONT = "stairs-inner-front";
+    String STAIRS_INNER_CORNER_LEFT = "stairs-inner-left";
+    String STAIRS_INNER_CORNER_RIGHT = "stairs-inner-right";
+    String STAIRS_INNER_CORNER_BACK = "stairs-inner-back";
 
 }
