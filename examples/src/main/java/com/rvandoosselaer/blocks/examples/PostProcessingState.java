@@ -2,7 +2,6 @@ package com.rvandoosselaer.blocks.examples;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
-import com.jme3.asset.AssetManager;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.FXAAFilter;
 import com.jme3.post.ssao.SSAOFilter;
@@ -24,7 +23,7 @@ public class PostProcessingState extends BaseAppState {
 
         setSamples(app);
 
-        setShadowFilter(app.getAssetManager());
+        setShadowFilter();
 
         setSSAO();
 
@@ -59,17 +58,13 @@ public class PostProcessingState extends BaseAppState {
         filterPostProcessor.addFilter(ssaoFilter);
     }
 
-    private void setShadowFilter(AssetManager assetManager) {
-        DirectionalLightShadowFilter shadowFilter = new DirectionalLightShadowFilter(assetManager, 1024, 4);
-        shadowFilter.setLight(getState(LightingState.class).getDirectionalLight());
-        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
-        shadowFilter.setEdgesThickness(2);
-        shadowFilter.setShadowIntensity(0.75f);
-        shadowFilter.setLambda(0.65f);
-        shadowFilter.setShadowZExtend(75);
-        shadowFilter.setEnabled(true);
-
-        filterPostProcessor.addFilter(shadowFilter);
+    private void setShadowFilter() {
+        DirectionalLightShadowFilter dlsf = new DirectionalLightShadowFilter(getApplication().getAssetManager(), 4096, 4);
+        dlsf.setLight(getState(LightingState.class).getDirectionalLight());
+        dlsf.setLambda(1);
+        dlsf.setEdgesThickness(4);
+        dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
+        filterPostProcessor.addFilter(dlsf);
     }
 
     private void setSamples(Application app) {
