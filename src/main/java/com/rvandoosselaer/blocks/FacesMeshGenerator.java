@@ -198,9 +198,9 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
         if (mesh.getBuffer(VertexBuffer.Type.Tangent) == null) {
             return true;
         }
-        int totalTangents = mesh.getTriangleCount() * 2;
+        int requiredTangents = mesh.getBuffer(VertexBuffer.Type.Position).getNumElements();
         int currentTangents = mesh.getBuffer(VertexBuffer.Type.Tangent).getNumElements();
-        return currentTangents < totalTangents;
+        return requiredTangents != currentTangents;
     }
 
     private void generateTangents(Mesh mesh) {
