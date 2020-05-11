@@ -90,6 +90,10 @@ public class ShapeRegistry {
         register(ShapeIds.STAIRS_INNER_CORNER_LEFT, new StairInnerCorner(Direction.LEFT));
         register(ShapeIds.STAIRS_INNER_CORNER_RIGHT, new StairInnerCorner(Direction.RIGHT));
         register(ShapeIds.STAIRS_INNER_CORNER_BACK, new StairInnerCorner(Direction.BACK));
+        register(ShapeIds.STAIRS_OUTER_CORNER_FRONT, new StairOuterCorner(Direction.FRONT));
+        register(ShapeIds.STAIRS_OUTER_CORNER_LEFT, new StairOuterCorner(Direction.LEFT));
+        register(ShapeIds.STAIRS_OUTER_CORNER_RIGHT, new StairOuterCorner(Direction.RIGHT));
+        register(ShapeIds.STAIRS_OUTER_CORNER_BACK, new StairOuterCorner(Direction.BACK));
     }
 
 }
