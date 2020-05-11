@@ -148,22 +148,22 @@ public class StairInnerCorner implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.333f, 0.000f));
                 chunkMesh.getUvs().add(new Vector2f(0.667f, 0.000f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.333f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.000f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.000f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.000f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.778f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.778f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.889f));
                 chunkMesh.getUvs().add(new Vector2f(0.000f, 1.000f));
                 chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.000f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.333f + (2f / 3f)));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.889f));
                 chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.000f + (2f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.000f + (2f / 3f)));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.778f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.889f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.889f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.778f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f));
             }
         }
     }
@@ -280,24 +280,24 @@ public class StairInnerCorner implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
                 chunkMesh.getUvs().add(new Vector2f(0.667f, 1.000f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.000f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.000f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 1.000f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 1.000f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 1.000f - (1f / 3f)));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.329f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.329f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.440f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.440f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.662f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.662f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.440f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.440f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.440f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.662f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.551f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.662f));
             }
         }
     }
@@ -414,24 +414,24 @@ public class StairInnerCorner implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
                 chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.000f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 1.000f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 1.000f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 1.000f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.000f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f - (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f + (1f / 3f)));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f - (1f / 3f)));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.439f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.439f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.328f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.439f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.661f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.661f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.439f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.661f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.328f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.550f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.439f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.661f));
             }
         }
     }
