@@ -42,6 +42,8 @@ public class Square implements Shape {
             case BACK:
                 createBackFace(location, chunkMesh, blockScale);
                 break;
+            default:
+                throw new IllegalArgumentException("Invalid direction: " + direction);
         }
 
     }
