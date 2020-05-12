@@ -59,7 +59,6 @@ public class PBRBlock extends SimpleApplication {
 
     private int frame = 0;
     private Chunk chunk;
-    private LightProbe lightProbe;
     private Material waterMaterial;
     private VersionedReference<Double> metallicValue;
     private Label metallicLabel;
@@ -138,7 +137,7 @@ public class PBRBlock extends SimpleApplication {
         frame++;
 
         if (frame == 2) {
-            lightProbe = LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode, new JobProgressAdapter<LightProbe>() {
+            LightProbeFactory.makeProbe(stateManager.getState(EnvironmentCamera.class), rootNode, new JobProgressAdapter<LightProbe>() {
                 @Override
                 public void done(LightProbe result) {
                     log.info("Environment map rendered");
