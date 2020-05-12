@@ -10,7 +10,9 @@ public interface ShapeIds {
 
     String CUBE = "cube";
     String SLAB = "slab";
+    String SLAB_TOP = "slab-top";
     String DOUBLE_SLAB = "double-slab";
+    String DOUBLE_SLAB_TOP = "double-slab-top";
     String PLATE = "plate";
     String STAIRS_BACK = "stairs-back";
     String STAIRS_FRONT = "stairs-front";

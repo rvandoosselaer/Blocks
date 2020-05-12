@@ -65,7 +65,9 @@ public class ShapeRegistry {
     public void registerDefaultShapes() {
         register(ShapeIds.CUBE, new Cube());
         register(ShapeIds.SLAB, new Slab(0, 1f / 3f));
+        register(ShapeIds.SLAB_TOP, new Slab(2f / 3f, 1));
         register(ShapeIds.DOUBLE_SLAB, new Slab(0, 2f / 3f));
+        register(ShapeIds.DOUBLE_SLAB_TOP, new Slab(1f / 3f, 1));
         register(ShapeIds.PLATE, new Slab(0, 0.1f));
         register(ShapeIds.STAIRS_BACK, new Stair(Direction.BACK));
         register(ShapeIds.STAIRS_FRONT, new Stair(Direction.FRONT));

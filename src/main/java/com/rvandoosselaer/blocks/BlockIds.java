@@ -13,7 +13,9 @@ public interface BlockIds {
     String BIRCH_LOG = "birch log";
     String BIRCH_LOG_ROUNDED = "birch log rounded";
     String BIRCH_LOG_SLAB = "birch log slab";
+    String BIRCH_LOG_SLAB_TOP = "birch log slab top";
     String BIRCH_LOG_DOUBLE_SLAB = "birch log double slab";
+    String BIRCH_LOG_DOUBLE_SLAB_TOP = "birch log double slab top";
     String BIRCH_LOG_WEDGE_BACK = "birch log wedge back";
     String BIRCH_LOG_WEDGE_INVERTED_BACK = "birch log wedge inverted back";
     String BIRCH_LOG_WEDGE_FRONT = "birch log wedge front";
@@ -33,7 +35,9 @@ public interface BlockIds {
     String BIRCH_PLANKS = "birch planks";
     String BIRCH_PLANKS_ROUNDED = "birch planks rounded";
     String BIRCH_PLANKS_SLAB = "birch planks slab";
+    String BIRCH_PLANKS_SLAB_TOP = "birch planks slab top";
     String BIRCH_PLANKS_DOUBLE_SLAB = "birch planks double slab";
+    String BIRCH_PLANKS_DOUBLE_SLAB_TOP = "birch planks double slab top";
     String BIRCH_PLANKS_PLATE = "birch planks plate";
     String BIRCH_PLANKS_STAIRS_BACK = "birch planks stairs back";
     String BIRCH_PLANKS_STAIRS_INNER_CORNER_BACK = "birch planks stairs inner corner back";
@@ -65,7 +69,9 @@ public interface BlockIds {
     String BRICKS = "bricks";
     String BRICKS_ROUNDED = "bricks rounded";
     String BRICK_SLAB = "brick slab";
+    String BRICK_SLAB_TOP = "brick slab top";
     String BRICK_DOUBLE_SLAB = "brick double slab";
+    String BRICK_DOUBLE_SLAB_TOP = "brick double slab top";
     String BRICK_STAIRS_BACK = "brick stairs back";
     String BRICK_STAIRS_INNER_CORNER_BACK = "brick stairs inner corner back";
     String BRICK_STAIRS_OUTER_CORNER_BACK = "brick stairs outer corner back";
@@ -96,7 +102,9 @@ public interface BlockIds {
     String COBBLESTONE = "cobblestone";
     String COBBLESTONE_ROUNDED = "cobblestone rounded";
     String COBBLESTONE_SLAB = "cobblestone slab";
+    String COBBLESTONE_SLAB_TOP = "cobblestone slab top";
     String COBBLESTONE_DOUBLE_SLAB = "cobblestone double slab";
+    String COBBLESTONE_DOUBLE_SLAB_TOP = "cobblestone double slab top";
     String COBBLESTONE_STAIRS_BACK = "cobblestone stairs back";
     String COBBLESTONE_STAIRS_INNER_CORNER_BACK = "cobblestone stairs inner corner back";
     String COBBLESTONE_STAIRS_OUTER_CORNER_BACK = "cobblestone stairs outer corner back";
@@ -127,7 +135,9 @@ public interface BlockIds {
     String MOSSY_COBBLESTONE = "mossy cobblestone";
     String MOSSY_COBBLESTONE_ROUNDED = "mossy cobblestone rounded";
     String MOSSY_COBBLESTONE_SLAB = "mossy cobblestone slab";
+    String MOSSY_COBBLESTONE_SLAB_TOP = "mossy cobblestone slab top";
     String MOSSY_COBBLESTONE_DOUBLE_SLAB = "mossy cobblestone double slab";
+    String MOSSY_COBBLESTONE_DOUBLE_SLAB_TOP = "mossy cobblestone double slab top";
     String MOSSY_COBBLESTONE_STAIRS_BACK = "mossy cobblestone stairs back";
     String MOSSY_COBBLESTONE_STAIRS_INNER_CORNER_BACK = "mossy cobblestone stairs inner corner back";
     String MOSSY_COBBLESTONE_STAIRS_OUTER_CORNER_BACK = "mossy cobblestone stairs outer corner back";
@@ -158,12 +168,16 @@ public interface BlockIds {
     String DIRT = "dirt";
     String DIRT_ROUNDED = "dirt rounded";
     String DIRT_SLAB = "dirt slab";
+    String DIRT_SLAB_TOP = "dirt slab top";
     String DIRT_DOUBLE_SLAB = "dirt double slab";
+    String DIRT_DOUBLE_SLAB_TOP = "dirt double slab top";
 
     String GRAVEL = "gravel";
     String GRAVEL_ROUNDED = "gravel rounded";
     String GRAVEL_SLAB = "gravel slab";
+    String GRAVEL_SLAB_TOP = "gravel slab top";
     String GRAVEL_DOUBLE_SLAB = "gravel double slab";
+    String GRAVEL_DOUBLE_SLAB_TOP = "gravel double slab top";
 
     String GRASS = "grass";
     String GRASS_ROUNDED = "grass rounded";
@@ -173,7 +187,9 @@ public interface BlockIds {
     String PALM_TREE_LOG = "palm tree log";
     String PALM_TREE_LOG_ROUNDED = "palm tree log rounded";
     String PALM_TREE_LOG_SLAB = "palm tree log slab";
+    String PALM_TREE_LOG_SLAB_TOP = "palm tree log slab top";
     String PALM_TREE_LOG_DOUBLE_SLAB = "palm tree log double slab";
+    String PALM_TREE_LOG_DOUBLE_SLAB_TOP = "palm tree log double slab top";
     String PALM_TREE_LOG_WEDGE_BACK = "palm tree log wedge back";
     String PALM_TREE_LOG_WEDGE_INVERTED_BACK = "palm tree log wedge inverted back";
     String PALM_TREE_LOG_WEDGE_FRONT = "palm tree log wedge front";
@@ -193,7 +209,9 @@ public interface BlockIds {
     String PALM_TREE_PLANKS = "palm tree planks";
     String PALM_TREE_PLANKS_ROUNDED = "palm tree planks rounded";
     String PALM_TREE_PLANKS_SLAB = "palm tree planks slab";
+    String PALM_TREE_PLANKS_SLAB_TOP = "palm tree planks slab top";
     String PALM_TREE_PLANKS_DOUBLE_SLAB = "palm tree planks double slab";
+    String PALM_TREE_PLANKS_DOUBLE_SLAB_TOP = "palm tree planks double slab top";
     String PALM_TREE_PLANKS_PLATE = "palm tree planks plate";
     String PALM_TREE_PLANKS_STAIRS_BACK = "palm tree planks stairs back";
     String PALM_TREE_PLANKS_STAIRS_INNER_CORNER_BACK = "palm tree planks stairs inner corner back";
@@ -225,7 +243,9 @@ public interface BlockIds {
     String ROCK = "rock";
     String ROCK_ROUNDED = "rock rounded";
     String ROCK_SLAB = "rock slab";
+    String ROCK_SLAB_TOP = "rock slab top";
     String ROCK_DOUBLE_SLAB = "rock double slab";
+    String ROCK_DOUBLE_SLAB_TOP = "rock double slab top";
     String ROCK_STAIRS_BACK = "rock stairs back";
     String ROCK_STAIRS_INNER_CORNER_BACK = "rock stairs inner corner back";
     String ROCK_STAIRS_OUTER_CORNER_BACK = "rock stairs outer corner back";
@@ -256,7 +276,9 @@ public interface BlockIds {
     String OAK_LOG = "oak log";
     String OAK_LOG_ROUNDED = "oak log rounded";
     String OAK_LOG_SLAB = "oak log slab";
+    String OAK_LOG_SLAB_TOP = "oak log slab top";
     String OAK_LOG_DOUBLE_SLAB = "oak log double slab";
+    String OAK_LOG_DOUBLE_SLAB_TOP = "oak log double slab top";
     String OAK_LOG_WEDGE_BACK = "oak log wedge back";
     String OAK_LOG_WEDGE_INVERTED_BACK = "oak log wedge inverted back";
     String OAK_LOG_WEDGE_FRONT = "oak log wedge front";
@@ -276,7 +298,9 @@ public interface BlockIds {
     String OAK_PLANKS = "oak planks";
     String OAK_PLANKS_ROUNDED = "oak planks rounded";
     String OAK_PLANKS_SLAB = "oak planks slab";
+    String OAK_PLANKS_SLAB_TOP = "oak planks slab top";
     String OAK_PLANKS_DOUBLE_SLAB = "oak planks double slab";
+    String OAK_PLANKS_DOUBLE_SLAB_TOP = "oak planks double slab top";
     String OAK_PLANKS_PLATE = "oak planks plate";
     String OAK_PLANKS_STAIRS_BACK = "oak planks stairs back";
     String OAK_PLANKS_STAIRS_INNER_CORNER_BACK = "oak planks stairs inner corner back";
@@ -308,17 +332,23 @@ public interface BlockIds {
     String SAND = "sand";
     String SAND_ROUNDED = "sand rounded";
     String SAND_SLAB = "sand slab";
+    String SAND_SLAB_TOP = "sand slab top";
     String SAND_DOUBLE_SLAB = "sand double slab";
+    String SAND_DOUBLE_SLAB_TOP = "sand double slab top";
 
     String SNOW = "snow";
     String SNOW_ROUNDED = "snow rounded";
     String SNOW_SLAB = "snow slab";
+    String SNOW_SLAB_TOP = "snow slab top";
     String SNOW_DOUBLE_SLAB = "snow double slab";
+    String SNOW_DOUBLE_SLAB_TOP = "snow double slab top";
 
     String SPRUCE_LOG = "spruce log";
     String SPRUCE_LOG_ROUNDED = "spruce log rounded";
     String SPRUCE_LOG_SLAB = "spruce log slab";
+    String SPRUCE_LOG_SLAB_TOP = "spruce log slab top";
     String SPRUCE_LOG_DOUBLE_SLAB = "spruce log double slab";
+    String SPRUCE_LOG_DOUBLE_SLAB_TOP = "spruce log double slab top";
     String SPRUCE_LOG_WEDGE_BACK = "spruce log wedge back";
     String SPRUCE_LOG_WEDGE_INVERTED_BACK = "spruce log wedge inverted back";
     String SPRUCE_LOG_WEDGE_FRONT = "spruce log wedge front";
@@ -338,7 +368,9 @@ public interface BlockIds {
     String SPRUCE_PLANKS = "spruce planks";
     String SPRUCE_PLANKS_ROUNDED = "spruce planks rounded";
     String SPRUCE_PLANKS_SLAB = "spruce planks slab";
+    String SPRUCE_PLANKS_SLAB_TOP = "spruce planks slab top";
     String SPRUCE_PLANKS_DOUBLE_SLAB = "spruce planks double slab";
+    String SPRUCE_PLANKS_DOUBLE_SLAB_TOP = "spruce planks double slab top";
     String SPRUCE_PLANKS_PLATE = "spruce planks plate";
     String SPRUCE_PLANKS_STAIRS_BACK = "spruce planks stairs back";
     String SPRUCE_PLANKS_STAIRS_INNER_CORNER_BACK = "spruce planks stairs inner corner back";
@@ -370,7 +402,9 @@ public interface BlockIds {
     String STONE_BRICKS = "stone bricks";
     String STONE_BRICKS_ROUNDED = "stone bricks rounded";
     String STONE_BRICK_SLAB = "stone brick slab";
+    String STONE_BRICK_SLAB_TOP = "stone brick slab top";
     String STONE_BRICK_DOUBLE_SLAB = "stone brick double slab";
+    String STONE_BRICK_DOUBLE_SLAB_TOP = "stone brick double slab top";
     String STONE_BRICK_STAIRS_BACK = "stone brick stairs back";
     String STONE_BRICK_STAIRS_INNER_CORNER_BACK = "stone brick stairs inner corner back";
     String STONE_BRICK_STAIRS_OUTER_CORNER_BACK = "stone brick stairs outer corner back";
@@ -401,7 +435,9 @@ public interface BlockIds {
     String MOSSY_STONE_BRICKS = "mossy stone bricks";
     String MOSSY_STONE_BRICKS_ROUNDED = "mossy stone bricks rounded";
     String MOSSY_STONE_BRICK_SLAB = "mossy stone brick slab";
+    String MOSSY_STONE_BRICK_SLAB_TOP = "mossy stone brick slab top";
     String MOSSY_STONE_BRICK_DOUBLE_SLAB = "mossy stone brick double slab";
+    String MOSSY_STONE_BRICK_DOUBLE_SLAB_TOP = "mossy stone brick double slab top";
     String MOSSY_STONE_BRICK_STAIRS_BACK = "mossy stone brick stairs back";
     String MOSSY_STONE_BRICK_STAIRS_INNER_CORNER_BACK = "mossy stone brick stairs inner corner back";
     String MOSSY_STONE_BRICK_STAIRS_OUTER_CORNER_BACK = "mossy stone brick stairs outer corner back";

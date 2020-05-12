@@ -128,7 +128,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.MOSSY_STONE_BRICKS, TypeIds.MOSSY_STONE_BRICKS, false));
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_SLAB).shape(ShapeIds.SLAB).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_STONE_BRICK_STAIRS_OUTER_CORNER_BACK).shape(ShapeIds.STAIRS_OUTER_CORNER_BACK).type(TypeIds.MOSSY_STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -161,7 +163,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.STONE_BRICKS, TypeIds.STONE_BRICKS, false));
         register(Block.builder().name(BlockIds.STONE_BRICKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_SLAB).shape(ShapeIds.SLAB).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.STONE_BRICK_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.STONE_BRICK_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.STONE_BRICK_STAIRS_OUTER_CORNER_BACK).shape(ShapeIds.STAIRS_OUTER_CORNER_BACK).type(TypeIds.STONE_BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -194,7 +198,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.SPRUCE_LOG, TypeIds.SPRUCE_LOG, true));
         register(Block.builder().name(BlockIds.SPRUCE_LOG_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_SLAB).shape(ShapeIds.SLAB).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SPRUCE_LOG_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SPRUCE_LOG_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_WEDGE_BACK).shape(ShapeIds.WEDGE_BACK).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_WEDGE_INVERTED_BACK).shape(ShapeIds.WEDGE_INVERTED_BACK).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_WEDGE_FRONT).shape(ShapeIds.WEDGE_FRONT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
@@ -214,7 +220,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.SPRUCE_PLANKS, TypeIds.SPRUCE_PLANKS, false));
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_SLAB).shape(ShapeIds.SLAB).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SPRUCE_PLANKS_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SPRUCE_PLANKS_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_PLATE).shape(ShapeIds.PLATE).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -250,21 +258,27 @@ public class BlockRegistry {
         register(Block.create(BlockIds.SNOW, TypeIds.SNOW, false));
         register(Block.builder().name(BlockIds.SNOW_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.SNOW).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SNOW_SLAB).shape(ShapeIds.SLAB).type(TypeIds.SNOW).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SNOW_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.SNOW).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SNOW_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.SNOW).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SNOW_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.SNOW).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerSandBlocks() {
         register(Block.create(BlockIds.SAND, TypeIds.SAND, false));
         register(Block.builder().name(BlockIds.SAND_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.SAND).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SAND_SLAB).shape(ShapeIds.SLAB).type(TypeIds.SAND).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SAND_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.SAND).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SAND_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.SAND).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.SAND_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.SAND).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerOakBlocks() {
         register(Block.create(BlockIds.OAK_LOG, TypeIds.OAK_LOG, true));
         register(Block.builder().name(BlockIds.OAK_LOG_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_SLAB).shape(ShapeIds.SLAB).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.OAK_LOG_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.OAK_LOG_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_WEDGE_BACK).shape(ShapeIds.WEDGE_BACK).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_WEDGE_INVERTED_BACK).shape(ShapeIds.WEDGE_INVERTED_BACK).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_WEDGE_FRONT).shape(ShapeIds.WEDGE_FRONT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
@@ -284,7 +298,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.OAK_PLANKS, TypeIds.OAK_PLANKS, false));
         register(Block.builder().name(BlockIds.OAK_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_SLAB).shape(ShapeIds.SLAB).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.OAK_PLANKS_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.OAK_PLANKS_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_PLATE).shape(ShapeIds.PLATE).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_PLANKS_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -320,7 +336,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.ROCK, TypeIds.ROCK, false));
         register(Block.builder().name(BlockIds.ROCK_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_SLAB).shape(ShapeIds.SLAB).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.ROCK_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.ROCK_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.ROCK_STAIRS_OUTER_CORNER_BACK).shape(ShapeIds.STAIRS_OUTER_CORNER_BACK).type(TypeIds.ROCK).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -353,7 +371,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.PALM_TREE_LOG, TypeIds.PALM_TREE_LOG, true));
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_SLAB).shape(ShapeIds.SLAB).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.PALM_TREE_LOG_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.PALM_TREE_LOG_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_WEDGE_BACK).shape(ShapeIds.WEDGE_BACK).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_WEDGE_INVERTED_BACK).shape(ShapeIds.WEDGE_INVERTED_BACK).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_WEDGE_FRONT).shape(ShapeIds.WEDGE_FRONT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
@@ -373,7 +393,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.PALM_TREE_PLANKS, TypeIds.PALM_TREE_PLANKS, false));
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_SLAB).shape(ShapeIds.SLAB).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_PLATE).shape(ShapeIds.PLATE).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -416,21 +438,27 @@ public class BlockRegistry {
         register(Block.create(BlockIds.GRAVEL, TypeIds.GRAVEL, false));
         register(Block.builder().name(BlockIds.GRAVEL_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.GRAVEL).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.GRAVEL_SLAB).shape(ShapeIds.SLAB).type(TypeIds.GRAVEL).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.GRAVEL_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.GRAVEL).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.GRAVEL_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.GRAVEL).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.GRAVEL_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.GRAVEL).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerDirtBlocks() {
         register(Block.create(BlockIds.DIRT, TypeIds.DIRT, false));
         register(Block.builder().name(BlockIds.DIRT_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.DIRT).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.DIRT_SLAB).shape(ShapeIds.SLAB).type(TypeIds.DIRT).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.DIRT_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.DIRT).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.DIRT_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.DIRT).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.DIRT_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.DIRT).usingMultipleImages(false).solid(true).transparent(false).build());
     }
 
     private void registerMossyCobbleStoneBlocks() {
         register(Block.create(BlockIds.MOSSY_COBBLESTONE, TypeIds.MOSSY_COBBLESTONE, false));
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_SLAB).shape(ShapeIds.SLAB).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.MOSSY_COBBLESTONE_STAIRS_OUTER_CORNER_BACK).shape(ShapeIds.STAIRS_OUTER_CORNER_BACK).type(TypeIds.MOSSY_COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -463,7 +491,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.COBBLESTONE, TypeIds.COBBLESTONE, false));
         register(Block.builder().name(BlockIds.COBBLESTONE_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_SLAB).shape(ShapeIds.SLAB).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.COBBLESTONE_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.COBBLESTONE_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.COBBLESTONE_STAIRS_OUTER_CORNER_BACK).shape(ShapeIds.STAIRS_OUTER_CORNER_BACK).type(TypeIds.COBBLESTONE).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -496,7 +526,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.BRICKS, TypeIds.BRICKS, false));
         register(Block.builder().name(BlockIds.BRICKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_SLAB).shape(ShapeIds.SLAB).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BRICK_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BRICK_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BRICK_STAIRS_OUTER_CORNER_BACK).shape(ShapeIds.STAIRS_OUTER_CORNER_BACK).type(TypeIds.BRICKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -529,7 +561,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.BIRCH_LOG, TypeIds.BIRCH_LOG, true));
         register(Block.builder().name(BlockIds.BIRCH_LOG_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_SLAB).shape(ShapeIds.SLAB).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BIRCH_LOG_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BIRCH_LOG_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_WEDGE_BACK).shape(ShapeIds.WEDGE_BACK).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_WEDGE_INVERTED_BACK).shape(ShapeIds.WEDGE_INVERTED_BACK).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_WEDGE_FRONT).shape(ShapeIds.WEDGE_FRONT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
@@ -549,7 +583,9 @@ public class BlockRegistry {
         register(Block.create(BlockIds.BIRCH_PLANKS, TypeIds.BIRCH_PLANKS, false));
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_SLAB).shape(ShapeIds.SLAB).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BIRCH_PLANKS_SLAB_TOP).shape(ShapeIds.SLAB_TOP).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_DOUBLE_SLAB).shape(ShapeIds.DOUBLE_SLAB).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
+        register(Block.builder().name(BlockIds.BIRCH_PLANKS_DOUBLE_SLAB_TOP).shape(ShapeIds.DOUBLE_SLAB_TOP).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_PLATE).shape(ShapeIds.PLATE).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_STAIRS_BACK).shape(ShapeIds.STAIRS_BACK).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_STAIRS_INNER_CORNER_BACK).shape(ShapeIds.STAIRS_INNER_CORNER_BACK).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
