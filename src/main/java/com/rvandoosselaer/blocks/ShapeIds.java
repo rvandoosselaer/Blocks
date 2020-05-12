@@ -45,5 +45,6 @@ public interface ShapeIds {
     String SQUARE_RIGHT = "square-right";
     String SQUARE_TOP = "square-top";
     String SQUARE_BOTTOM = "square-bottom";
+    String POLE = "pole";
 
 }

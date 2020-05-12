@@ -100,6 +100,7 @@ public class ShapeRegistry {
         register(ShapeIds.SQUARE_RIGHT, new Square(Direction.RIGHT));
         register(ShapeIds.SQUARE_TOP, new Square(Direction.TOP));
         register(ShapeIds.SQUARE_BOTTOM, new Square(Direction.BOTTOM));
+        register(ShapeIds.POLE, new Pole());
     }
 
 }
