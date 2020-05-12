@@ -24,6 +24,11 @@ public interface BlockIds {
     String BIRCH_LOG_WEDGE_INVERTED_RIGHT = "birch log wedge inverted right";
     String BIRCH_LOG_PYRAMID = "birch log pyramid";
     String BIRCH_LOG_PYRAMID_INVERTED = "birch log pyramid inverted";
+    String BIRCH_LOG_UPSIDE_DOWN = "birch log upside-down";
+    String BIRCH_LOG_FRONT = "birch log front";
+    String BIRCH_LOG_BACK = "birch log back";
+    String BIRCH_LOG_LEFT = "birch log left";
+    String BIRCH_LOG_RIGHT = "birch log right";
 
     String BIRCH_PLANKS = "birch planks";
     String BIRCH_PLANKS_ROUNDED = "birch planks rounded";
@@ -179,6 +184,11 @@ public interface BlockIds {
     String PALM_TREE_LOG_WEDGE_INVERTED_RIGHT = "palm tree log wedge inverted right";
     String PALM_TREE_LOG_PYRAMID = "palm tree log pyramid";
     String PALM_TREE_LOG_PYRAMID_INVERTED = "palm tree log pyramid inverted";
+    String PALM_TREE_LOG_UPSIDE_DOWN = "palm tree log upside-down";
+    String PALM_TREE_LOG_FRONT = "palm tree log front";
+    String PALM_TREE_LOG_BACK = "palm tree log back";
+    String PALM_TREE_LOG_LEFT = "palm tree log left";
+    String PALM_TREE_LOG_RIGHT = "palm tree log right";
 
     String PALM_TREE_PLANKS = "palm tree planks";
     String PALM_TREE_PLANKS_ROUNDED = "palm tree planks rounded";
@@ -257,6 +267,11 @@ public interface BlockIds {
     String OAK_LOG_WEDGE_INVERTED_RIGHT = "oak log wedge inverted right";
     String OAK_LOG_PYRAMID = "oak log pyramid";
     String OAK_LOG_PYRAMID_INVERTED = "oak log pyramid inverted";
+    String OAK_LOG_UPSIDE_DOWN = "oak log upside-down";
+    String OAK_LOG_FRONT = "oak log front";
+    String OAK_LOG_BACK = "oak log back";
+    String OAK_LOG_LEFT = "oak log left";
+    String OAK_LOG_RIGHT = "oak log right";
 
     String OAK_PLANKS = "oak planks";
     String OAK_PLANKS_ROUNDED = "oak planks rounded";
@@ -314,6 +329,11 @@ public interface BlockIds {
     String SPRUCE_LOG_WEDGE_INVERTED_RIGHT = "spruce log wedge inverted right";
     String SPRUCE_LOG_PYRAMID = "spruce log pyramid";
     String SPRUCE_LOG_PYRAMID_INVERTED = "spruce log pyramid inverted";
+    String SPRUCE_LOG_UPSIDE_DOWN = "spruce log upside-down";
+    String SPRUCE_LOG_FRONT = "spruce log front";
+    String SPRUCE_LOG_BACK = "spruce log back";
+    String SPRUCE_LOG_LEFT = "spruce log left";
+    String SPRUCE_LOG_RIGHT = "spruce log right";
 
     String SPRUCE_PLANKS = "spruce planks";
     String SPRUCE_PLANKS_ROUNDED = "spruce planks rounded";

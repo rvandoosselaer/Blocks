@@ -101,6 +101,11 @@ public class ShapeRegistry {
         register(ShapeIds.SQUARE_TOP, new Square(Direction.TOP));
         register(ShapeIds.SQUARE_BOTTOM, new Square(Direction.BOTTOM));
         register(ShapeIds.POLE, new Pole());
+        register(ShapeIds.CUBE_UPSIDE_DOWN, new RotatedCube(Direction.BOTTOM));
+        register(ShapeIds.CUBE_LEFT, new RotatedCube(Direction.LEFT));
+        register(ShapeIds.CUBE_RIGHT, new RotatedCube(Direction.RIGHT));
+        register(ShapeIds.CUBE_FRONT, new RotatedCube(Direction.FRONT));
+        register(ShapeIds.CUBE_BACK, new RotatedCube(Direction.BACK));
     }
 
 }
