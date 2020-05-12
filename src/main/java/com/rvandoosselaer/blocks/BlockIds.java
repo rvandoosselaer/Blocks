@@ -416,4 +416,11 @@ public interface BlockIds {
     String PALM_TREE_LEAVES = "palm tree leaves";
     String OAK_LEAVES = "oak leaves";
     String SPRUCE_LEAVES = "spruce leaves";
+
+    String WINDOW_TOP = "window top";
+    String WINDOW_BOTTOM = "window bottom";
+    String WINDOW_LEFT = "window left";
+    String WINDOW_RIGHT = "window right";
+    String WINDOW_FRONT = "window front";
+    String WINDOW_BACK = "window back";
 }

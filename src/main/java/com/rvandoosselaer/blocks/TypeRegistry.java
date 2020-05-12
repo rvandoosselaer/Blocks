@@ -130,6 +130,7 @@ public class TypeRegistry {
         register(TypeIds.PALM_TREE_LEAVES);
         register(TypeIds.OAK_LEAVES);
         register(TypeIds.SPRUCE_LEAVES);
+        register(TypeIds.WINDOW);
     }
 
     public void setTheme(BlocksTheme theme) {

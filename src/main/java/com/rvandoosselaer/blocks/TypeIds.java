@@ -34,4 +34,5 @@ public interface TypeIds {
     String PALM_TREE_LEAVES = "palm_tree_leaves";
     String OAK_LEAVES = "oak_leaves";
     String SPRUCE_LEAVES = "spruce_leaves";
+    String WINDOW = "window";
 }

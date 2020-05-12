@@ -94,6 +94,12 @@ public class ShapeRegistry {
         register(ShapeIds.STAIRS_OUTER_CORNER_LEFT, new StairOuterCorner(Direction.LEFT));
         register(ShapeIds.STAIRS_OUTER_CORNER_RIGHT, new StairOuterCorner(Direction.RIGHT));
         register(ShapeIds.STAIRS_OUTER_CORNER_BACK, new StairOuterCorner(Direction.BACK));
+        register(ShapeIds.SQUARE_BACK, new Square(Direction.BACK));
+        register(ShapeIds.SQUARE_FRONT, new Square(Direction.FRONT));
+        register(ShapeIds.SQUARE_LEFT, new Square(Direction.LEFT));
+        register(ShapeIds.SQUARE_RIGHT, new Square(Direction.RIGHT));
+        register(ShapeIds.SQUARE_TOP, new Square(Direction.TOP));
+        register(ShapeIds.SQUARE_BOTTOM, new Square(Direction.BOTTOM));
     }
 
 }

@@ -1,0 +1,19 @@
+Material window : Common/MatDefs/Light/Lighting.j3md {
+
+    MaterialParameters {
+        Shininess: 0
+        UseMaterialColors: true
+        Ambient: 1.0 1.0 1.0 1.0
+        Diffuse: 1.0 1.0 1.0 1.0
+        Specular: 0 0 0 1.0
+        VertexLighting: true
+        DiffuseMap: MagNearest MinNearestNoMipMaps Blocks/Themes/default/window.png
+        AlphaDiscardThreshold : 0.1
+    }
+
+    AdditionalRenderState {
+        Blend Alpha
+        FaceCull Off
+    }
+
+}

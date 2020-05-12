@@ -106,6 +106,17 @@ public class BlockRegistry {
         registerMossyStoneBrickBlocks();
 
         registerWaterBlocks();
+
+        registerWindowBlocks();
+    }
+
+    private void registerWindowBlocks() {
+        register(Block.builder().name(BlockIds.WINDOW_BACK).shape(ShapeIds.SQUARE_BACK).type(TypeIds.WINDOW).usingMultipleImages(false).solid(true).transparent(true).build());
+        register(Block.builder().name(BlockIds.WINDOW_FRONT).shape(ShapeIds.SQUARE_FRONT).type(TypeIds.WINDOW).usingMultipleImages(false).solid(true).transparent(true).build());
+        register(Block.builder().name(BlockIds.WINDOW_LEFT).shape(ShapeIds.SQUARE_LEFT).type(TypeIds.WINDOW).usingMultipleImages(false).solid(true).transparent(true).build());
+        register(Block.builder().name(BlockIds.WINDOW_RIGHT).shape(ShapeIds.SQUARE_RIGHT).type(TypeIds.WINDOW).usingMultipleImages(false).solid(true).transparent(true).build());
+        register(Block.builder().name(BlockIds.WINDOW_TOP).shape(ShapeIds.SQUARE_TOP).type(TypeIds.WINDOW).usingMultipleImages(false).solid(true).transparent(true).build());
+        register(Block.builder().name(BlockIds.WINDOW_BOTTOM).shape(ShapeIds.SQUARE_BOTTOM).type(TypeIds.WINDOW).usingMultipleImages(false).solid(true).transparent(true).build());
     }
 
     private void registerWaterBlocks() {
