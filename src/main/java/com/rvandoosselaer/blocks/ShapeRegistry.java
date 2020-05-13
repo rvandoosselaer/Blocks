@@ -108,6 +108,10 @@ public class ShapeRegistry {
         register(ShapeIds.CUBE_RIGHT, new RotatedCube(Direction.RIGHT));
         register(ShapeIds.CUBE_FRONT, new RotatedCube(Direction.FRONT));
         register(ShapeIds.CUBE_BACK, new RotatedCube(Direction.BACK));
+        register(ShapeIds.STAIRS_OUTER_CORNER_INVERTED_FRONT, new StairOuterCornerInverted(Direction.FRONT));
+        register(ShapeIds.STAIRS_OUTER_CORNER_INVERTED_LEFT, new StairOuterCornerInverted(Direction.LEFT));
+        register(ShapeIds.STAIRS_OUTER_CORNER_INVERTED_RIGHT, new StairOuterCornerInverted(Direction.RIGHT));
+        register(ShapeIds.STAIRS_OUTER_CORNER_INVERTED_BACK, new StairOuterCornerInverted(Direction.BACK));
     }
 
 }

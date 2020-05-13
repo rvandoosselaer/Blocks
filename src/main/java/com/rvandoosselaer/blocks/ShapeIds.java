@@ -38,9 +38,13 @@ public interface ShapeIds {
     String STAIRS_INNER_CORNER_RIGHT = "stairs-inner-right";
     String STAIRS_INNER_CORNER_BACK = "stairs-inner-back";
     String STAIRS_OUTER_CORNER_FRONT = "stairs-outer-front";
+    String STAIRS_OUTER_CORNER_INVERTED_FRONT = "stairs-outer-inverted-front";
     String STAIRS_OUTER_CORNER_LEFT = "stairs-outer-left";
+    String STAIRS_OUTER_CORNER_INVERTED_LEFT = "stairs-outer-inverted-left";
     String STAIRS_OUTER_CORNER_RIGHT = "stairs-outer-right";
+    String STAIRS_OUTER_CORNER_INVERTED_RIGHT = "stairs-outer-inverted-right";
     String STAIRS_OUTER_CORNER_BACK = "stairs-outer-back";
+    String STAIRS_OUTER_CORNER_INVERTED_BACK = "stairs-outer-inverted-back";
     String SQUARE_FRONT = "square-front";
     String SQUARE_BACK = "square-back";
     String SQUARE_LEFT = "square-left";

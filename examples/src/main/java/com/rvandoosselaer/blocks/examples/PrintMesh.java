@@ -1,4 +1,4 @@
-package com.rvandoosselaer.blocks;
+package com.rvandoosselaer.blocks.examples;
 
 import com.jme3.app.BasicProfilerState;
 import com.jme3.app.DebugKeysAppState;
@@ -53,16 +53,17 @@ public class PrintMesh extends SimpleApplication {
         super(new StatsAppState(),
                 new FlyCamAppState(),
                 new DebugKeysAppState(),
+                new LightingState(),
                 new BasicProfilerState(false));
     }
 
     @Override
     public void simpleInitApp() {
-        Spatial spatial = assetManager.loadModel("stair-outercorner.j3o");
+        Spatial spatial = assetManager.loadModel("stair-outercorner-inverted.j3o");
         spatial.depthFirstTraversal(new SceneGraphVisitorAdapter() {
             @Override
             public void visit(Geometry geom) {
-                if (geom.getName().startsWith("back")) {
+                if (geom.getName().startsWith("bottom")) {
                     Mesh mesh = geom.getMesh();
                     MikktspaceTangentGenerator.genTangSpaceDefault(new MikkTSpaceImpl(mesh));
 
