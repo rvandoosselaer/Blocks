@@ -525,8 +525,9 @@ public class Stair implements Shape {
     }
 
     /**
-     * Calculates the direction of a side of the wedge, based on the rotation. A wedge facing right, is rotated 90 degrees
-     * around the y-axis. The original left side of this wedge is now facing to the front.
+     * Calculates the direction of a side of the wedge, based on the rotation.
+     * eg. A wedge with the hypotenuse facing to the front, is rotated 90 degrees around the y-axis.
+     * The original left side of this wedge is now facing to the front.
      *
      * @param direction
      * @return
