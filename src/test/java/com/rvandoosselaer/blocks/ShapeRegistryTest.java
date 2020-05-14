@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
@@ -31,20 +30,13 @@ public class ShapeRegistryTest {
     }
 
     @Test
-    public void testGetDefaultShape() {
-        ShapeRegistry shapeRegistry = BlocksConfig.getInstance().getShapeRegistry();
-
-        assertNotNull(shapeRegistry.get(ShapeIds.CUBE));
-    }
-
-    @Test
     public void testRemoveShape() {
         ShapeRegistry shapeRegistry = BlocksConfig.getInstance().getShapeRegistry();
         int size = shapeRegistry.getAll().size();
 
-        shapeRegistry.remove(ShapeIds.PYRAMID);
+        shapeRegistry.remove(ShapeIds.CUBE);
         assertEquals(size - 1, shapeRegistry.getAll().size());
-        assertNull(shapeRegistry.get(ShapeIds.PYRAMID));
+        assertNull(shapeRegistry.get(ShapeIds.CUBE));
     }
 
     @AfterAll

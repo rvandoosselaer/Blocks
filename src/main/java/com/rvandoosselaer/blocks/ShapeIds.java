@@ -9,6 +9,12 @@ package com.rvandoosselaer.blocks;
 public interface ShapeIds {
 
     String CUBE = "cube";
+    String CUBE_DOWN = "cube_down";
+    String CUBE_NORTH = "cube_north";
+    String CUBE_EAST = "cube_east";
+    String CUBE_SOUTH = "cube_south";
+    String CUBE_WEST = "cube_west";
+
     String SLAB = "slab";
     String SLAB_TOP = "slab-top";
     String DOUBLE_SLAB = "double-slab";
@@ -52,10 +58,5 @@ public interface ShapeIds {
     String SQUARE_TOP = "square-top";
     String SQUARE_BOTTOM = "square-bottom";
     String POLE = "pole";
-    String CUBE_UPSIDE_DOWN = "cube-upside-down";
-    String CUBE_LEFT = "cube-left";
-    String CUBE_RIGHT = "cube-right";
-    String CUBE_BACK = "cube-back";
-    String CUBE_FRONT = "cube-front";
 
 }

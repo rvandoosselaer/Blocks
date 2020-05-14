@@ -1,20 +1,32 @@
 package com.rvandoosselaer.blocks;
 
+import com.jme3.math.FastMath;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.simsilica.mathd.Vec3i;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
  * A shape implementation for a cube. Only 4 vertices are used per face, 2 vertices are shared. A face is only added
  * to the resulting mesh if the face is visible. eg. When there is a block above this block, the top face will not be
  * added to the mesh.
+ * The default cube has a Direction.UP.
  *
  * @author rvandoosselaer
  */
 @ToString
+@RequiredArgsConstructor
 public class Cube implements Shape {
+
+    private final Direction direction;
+
+    public Cube() {
+        this(Direction.UP);
+    }
 
     @Override
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
@@ -22,41 +34,37 @@ public class Cube implements Shape {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
         // check if we have 3 textures or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        // get the rotation of the shape based on the direction
+        Quaternion rotation = getRotationFromDirection(direction);
 
-        // top face
         if (chunk.isFaceVisible(location, Direction.UP)) {
-            createTopFace(location, chunkMesh, blockScale, multipleImages);
+            createUp(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // bottom face
         if (chunk.isFaceVisible(location, Direction.DOWN)) {
-            createBottomFace(location, chunkMesh, blockScale, multipleImages);
+            createDown(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // left face
         if (chunk.isFaceVisible(location, Direction.WEST)) {
-            createLeftFace(location, chunkMesh, blockScale, multipleImages);
+            createWest(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // right face
         if (chunk.isFaceVisible(location, Direction.EAST)) {
-            createRightFace(location, chunkMesh, blockScale, multipleImages);
+            createEast(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // front face
         if (chunk.isFaceVisible(location, Direction.SOUTH)) {
-            createFrontFace(location, chunkMesh, blockScale, multipleImages);
+            createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // back face
         if (chunk.isFaceVisible(location, Direction.NORTH)) {
-            createBackFace(location, chunkMesh, blockScale, multipleImages);
+            createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
         }
     }
 
-    private static void createBackFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 1.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 1.0f, -0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, -0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -68,8 +76,9 @@ public class Cube implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 0.0f, -1.0f));
-                chunkMesh.getTangents().add(new Vector4f(-1.0f, 0.0f, 0.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.0f, -1.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(-1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -86,14 +95,14 @@ public class Cube implements Shape {
         }
     }
 
-    private static void createFrontFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 1.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 1.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -105,8 +114,9 @@ public class Cube implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 0.0f, 1.0f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.0f, 1.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -123,14 +133,14 @@ public class Cube implements Shape {
         }
     }
 
-    private static void createRightFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 1.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 1.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -142,8 +152,9 @@ public class Cube implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(1.0f, 0.0f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(1.0f, 0.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -160,14 +171,14 @@ public class Cube implements Shape {
         }
     }
 
-    private static void createLeftFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 1.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 1.0f, -0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, -0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -179,8 +190,9 @@ public class Cube implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(-1.0f, 0.0f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.0f, 0.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -197,14 +209,14 @@ public class Cube implements Shape {
         }
     }
 
-    private static void createBottomFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -216,8 +228,9 @@ public class Cube implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, -1.0f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, -1.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -234,14 +247,14 @@ public class Cube implements Shape {
         }
     }
 
-    private static void createTopFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createUp(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 1.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 1.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 1.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 1.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -253,8 +266,9 @@ public class Cube implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 1.0f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 1.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -268,6 +282,23 @@ public class Cube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
             }
+        }
+    }
+
+    private static Quaternion getRotationFromDirection(Direction direction) {
+        switch (direction) {
+            case DOWN:
+                return new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X);
+            case EAST:
+                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Z);
+            case WEST:
+                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Z);
+            case NORTH:
+                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X);
+            case SOUTH:
+                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X);
+            default:
+                return new Quaternion();
         }
     }
 

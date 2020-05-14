@@ -101,172 +101,180 @@ public class FacesMeshGeneratorTest {
         assertEquals(5 * 2, mesh.getTriangleCount());
     }
 
-    @Test
-    public void testPyramidShape() {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-
-        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
-
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID));
-        chunk.createNode(meshGenerator);
-
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID).getType())).getMesh();
-        // 5 faces, 6 triangles
-        assertEquals(6, mesh.getTriangleCount());
-
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.GRASS));
-        chunk.addBlock(0, 1, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID));
-        chunk.createNode(meshGenerator);
-
-        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.GRASS).getType())).getMesh();
-        // 6 faces, 10 triangles
-        assertEquals(6 * 2, mesh.getTriangleCount());
-
-        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID).getType())).getMesh();
-        // 4 faces, 4 triangles
-        assertEquals(4, mesh.getTriangleCount());
-    }
-
-    @Test
-    public void testInvertedPyramidShape() {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-
-        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
-
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED));
-        chunk.createNode(meshGenerator);
-
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED).getType())).getMesh();
-        // 5 faces, 6 triangles
-        assertEquals(6, mesh.getTriangleCount());
-
-        chunk.addBlock(0, 1, 0, blockRegistry.get(BlockIds.GRASS));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED));
-        chunk.createNode(meshGenerator);
-
-        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.GRASS).getType())).getMesh();
-        // 6 faces, 10 triangles
-        assertEquals(6 * 2, mesh.getTriangleCount());
-
-        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED).getType())).getMesh();
-        // 4 faces, 4 triangles
-        assertEquals(4, mesh.getTriangleCount());
-    }
-
-    @Test
-    public void testWedgeShape() {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-
-        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
-
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT));
-        chunk.createNode(meshGenerator);
-
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT).getType())).getMesh();
-        // 5 faces, 8 triangles
-        assertEquals(8, mesh.getTriangleCount());
-
-        // test other wedge directions
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_BACK));
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT));
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_LEFT));
-        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_RIGHT));
-    }
-
-    private void testEnclosedWedge(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-
-        chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
-        chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
-        chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 2, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 1, 1, block);
-        chunk.createNode(meshGenerator);
-
-        // cube mesh
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
-        // 6 cubes = 6 * (6 faces = 12 triangles)
-        assertEquals(6 * 12, mesh.getTriangleCount());
-
-        // wedge mesh
-        mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
-        // 1 face, 2 triangles
-        assertEquals(2, mesh.getTriangleCount());
-    }
-
-    @Test
-    public void testStairShape() {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
-
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
-        chunk.createNode(meshGenerator);
-
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT).getType())).getMesh();
-        // 14 faces
-        assertEquals(14 * 2, mesh.getTriangleCount());
-
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_BACK));
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_LEFT));
-        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_RIGHT));
-    }
-
-    @Test
-    public void testStairCollisionShape() {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
-
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
-        Mesh mesh = chunk.createCollisionMesh(meshGenerator);
-
-        // 5 faces, 8 triangles
-        assertEquals(8, mesh.getTriangleCount());
-    }
-
-    private void testEnclosedStair(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-
-        chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
-        chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
-        chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 2, 1, blockRegistry.get("grass"));
-        chunk.addBlock(1, 1, 1, block);
-        chunk.createNode(meshGenerator);
-
-        // cube mesh
-        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
-        // 6 cubes, 6 faces / cube
-        assertEquals(6 * 6 * 2, mesh.getTriangleCount());
-
-        // stair mesh
-        mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
-        // 6 faces
-        assertEquals(6 * 2, mesh.getTriangleCount());
-    }
-
-    @Test
-    public void testRoundedCubeCollisionShape() {
-        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
-        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
-
-        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.GRASS_ROUNDED));
-        chunk.createCollisionMesh(meshGenerator);
-
-        Mesh mesh = chunk.getCollisionMesh();
-        // 6 faces
-        assertEquals(6 * 2, mesh.getTriangleCount());
-    }
+//    @Test
+//    //TODO: move to separate test
+//    public void testPyramidShape() {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//
+//        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+//
+//        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID));
+//        chunk.createNode(meshGenerator);
+//
+//        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID).getType())).getMesh();
+//        // 5 faces, 6 triangles
+//        assertEquals(6, mesh.getTriangleCount());
+//
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.GRASS));
+//        chunk.addBlock(0, 1, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID));
+//        chunk.createNode(meshGenerator);
+//
+//        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.GRASS).getType())).getMesh();
+//        // 6 faces, 10 triangles
+//        assertEquals(6 * 2, mesh.getTriangleCount());
+//
+//        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID).getType())).getMesh();
+//        // 4 faces, 4 triangles
+//        assertEquals(4, mesh.getTriangleCount());
+//    }
+//
+//    @Test
+//    //TODO: move to separate test
+//    public void testInvertedPyramidShape() {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//
+//        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+//
+//        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED));
+//        chunk.createNode(meshGenerator);
+//
+//        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED).getType())).getMesh();
+//        // 5 faces, 6 triangles
+//        assertEquals(6, mesh.getTriangleCount());
+//
+//        chunk.addBlock(0, 1, 0, blockRegistry.get(BlockIds.GRASS));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED));
+//        chunk.createNode(meshGenerator);
+//
+//        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.GRASS).getType())).getMesh();
+//        // 6 faces, 10 triangles
+//        assertEquals(6 * 2, mesh.getTriangleCount());
+//
+//        mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_PYRAMID_INVERTED).getType())).getMesh();
+//        // 4 faces, 4 triangles
+//        assertEquals(4, mesh.getTriangleCount());
+//    }
+//
+//    @Test
+//    //TODO: move to separate test
+//    public void testWedgeShape() {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//
+//        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+//
+//        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT));
+//        chunk.createNode(meshGenerator);
+//
+//        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT).getType())).getMesh();
+//        // 5 faces, 8 triangles
+//        assertEquals(8, mesh.getTriangleCount());
+//
+//        // test other wedge directions
+//        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_BACK));
+//        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_FRONT));
+//        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_LEFT));
+//        testEnclosedWedge(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_WEDGE_RIGHT));
+//    }
+//
+//    //TODO: move to separate test
+//    private void testEnclosedWedge(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//
+//        chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
+//        chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
+//        chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 2, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 1, 1, block);
+//        chunk.createNode(meshGenerator);
+//
+//        // cube mesh
+//        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
+//        // 6 cubes = 6 * (6 faces = 12 triangles)
+//        assertEquals(6 * 12, mesh.getTriangleCount());
+//
+//        // wedge mesh
+//        mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
+//        // 1 face, 2 triangles
+//        assertEquals(2, mesh.getTriangleCount());
+//    }
+//
+//    @Test
+//    //TODO: move to separate test
+//    public void testStairShape() {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+//
+//        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
+//        chunk.createNode(meshGenerator);
+//
+//        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT).getType())).getMesh();
+//        // 14 faces
+//        assertEquals(14 * 2, mesh.getTriangleCount());
+//
+//        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_BACK));
+//        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
+//        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_LEFT));
+//        testEnclosedStair(Chunk.createAt(new Vec3i(0, 0, 0)), meshGenerator, blockRegistry.get(BlockIds.BRICK_STAIRS_RIGHT));
+//    }
+//
+//    @Test
+//    //TODO: move to separate test
+//    public void testStairCollisionShape() {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+//
+//        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.BRICK_STAIRS_FRONT));
+//        Mesh mesh = chunk.createCollisionMesh(meshGenerator);
+//
+//        // 5 faces, 8 triangles
+//        assertEquals(8, mesh.getTriangleCount());
+//    }
+//
+//    //TODO: move to separate test
+//    private void testEnclosedStair(Chunk chunk, ChunkMeshGenerator meshGenerator, Block block) {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//
+//        chunk.addBlock(1, 0, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 1, 0, blockRegistry.get("grass"));
+//        chunk.addBlock(0, 1, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 1, 2, blockRegistry.get("grass"));
+//        chunk.addBlock(2, 1, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 2, 1, blockRegistry.get("grass"));
+//        chunk.addBlock(1, 1, 1, block);
+//        chunk.createNode(meshGenerator);
+//
+//        // cube mesh
+//        Mesh mesh = ((Geometry) chunk.getNode().getChild(blockRegistry.get("grass").getType())).getMesh();
+//        // 6 cubes, 6 faces / cube
+//        assertEquals(6 * 6 * 2, mesh.getTriangleCount());
+//
+//        // stair mesh
+//        mesh = ((Geometry) chunk.getNode().getChild(block.getType())).getMesh();
+//        // 6 faces
+//        assertEquals(6 * 2, mesh.getTriangleCount());
+//    }
+//
+//    @Test
+//    //TODO: move to separate test
+//    public void testRoundedCubeCollisionShape() {
+//        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+//        ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
+//
+//        Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
+//        chunk.addBlock(0, 0, 0, blockRegistry.get(BlockIds.GRASS_ROUNDED));
+//        chunk.createCollisionMesh(meshGenerator);
+//
+//        Mesh mesh = chunk.getCollisionMesh();
+//        // 6 faces
+//        assertEquals(6 * 2, mesh.getTriangleCount());
+//    }
 
     private static class ChunkCache implements ChunkResolver {
 

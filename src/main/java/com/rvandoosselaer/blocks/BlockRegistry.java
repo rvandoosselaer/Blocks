@@ -211,11 +211,11 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.SPRUCE_LOG_WEDGE_INVERTED_RIGHT).shape(ShapeIds.WEDGE_INVERTED_RIGHT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.SPRUCE_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.SPRUCE_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.SPRUCE_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.SPRUCE_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.SPRUCE_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.SPRUCE_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.SPRUCE_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.SPRUCE_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.SPRUCE_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.SPRUCE_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.SPRUCE_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.SPRUCE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.SPRUCE_PLANKS, TypeIds.SPRUCE_PLANKS, false));
         register(Block.builder().name(BlockIds.SPRUCE_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.SPRUCE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -289,11 +289,11 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.OAK_LOG_WEDGE_INVERTED_RIGHT).shape(ShapeIds.WEDGE_INVERTED_RIGHT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.OAK_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.OAK_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.OAK_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.OAK_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.OAK_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.OAK_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.OAK_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.OAK_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.OAK_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.OAK_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.OAK_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.OAK_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.OAK_PLANKS, TypeIds.OAK_PLANKS, false));
         register(Block.builder().name(BlockIds.OAK_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.OAK_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -384,11 +384,11 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_WEDGE_INVERTED_RIGHT).shape(ShapeIds.WEDGE_INVERTED_RIGHT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.PALM_TREE_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.PALM_TREE_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.PALM_TREE_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.PALM_TREE_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.PALM_TREE_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.PALM_TREE_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.PALM_TREE_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.PALM_TREE_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.PALM_TREE_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.PALM_TREE_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.PALM_TREE_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.PALM_TREE_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.PALM_TREE_PLANKS, TypeIds.PALM_TREE_PLANKS, false));
         register(Block.builder().name(BlockIds.PALM_TREE_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.PALM_TREE_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());
@@ -574,11 +574,11 @@ public class BlockRegistry {
         register(Block.builder().name(BlockIds.BIRCH_LOG_WEDGE_INVERTED_RIGHT).shape(ShapeIds.WEDGE_INVERTED_RIGHT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_PYRAMID).shape(ShapeIds.PYRAMID).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
         register(Block.builder().name(BlockIds.BIRCH_LOG_PYRAMID_INVERTED).shape(ShapeIds.PYRAMID_INVERTED).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.BIRCH_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.BIRCH_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.BIRCH_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.BIRCH_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
-        register(Block.builder().name(BlockIds.BIRCH_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.BIRCH_LOG_UPSIDE_DOWN).shape(ShapeIds.CUBE_UPSIDE_DOWN).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.BIRCH_LOG_FRONT).shape(ShapeIds.CUBE_FRONT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.BIRCH_LOG_BACK).shape(ShapeIds.CUBE_BACK).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.BIRCH_LOG_LEFT).shape(ShapeIds.CUBE_LEFT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
+//        register(Block.builder().name(BlockIds.BIRCH_LOG_RIGHT).shape(ShapeIds.CUBE_RIGHT).type(TypeIds.BIRCH_LOG).usingMultipleImages(true).solid(true).transparent(false).build());
 
         register(Block.create(BlockIds.BIRCH_PLANKS, TypeIds.BIRCH_PLANKS, false));
         register(Block.builder().name(BlockIds.BIRCH_PLANKS_ROUNDED).shape(ShapeIds.ROUNDED_CUBE).type(TypeIds.BIRCH_PLANKS).usingMultipleImages(false).solid(true).transparent(false).build());

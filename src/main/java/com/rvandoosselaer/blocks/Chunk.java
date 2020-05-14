@@ -269,9 +269,9 @@ public class Chunk {
             worldLocation = location.toVector3f().multLocal(chunkSize.toVector3f()).multLocal(blockScale);
             // the chunk at (1, 0, 1) should be positioned at (1 * chunkSize.x, 0 * chunkSize.y, 1 * chunkSize.z)
             // we also add an offset to the chunk location to compensate for the block extends. A block positioned at
-            // (0, 0, 0) will have it's bounding box center at (0, blockScale / 2, 0) so the block on the x-axis and z-axis
+            // (0, 0, 0) will have it's bounding box center at (0, 0, 0) so the block on the x-axis and z-axis
             // will go from -blockScale / 2 to blockScale / 2.
-            worldLocation.addLocal(blockScale * 0.5f, 0, blockScale * 0.5f);
+            worldLocation.addLocal(blockScale * 0.5f, blockScale * 0.5f, blockScale * 0.5f);
         }
         return worldLocation;
     }
