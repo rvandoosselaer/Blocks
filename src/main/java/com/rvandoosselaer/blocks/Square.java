@@ -24,22 +24,22 @@ public class Square implements Shape {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
 
         switch (direction) {
-            case TOP:
+            case UP:
                 createTopFace(location, chunkMesh, blockScale);
                 break;
-            case BOTTOM:
+            case DOWN:
                 createBottomFace(location, chunkMesh, blockScale);
                 break;
-            case LEFT:
+            case WEST:
                 createLeftFace(location, chunkMesh, blockScale);
                 break;
-            case RIGHT:
+            case EAST:
                 createRightFace(location, chunkMesh, blockScale);
                 break;
-            case FRONT:
+            case SOUTH:
                 createFrontFace(location, chunkMesh, blockScale);
                 break;
-            case BACK:
+            case NORTH:
                 createBackFace(location, chunkMesh, blockScale);
                 break;
             default:

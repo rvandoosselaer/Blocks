@@ -25,7 +25,7 @@ public class Pyramid implements Shape {
         createBackFace(location, chunkMesh, blockScale, multipleImages);
         createRightFace(location, chunkMesh, blockScale, multipleImages);
         createFrontFace(location, chunkMesh, blockScale, multipleImages);
-        if (chunk.isFaceVisible(location, Direction.BOTTOM)) {
+        if (chunk.isFaceVisible(location, Direction.DOWN)) {
             createBottomFace(location, chunkMesh, blockScale, multipleImages);
         }
     }

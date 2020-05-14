@@ -348,10 +348,10 @@ public class ChunkManagerTest {
     public void testGetNeighbourBlock() throws InterruptedException {
         ChunkManager chunkManager = getChunkManagerWithBlockAtZero();
 
-        Optional<Block> optionalBlock = chunkManager.getNeighbourBlock(new Vector3f(0.5f, 0.9f, 0.1f), Direction.RIGHT);
+        Optional<Block> optionalBlock = chunkManager.getNeighbourBlock(new Vector3f(0.5f, 0.9f, 0.1f), Direction.EAST);
         assertFalse(optionalBlock.isPresent());
 
-        optionalBlock = chunkManager.getNeighbourBlock(new Vector3f(1.4f, 0.5f, 0.3f), Direction.LEFT);
+        optionalBlock = chunkManager.getNeighbourBlock(new Vector3f(1.4f, 0.5f, 0.3f), Direction.WEST);
         assertTrue(optionalBlock.isPresent());
         assertEquals(optionalBlock.get(), BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
     }

@@ -30,23 +30,23 @@ public class InvertedStair implements Shape {
         // check if we have 3 images or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.TOP))) {
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.UP))) {
             createTopFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
 
         createBottomFace(location, chunkMesh, rotation, blockScale, multipleImages);
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.LEFT))) {
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.WEST))) {
             createLeftFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.RIGHT))) {
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.EAST))) {
             createRightFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
 
         createFrontFace(location, chunkMesh, rotation, blockScale, multipleImages);
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.BACK))) {
+        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.NORTH))) {
             createBackFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
     }
@@ -510,11 +510,11 @@ public class InvertedStair implements Shape {
      */
     private static float rotationFromDirection(Direction direction) {
         switch (direction) {
-            case RIGHT:
+            case EAST:
                 return FastMath.HALF_PI;
-            case BACK:
+            case NORTH:
                 return FastMath.PI;
-            case LEFT:
+            case WEST:
                 return -FastMath.HALF_PI;
             default:
                 return 0;

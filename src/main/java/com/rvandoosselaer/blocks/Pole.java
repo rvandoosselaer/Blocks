@@ -34,10 +34,10 @@ public class Pole implements Shape {
         // check if we have 3 textures or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        if (chunk.isFaceVisible(location, Direction.TOP)) {
+        if (chunk.isFaceVisible(location, Direction.UP)) {
             createTopFace(location, chunkMesh, blockScale, multipleImages, thicknessExtend);
         }
-        if (chunk.isFaceVisible(location, Direction.BOTTOM)) {
+        if (chunk.isFaceVisible(location, Direction.DOWN)) {
             createBottomFace(location, chunkMesh, blockScale, multipleImages, thicknessExtend);
         }
         createLeftFace(location, chunkMesh, blockScale, multipleImages, thicknessExtend);

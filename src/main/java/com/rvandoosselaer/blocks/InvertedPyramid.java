@@ -21,7 +21,7 @@ public class InvertedPyramid implements Shape {
         // check if we have only one texture
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        if (chunk.isFaceVisible(location, Direction.TOP)) {
+        if (chunk.isFaceVisible(location, Direction.UP)) {
             createTopFace(location, chunkMesh, blockScale, multipleImages);
         }
         createLeftFace(location, chunkMesh, blockScale, multipleImages);

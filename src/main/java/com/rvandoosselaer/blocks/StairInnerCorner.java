@@ -31,13 +31,13 @@ public class StairInnerCorner implements Shape {
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
         createFrontFace(location, chunkMesh, rotation, blockScale, multipleImages);
-        if (chunk.isFaceVisible(location, Direction.LEFT)) {
+        if (chunk.isFaceVisible(location, Direction.WEST)) {
             createLeftFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.BACK)) {
+        if (chunk.isFaceVisible(location, Direction.NORTH)) {
             createBackFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.BOTTOM)) {
+        if (chunk.isFaceVisible(location, Direction.DOWN)) {
             createBottomFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
         createRightFace(location, chunkMesh, rotation, blockScale, multipleImages);
@@ -558,11 +558,11 @@ public class StairInnerCorner implements Shape {
      */
     private static float rotationFromDirection(Direction direction) {
         switch (direction) {
-            case RIGHT:
+            case EAST:
                 return FastMath.HALF_PI;
-            case BACK:
+            case NORTH:
                 return FastMath.PI;
-            case LEFT:
+            case WEST:
                 return -FastMath.HALF_PI;
             default:
                 return 0;

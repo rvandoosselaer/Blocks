@@ -30,27 +30,27 @@ public class RotatedCube implements Shape {
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
         // top face
-        if (chunk.isFaceVisible(location, Direction.TOP)) {
+        if (chunk.isFaceVisible(location, Direction.UP)) {
             createTopFace(location, chunkMesh, blockScale, multipleImages);
         }
         // bottom face
-        if (chunk.isFaceVisible(location, Direction.BOTTOM)) {
+        if (chunk.isFaceVisible(location, Direction.DOWN)) {
             createBottomFace(location, chunkMesh, blockScale, multipleImages);
         }
         // left face
-        if (chunk.isFaceVisible(location, Direction.LEFT)) {
+        if (chunk.isFaceVisible(location, Direction.WEST)) {
             createLeftFace(location, chunkMesh, blockScale, multipleImages);
         }
         // right face
-        if (chunk.isFaceVisible(location, Direction.RIGHT)) {
+        if (chunk.isFaceVisible(location, Direction.EAST)) {
             createRightFace(location, chunkMesh, blockScale, multipleImages);
         }
         // front face
-        if (chunk.isFaceVisible(location, Direction.FRONT)) {
+        if (chunk.isFaceVisible(location, Direction.SOUTH)) {
             createFrontFace(location, chunkMesh, blockScale, multipleImages);
         }
         // back face
-        if (chunk.isFaceVisible(location, Direction.BACK)) {
+        if (chunk.isFaceVisible(location, Direction.NORTH)) {
             createBackFace(location, chunkMesh, blockScale, multipleImages);
         }
     }
@@ -84,32 +84,32 @@ public class RotatedCube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
             } else {
-                if (direction == Direction.TOP) {
+                if (direction == Direction.UP) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BOTTOM) {
+                } else if (direction == Direction.DOWN) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.FRONT) {
+                } else if (direction == Direction.SOUTH) {
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                } else if (direction == Direction.BACK) {
+                } else if (direction == Direction.NORTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.LEFT) {
+                } else if (direction == Direction.WEST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.RIGHT) {
+                } else if (direction == Direction.EAST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
@@ -148,32 +148,32 @@ public class RotatedCube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
             } else {
-                if (direction == Direction.TOP) {
+                if (direction == Direction.UP) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BACK) {
+                } else if (direction == Direction.NORTH) {
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                } else if (direction == Direction.FRONT) {
+                } else if (direction == Direction.SOUTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BOTTOM) {
+                } else if (direction == Direction.DOWN) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.LEFT) {
+                } else if (direction == Direction.WEST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.RIGHT) {
+                } else if (direction == Direction.EAST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
@@ -212,32 +212,32 @@ public class RotatedCube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
             } else {
-                if (direction == Direction.TOP) {
+                if (direction == Direction.UP) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.RIGHT) {
+                } else if (direction == Direction.EAST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.LEFT) {
+                } else if (direction == Direction.WEST) {
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                } else if (direction == Direction.FRONT) {
+                } else if (direction == Direction.SOUTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BACK) {
+                } else if (direction == Direction.NORTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.BOTTOM) {
+                } else if (direction == Direction.DOWN) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
@@ -276,32 +276,32 @@ public class RotatedCube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
             } else {
-                if (direction == Direction.TOP) {
+                if (direction == Direction.UP) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.LEFT) {
+                } else if (direction == Direction.WEST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.RIGHT) {
+                } else if (direction == Direction.EAST) {
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                } else if (direction == Direction.FRONT) {
+                } else if (direction == Direction.SOUTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.BACK) {
+                } else if (direction == Direction.NORTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BOTTOM) {
+                } else if (direction == Direction.DOWN) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
@@ -340,32 +340,32 @@ public class RotatedCube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
             } else {
-                if (direction == Direction.TOP) {
+                if (direction == Direction.UP) {
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                } else if (direction == Direction.BOTTOM) {
+                } else if (direction == Direction.DOWN) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.LEFT) {
+                } else if (direction == Direction.WEST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.RIGHT) {
+                } else if (direction == Direction.EAST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.FRONT) {
+                } else if (direction == Direction.SOUTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BACK) {
+                } else if (direction == Direction.NORTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
@@ -404,32 +404,32 @@ public class RotatedCube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
             } else {
-                if (direction == Direction.TOP) {
+                if (direction == Direction.UP) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BOTTOM) {
+                } else if (direction == Direction.DOWN) {
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                } else if (direction == Direction.LEFT) {
+                } else if (direction == Direction.WEST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.RIGHT) {
+                } else if (direction == Direction.EAST) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                } else if (direction == Direction.FRONT) {
+                } else if (direction == Direction.SOUTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                } else if (direction == Direction.BACK) {
+                } else if (direction == Direction.NORTH) {
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
                     chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));

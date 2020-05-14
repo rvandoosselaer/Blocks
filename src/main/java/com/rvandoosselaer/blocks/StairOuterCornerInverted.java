@@ -30,7 +30,7 @@ public class StairOuterCornerInverted implements Shape {
         // check if we have 3 images or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        if (chunk.isFaceVisible(location, Direction.TOP)) {
+        if (chunk.isFaceVisible(location, Direction.UP)) {
             createTopFace(location, chunkMesh, rotation, blockScale, multipleImages);
         }
         createFrontFace(location, chunkMesh, rotation, blockScale, multipleImages);
@@ -562,11 +562,11 @@ public class StairOuterCornerInverted implements Shape {
      */
     private static float rotationFromDirection(Direction direction) {
         switch (direction) {
-            case RIGHT:
+            case EAST:
                 return FastMath.HALF_PI;
-            case BACK:
+            case NORTH:
                 return FastMath.PI;
-            case LEFT:
+            case WEST:
                 return -FastMath.HALF_PI;
             default:
                 return 0;

@@ -43,27 +43,27 @@ public class Slab implements Shape {
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
         // top face; when the end y value is 1 (top slab), check if the top face should be rendered
-        if (endY < 1 || chunk.isFaceVisible(location, Direction.TOP)) {
+        if (endY < 1 || chunk.isFaceVisible(location, Direction.UP)) {
             createTopFace(location, chunkMesh, blockScale, multipleImages);
         }
         // bottom face; when the start y value is 0 (bottom slab), check if the bottom face should be rendered
-        if (startY > 0 || chunk.isFaceVisible(location, Direction.BOTTOM)) {
+        if (startY > 0 || chunk.isFaceVisible(location, Direction.DOWN)) {
             createBottomFace(location, chunkMesh, blockScale, multipleImages);
         }
         // left face
-        if (chunk.isFaceVisible(location, Direction.LEFT)) {
+        if (chunk.isFaceVisible(location, Direction.WEST)) {
             createLeftFace(location, chunkMesh, blockScale, multipleImages);
         }
         // right face
-        if (chunk.isFaceVisible(location, Direction.RIGHT)) {
+        if (chunk.isFaceVisible(location, Direction.EAST)) {
             createRightFace(location, chunkMesh, blockScale, multipleImages);
         }
         // front face
-        if (chunk.isFaceVisible(location, Direction.FRONT)) {
+        if (chunk.isFaceVisible(location, Direction.SOUTH)) {
             createFrontFace(location, chunkMesh, blockScale, multipleImages);
         }
         // back face
-        if (chunk.isFaceVisible(location, Direction.BACK)) {
+        if (chunk.isFaceVisible(location, Direction.NORTH)) {
             createBackFace(location, chunkMesh, blockScale, multipleImages);
         }
     }
