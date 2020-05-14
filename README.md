@@ -6,6 +6,7 @@ Blocks is a voxel engine created for [jMonkeyEngine](https://jmonkeyengine.org).
 ![](https://i.imgur.com/B3v3s3U.jpg)
 ![](https://i.imgur.com/SIVpZJa.jpg)
 ![](https://i.imgur.com/vjqOTR5.jpg)
+![](https://i.imgur.com/F2EK6lz.jpg)
 ![](https://i.imgur.com/3d7dpvg.gif)
 
 ## Features
