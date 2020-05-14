@@ -1,11 +1,15 @@
-package com.rvandoosselaer.blocks;
+package com.rvandoosselaer.blocks.shapes;
 
-import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.Chunk;
+import com.rvandoosselaer.blocks.ChunkMesh;
+import com.rvandoosselaer.blocks.Direction;
+import com.rvandoosselaer.blocks.Shape;
 import com.simsilica.mathd.Vec3i;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -20,43 +24,52 @@ import lombok.ToString;
 public class Wedge implements Shape {
 
     private final Direction direction;
+    private final boolean upsideDown;
+
+    public Wedge() {
+        this(Direction.UP, false);
+    }
 
     @Override
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
-        // get the rotation of the wedge; a front facing wedge will have it's sloping side facing forward (0,0,1)
-        Quaternion rotation = new Quaternion().fromAngleAxis(rotationFromDirection(direction), Vector3f.UNIT_Y);
+        // get the rotation of the wedge; a south facing wedge will have it's sloping side (hypotenuse) facing south
+        // when the shape is upside down (inverted), we need to perform 2 rotations. One for the direction and one to invert the shape
+        Quaternion rotation = Shape.getYawFromDirection(direction); //Shape.getRotationFromDirection(direction);
+        if (upsideDown) {
+            rotation = Shape.getRotationFromDirection(Direction.DOWN).multLocal(Shape.getYawFromDirection(direction, Direction.NORTH));
+        }
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
         // check if we have 3 textures or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        createFrontFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        createSouth(location, chunkMesh, rotation, blockScale, multipleImages);
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.WEST))) {
-            createLeftFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
+            createWest(location, chunkMesh, rotation, blockScale, multipleImages);
         }
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.EAST))) {
-            createRightFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
+            createEast(location, chunkMesh, rotation, blockScale, multipleImages);
         }
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.NORTH))) {
-            createBackFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
+            createNorth(location, chunkMesh, rotation, blockScale, multipleImages);
         }
 
-        if (chunk.isFaceVisible(location, getCorrectedDirection(Direction.DOWN))) {
-            createBottomFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
+            createDown(location, chunkMesh, rotation, blockScale, multipleImages);
         }
     }
 
-    private static void createBottomFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -87,14 +100,14 @@ public class Wedge implements Shape {
         }
     }
 
-    private static void createBackFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createNorth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, -0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -125,13 +138,13 @@ public class Wedge implements Shape {
         }
     }
 
-    private static void createRightFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createEast(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -157,14 +170,14 @@ public class Wedge implements Shape {
         }
     }
 
-    private static void createLeftFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         int offset;
         // calculate index offset, we use this to connect the triangles
         offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -190,14 +203,14 @@ public class Wedge implements Shape {
         }
     }
 
-    private static void createFrontFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createSouth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -226,39 +239,6 @@ public class Wedge implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
             }
         }
-    }
-
-    /**
-     * Returns the rotation around the y-axis for the given direction
-     *
-     * @param direction
-     * @return rotation in radians
-     */
-    private static float rotationFromDirection(Direction direction) {
-        switch (direction) {
-            case EAST:
-                return FastMath.HALF_PI;
-            case NORTH:
-                return FastMath.PI;
-            case WEST:
-                return -FastMath.HALF_PI;
-            default:
-                return 0;
-        }
-    }
-
-    /**
-     * Calculates the direction of a side of the wedge, based on the rotation. A wedge facing right, is rotated 90 degrees
-     * around the y-axis. The original left side of this wedge is now facing to the front.
-     *
-     * @param direction
-     * @return
-     */
-    private Direction getCorrectedDirection(Direction direction) {
-        Quaternion rotation = new Quaternion().fromAngleAxis(rotationFromDirection(this.direction), Vector3f.UNIT_Y);
-        Vector3f correctedDirection = rotation.mult(direction.getVector().toVector3f());
-
-        return Direction.fromVector(correctedDirection);
     }
 
 }

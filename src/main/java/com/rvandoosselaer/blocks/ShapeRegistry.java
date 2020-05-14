@@ -2,6 +2,7 @@ package com.rvandoosselaer.blocks;
 
 import com.rvandoosselaer.blocks.shapes.Cube;
 import com.rvandoosselaer.blocks.shapes.Pyramid;
+import com.rvandoosselaer.blocks.shapes.Wedge;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,6 +79,16 @@ public class ShapeRegistry {
         register(ShapeIds.PYRAMID_EAST, new Pyramid(Direction.EAST));
         register(ShapeIds.PYRAMID_SOUTH, new Pyramid(Direction.SOUTH));
         register(ShapeIds.PYRAMID_WEST, new Pyramid(Direction.WEST));
+
+        register(ShapeIds.WEDGE_NORTH, new Wedge(Direction.NORTH, false));
+        register(ShapeIds.WEDGE_EAST, new Wedge(Direction.EAST, false));
+        register(ShapeIds.WEDGE_SOUTH, new Wedge(Direction.SOUTH, false));
+        register(ShapeIds.WEDGE_WEST, new Wedge(Direction.WEST, false));
+        register(ShapeIds.WEDGE_INVERTED_NORTH, new Wedge(Direction.NORTH, true));
+        register(ShapeIds.WEDGE_INVERTED_EAST, new Wedge(Direction.EAST, true));
+        register(ShapeIds.WEDGE_INVERTED_SOUTH, new Wedge(Direction.SOUTH, true));
+        register(ShapeIds.WEDGE_INVERTED_WEST, new Wedge(Direction.WEST, true));
+
 //        register(ShapeIds.CUBE, new Cube());
 //        register(ShapeIds.SLAB, new Slab(0, 1f / 3f));
 //        register(ShapeIds.SLAB_TOP, new Slab(2f / 3f, 1));

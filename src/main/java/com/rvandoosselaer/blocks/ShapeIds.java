@@ -22,6 +22,15 @@ public interface ShapeIds {
     String PYRAMID_SOUTH = "pyramid_south";
     String PYRAMID_WEST = "pyramid_west";
 
+    String WEDGE_NORTH = "wedge_north";
+    String WEDGE_EAST = "wedge_east";
+    String WEDGE_SOUTH = "wedge_south";
+    String WEDGE_WEST = "wedge_west";
+    String WEDGE_INVERTED_NORTH = "wedge_inverted_north";
+    String WEDGE_INVERTED_EAST = "wedge_inverted_east";
+    String WEDGE_INVERTED_SOUTH = "wedge_inverted_south";
+    String WEDGE_INVERTED_WEST = "wedge_inverted_west";
+
     String SLAB = "slab";
     String SLAB_TOP = "slab-top";
     String DOUBLE_SLAB = "double-slab";
@@ -31,19 +40,19 @@ public interface ShapeIds {
     String STAIRS_FRONT = "stairs-front";
     String STAIRS_LEFT = "stairs-left";
     String STAIRS_RIGHT = "stairs-right";
-    String WEDGE_BACK = "wedge-back";
-    String WEDGE_FRONT = "wedge-front";
-    String WEDGE_LEFT = "wedge-left";
-    String WEDGE_RIGHT = "wedge-right";
+//    String WEDGE_BACK = "wedge-back";
+//    String WEDGE_FRONT = "wedge-front";
+//    String WEDGE_LEFT = "wedge-left";
+//    String WEDGE_RIGHT = "wedge-right";
     String ROUNDED_CUBE = "rounded-cube";
     String STAIRS_INVERTED_BACK = "stairs-inverted-back";
     String STAIRS_INVERTED_FRONT = "stairs-inverted-front";
     String STAIRS_INVERTED_LEFT = "stairs-inverted-left";
     String STAIRS_INVERTED_RIGHT = "stairs-inverted-right";
-    String WEDGE_INVERTED_BACK = "wedge-inverted-back";
-    String WEDGE_INVERTED_FRONT = "wedge-inverted-front";
-    String WEDGE_INVERTED_LEFT = "wedge-inverted-left";
-    String WEDGE_INVERTED_RIGHT = "wedge-inverted-right";
+//    String WEDGE_INVERTED_BACK = "wedge-inverted-back";
+//    String WEDGE_INVERTED_FRONT = "wedge-inverted-front";
+//    String WEDGE_INVERTED_LEFT = "wedge-inverted-left";
+//    String WEDGE_INVERTED_RIGHT = "wedge-inverted-right";
     String STAIRS_INNER_CORNER_FRONT = "stairs-inner-front";
     String STAIRS_INNER_CORNER_LEFT = "stairs-inner-left";
     String STAIRS_INNER_CORNER_RIGHT = "stairs-inner-right";
