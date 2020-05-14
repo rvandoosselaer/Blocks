@@ -15,6 +15,13 @@ public interface ShapeIds {
     String CUBE_SOUTH = "cube_south";
     String CUBE_WEST = "cube_west";
 
+    String PYRAMID = "pyramid";
+    String PYRAMID_DOWN = "pyramid_down";
+    String PYRAMID_NORTH = "pyramid_north";
+    String PYRAMID_EAST = "pyramid_east";
+    String PYRAMID_SOUTH = "pyramid_south";
+    String PYRAMID_WEST = "pyramid_west";
+
     String SLAB = "slab";
     String SLAB_TOP = "slab-top";
     String DOUBLE_SLAB = "double-slab";
@@ -28,9 +35,7 @@ public interface ShapeIds {
     String WEDGE_FRONT = "wedge-front";
     String WEDGE_LEFT = "wedge-left";
     String WEDGE_RIGHT = "wedge-right";
-    String PYRAMID = "pyramid";
     String ROUNDED_CUBE = "rounded-cube";
-    String PYRAMID_INVERTED = "pyramid-inverted";
     String STAIRS_INVERTED_BACK = "stairs-inverted-back";
     String STAIRS_INVERTED_FRONT = "stairs-inverted-front";
     String STAIRS_INVERTED_LEFT = "stairs-inverted-left";

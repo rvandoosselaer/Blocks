@@ -1,6 +1,5 @@
 package com.rvandoosselaer.blocks.shapes;
 
-import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -40,7 +39,7 @@ public class Cube implements Shape {
         // check if we have 3 textures or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
         // get the rotation of the shape based on the direction
-        Quaternion rotation = getRotationFromDirection(direction);
+        Quaternion rotation = Shape.getRotationFromDirection(direction);
 
         if (chunk.isFaceVisible(location, Direction.UP)) {
             createUp(location, rotation, chunkMesh, blockScale, multipleImages);
@@ -287,23 +286,6 @@ public class Cube implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
                 chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
             }
-        }
-    }
-
-    private static Quaternion getRotationFromDirection(Direction direction) {
-        switch (direction) {
-            case DOWN:
-                return new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X);
-            case EAST:
-                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Z);
-            case WEST:
-                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Z);
-            case NORTH:
-                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X);
-            case SOUTH:
-                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X);
-            default:
-                return new Quaternion();
         }
     }
 

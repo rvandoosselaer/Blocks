@@ -1,9 +1,17 @@
-package com.rvandoosselaer.blocks;
+package com.rvandoosselaer.blocks.shapes;
 
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.Chunk;
+import com.rvandoosselaer.blocks.ChunkMesh;
+import com.rvandoosselaer.blocks.Direction;
+import com.rvandoosselaer.blocks.Shape;
 import com.simsilica.mathd.Vec3i;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -12,7 +20,14 @@ import lombok.ToString;
  * @author rvandoosselaer
  */
 @ToString
+@RequiredArgsConstructor
 public class Pyramid implements Shape {
+
+    private final Direction direction;
+
+    public Pyramid() {
+        this(Direction.UP);
+    }
 
     @Override
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
@@ -20,23 +35,24 @@ public class Pyramid implements Shape {
         float blockScale = BlocksConfig.getInstance().getBlockScale();
         // check if we have only one texture
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        Quaternion rotation = Shape.getRotationFromDirection(direction);
 
-        createLeftFace(location, chunkMesh, blockScale, multipleImages);
-        createBackFace(location, chunkMesh, blockScale, multipleImages);
-        createRightFace(location, chunkMesh, blockScale, multipleImages);
-        createFrontFace(location, chunkMesh, blockScale, multipleImages);
-        if (chunk.isFaceVisible(location, Direction.DOWN)) {
-            createBottomFace(location, chunkMesh, blockScale, multipleImages);
+        createWest(location, rotation, chunkMesh, blockScale, multipleImages);
+        createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
+        createEast(location, rotation, chunkMesh, blockScale, multipleImages);
+        createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
+            createDown(location, rotation, chunkMesh, blockScale, multipleImages);
         }
     }
 
-    private static void createBottomFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -48,8 +64,9 @@ public class Pyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, -1.0f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, -1.0f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -66,12 +83,12 @@ public class Pyramid implements Shape {
         }
     }
 
-    private void createFrontFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.0f, 1.0f, 0.0f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.0f, 0.5f, 0.0f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -79,8 +96,9 @@ public class Pyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 0.4472136f, 0.8944272f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.4472136f, 0.8944272f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -95,12 +113,12 @@ public class Pyramid implements Shape {
         }
     }
 
-    private static void createRightFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.0f, 1.0f, 0.0f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, 0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.0f, 0.5f, 0.0f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -108,8 +126,9 @@ public class Pyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.8944272f, 0.4472136f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.8944272f, 0.4472136f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -124,12 +143,12 @@ public class Pyramid implements Shape {
         }
     }
 
-    private static void createBackFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, -0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.0f, 1.0f, 0.0f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.5f, 0.0f, -0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.0f, 0.5f, 0.0f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -137,8 +156,9 @@ public class Pyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(0.0f, 0.4472136f, -0.8944272f));
-                chunkMesh.getTangents().add(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.4472136f, -0.8944272f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -153,12 +173,12 @@ public class Pyramid implements Shape {
         }
     }
 
-    private static void createLeftFace(Vec3i location, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, 0.5f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(0.0f, 1.0f, 0.0f), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(new Vector3f(-0.5f, 0.0f, -0.5f), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.0f, 0.5f, 0.0f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
         // indices
         chunkMesh.getIndices().add(offset);
         chunkMesh.getIndices().add(offset + 1);
@@ -166,8 +186,9 @@ public class Pyramid implements Shape {
         if (!chunkMesh.isCollisionMesh()) {
             // normals and tangents
             for (int i = 0; i < 3; i++) {
-                chunkMesh.getNormals().add(new Vector3f(-0.8944272f, 0.4472136f, 0.0f));
-                chunkMesh.getTangents().add(new Vector4f(0.0f, 0.0f, -1.0f, -1.0f));
+                chunkMesh.getNormals().add(rotation.mult(new Vector3f(-0.8944272f, 0.4472136f, 0.0f)));
+                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, -1.0f, -1.0f)));
             }
             // uvs
             if (!multipleImages) {
@@ -182,4 +203,5 @@ public class Pyramid implements Shape {
 
         }
     }
+
 }
