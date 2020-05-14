@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks;
 
+import com.rvandoosselaer.blocks.shapes.Cube;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 

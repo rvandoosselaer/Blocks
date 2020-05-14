@@ -1,4 +1,4 @@
-package com.rvandoosselaer.blocks;
+package com.rvandoosselaer.blocks.shapes;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
@@ -6,6 +6,11 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.Chunk;
+import com.rvandoosselaer.blocks.ChunkMesh;
+import com.rvandoosselaer.blocks.Direction;
+import com.rvandoosselaer.blocks.Shape;
 import com.simsilica.mathd.Vec3i;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
