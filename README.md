@@ -3,7 +3,10 @@ Blocks is a voxel engine created for [jMonkeyEngine](https://jmonkeyengine.org).
 
 [![Build Status](https://travis-ci.com/rvandoosselaer/Blocks.svg?token=EPZCRwE8MCLwXqyrYpqT&branch=master)](https://travis-ci.com/rvandoosselaer/Blocks) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9ee72fb21dc847dc98b80e1908dd0298)](https://www.codacy.com/manual/rvandoosselaer/Blocks?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rvandoosselaer/Blocks&amp;utm_campaign=Badge_Grade)
 
-![image](blocks-examples.jpg)
+![](https://i.imgur.com/B3v3s3U.jpg)
+![](https://i.imgur.com/SIVpZJa.jpg)
+![](https://i.imgur.com/vjqOTR5.jpg)
+![](https://i.imgur.com/3d7dpvg.gif)
 
 ## Features
 
