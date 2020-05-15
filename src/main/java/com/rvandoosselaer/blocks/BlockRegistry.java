@@ -75,6 +75,10 @@ public class BlockRegistry {
     }
 
     public void registerDefaultBlocks() {
+        register(Block.create(BlockIds.GRASS, TypeIds.GRASS, true));
+        register(Block.create(BlockIds.PALM_TREE_PLANKS, TypeIds.PALM_TREE_PLANKS, false));
+        register(Block.create(BlockIds.BIRCH_LOG, TypeIds.BIRCH_LOG, false));
+        register(Block.builder().name(BlockIds.WATER).shape(ShapeIds.CUBE).type(TypeIds.WATER).usingMultipleImages(false).solid(false).transparent(true).build());
 //        registerBirchBlocks();
 //
 //        registerBrickBlocks();

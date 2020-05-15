@@ -12,7 +12,6 @@ import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
 import com.simsilica.mathd.Vec3i;
-import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author rvandoosselaer
  */
 @Slf4j
-@Getter
 @ToString
 public class Slab implements Shape {
 
@@ -56,28 +54,22 @@ public class Slab implements Shape {
         // get the rotation of the shape based on the direction
         Quaternion rotation = Shape.getRotationFromDirection(direction);
 
-        // top face; when the end y value is 1 (top slab), check if the top face should be rendered
         if (endY < 1 || chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.UP, direction))) {
             createUp(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // bottom face; when the start y value is 0 (bottom slab), check if the bottom face should be rendered
         if (startY > 0 || chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
             createDown(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // left face
-        if (chunk.isFaceVisible(location, Direction.WEST)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
             createWest(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // right face
-        if (chunk.isFaceVisible(location, Direction.EAST)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
             createEast(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // front face
-        if (chunk.isFaceVisible(location, Direction.SOUTH)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.SOUTH, direction))) {
             createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        // back face
-        if (chunk.isFaceVisible(location, Direction.NORTH)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
             createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
         }
     }

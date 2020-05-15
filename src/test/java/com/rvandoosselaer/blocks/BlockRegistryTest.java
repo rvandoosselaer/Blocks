@@ -2,6 +2,7 @@ package com.rvandoosselaer.blocks;
 
 import com.jme3.asset.DesktopAssetManager;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,11 @@ public class BlockRegistryTest {
 
     @BeforeAll
     public static void setUp() {
+        BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
+
+    @AfterEach
+    public void reset() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
     }
 
