@@ -34,11 +34,6 @@ public class ChunkCache implements ChunkResolver {
         return Optional.ofNullable(cache.getIfPresent(location));
     }
 
-    @Override
-    public Chunk getChunk(@NonNull Vec3i location) {
-        return get(location).orElse(null);
-    }
-
     public void evict(@NonNull Vec3i location) {
         cache.invalidate(location);
     }

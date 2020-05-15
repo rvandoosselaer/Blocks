@@ -20,14 +20,4 @@ public interface ChunkResolver {
      */
     Optional<Chunk> get(@NonNull Vec3i location);
 
-    /**
-     * Return the chunk at the given location or null.
-     *
-     * @param location of the chunk
-     * @return chunk or null
-     * @deprecated use {@link #get(Vec3i)} instead
-     */
-    @Deprecated
-    Chunk getChunk(@NonNull Vec3i location);
-
 }
