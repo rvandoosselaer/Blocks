@@ -8,14 +8,14 @@ package com.rvandoosselaer.blocks;
  */
 public interface ShapeIds {
 
-    String CUBE = "cube";
+    String CUBE = "cube_up";
     String CUBE_DOWN = "cube_down";
     String CUBE_NORTH = "cube_north";
     String CUBE_EAST = "cube_east";
     String CUBE_SOUTH = "cube_south";
     String CUBE_WEST = "cube_west";
 
-    String PYRAMID = "pyramid";
+    String PYRAMID = "pyramid_up";
     String PYRAMID_DOWN = "pyramid_down";
     String PYRAMID_NORTH = "pyramid_north";
     String PYRAMID_EAST = "pyramid_east";
@@ -30,6 +30,13 @@ public interface ShapeIds {
     String WEDGE_INVERTED_EAST = "wedge_inverted_east";
     String WEDGE_INVERTED_SOUTH = "wedge_inverted_south";
     String WEDGE_INVERTED_WEST = "wedge_inverted_west";
+
+    String POLE = "pole_up";
+    String POLE_DOWN = "pole_down";
+    String POLE_NORTH = "pole_north";
+    String POLE_EAST = "pole_east";
+    String POLE_SOUTH = "pole_south";
+    String POLE_WEST = "pole_west";
 
     String SLAB = "slab";
     String SLAB_TOP = "slab-top";
@@ -71,6 +78,6 @@ public interface ShapeIds {
     String SQUARE_RIGHT = "square-right";
     String SQUARE_TOP = "square-top";
     String SQUARE_BOTTOM = "square-bottom";
-    String POLE = "pole";
+//    String POLE = "pole";
 
 }
