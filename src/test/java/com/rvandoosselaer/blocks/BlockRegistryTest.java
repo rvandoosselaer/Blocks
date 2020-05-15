@@ -7,9 +7,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author: rvandoosselaer
@@ -72,6 +74,34 @@ public class BlockRegistryTest {
         blockRegistry.remove(block);
         assertEquals(size - 1, blockRegistry.getAll().size());
         assertNull(blockRegistry.get(BlockIds.PALM_TREE_PLANKS));
+    }
+
+    @Test
+    public void testLoadBlockFromYaml() {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+
+        blockRegistry.clear();
+
+        blockRegistry.load(BlockRegistryTest.class.getResourceAsStream("/blocks.yml"));
+
+        Block block = blockRegistry.get("my-block-from-yaml");
+        assertNotNull(block);
+        assertEquals("grass", block.getType());
+        assertEquals("wedge", block.getShape());
+        assertFalse(block.isSolid());
+        assertTrue(block.isTransparent());
+        assertTrue(block.isUsingMultipleImages());
+
+        block = blockRegistry.get("oak_log");
+        assertNotNull(block);
+        assertEquals(ShapeIds.CUBE, block.getShape());
+        assertTrue(block.isSolid());
+        assertFalse(block.isTransparent());
+        assertFalse(block.isUsingMultipleImages());
+
+        block = blockRegistry.get("birch_planks-stairs_north");
+        assertNotNull(block);
+        assertEquals("stairs_north", block.getShape());
     }
 
     @AfterAll

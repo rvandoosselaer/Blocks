@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks;
 
+import com.rvandoosselaer.blocks.serialize.BlockDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -83,6 +84,17 @@ public class Block {
                 .usingMultipleImages(multipleImages)
                 .transparent(false)
                 .solid(true)
+                .build();
+    }
+
+    public static Block createFrom(BlockDTO blockDTO) {
+        return Block.builder()
+                .name(blockDTO.getName())
+                .type(blockDTO.getType())
+                .shape(blockDTO.getShape())
+                .usingMultipleImages(blockDTO.isMultiTexture())
+                .transparent(blockDTO.isTransparent())
+                .solid(blockDTO.isSolid())
                 .build();
     }
 

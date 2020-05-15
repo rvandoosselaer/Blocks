@@ -1,0 +1,11 @@
+- name: my-block-from-yaml
+  type: grass
+  shape: wedge
+  solid: false
+  transparent: true
+  multiTexture: true
+
+- type: oak_log
+
+- type: birch_planks
+  shape: stairs_north

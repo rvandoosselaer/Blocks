@@ -1,10 +1,16 @@
 package com.rvandoosselaer.blocks;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.rvandoosselaer.blocks.serialize.BlockDTO;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 public class BlockRegistry {
 
     private final ConcurrentMap<String, Block> registry = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
 
     public BlockRegistry() {
         registerDefaultBlocks();
@@ -112,6 +119,18 @@ public class BlockRegistry {
 //        registerWaterBlocks();
 //
 //        registerWindowBlocks();
+    }
+
+    public void load(InputStream inputStream) {
+        try {
+            List<BlockDTO> blocks = objectMapper.readValue(inputStream, objectMapper.getTypeFactory().constructCollectionType(List.class, BlockDTO.class));
+            if (log.isTraceEnabled()) {
+                log.trace("Loaded {} blocks from file.", blocks.size());
+            }
+            blocks.forEach(blockDTO -> register(Block.createFrom(blockDTO)));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
 //    private void registerWindowBlocks() {

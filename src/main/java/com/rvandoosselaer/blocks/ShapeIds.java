@@ -6,6 +6,7 @@ package com.rvandoosselaer.blocks;
  *
  * @author: rvandoosselaer
  */
+//TODO: add plate shape (0-0.1)
 public interface ShapeIds {
 
     String CUBE = "cube_up";
@@ -91,47 +92,5 @@ public interface ShapeIds {
     String STAIRS_INVERTED_OUTER_CORNER_EAST = "stairs_inverted_outer_corner_east";
     String STAIRS_INVERTED_OUTER_CORNER_SOUTH = "stairs_inverted_outer_corner_south";
     String STAIRS_INVERTED_OUTER_CORNER_WEST = "stairs_inverted_outer_corner_west";
-
-//    String SLAB = "slab";
-//    String SLAB_TOP = "slab-top";
-//    String DOUBLE_SLAB = "double-slab";
-//    String DOUBLE_SLAB_TOP = "double-slab-top";
-    String PLATE = "plate";
-    String STAIRS_BACK = "stairs-back";
-    String STAIRS_FRONT = "stairs-front";
-    String STAIRS_LEFT = "stairs-left";
-    String STAIRS_RIGHT = "stairs-right";
-//    String WEDGE_BACK = "wedge-back";
-//    String WEDGE_FRONT = "wedge-front";
-//    String WEDGE_LEFT = "wedge-left";
-//    String WEDGE_RIGHT = "wedge-right";
-//    String ROUNDED_CUBE = "rounded-cube";
-    String STAIRS_INVERTED_BACK = "stairs-inverted-back";
-    String STAIRS_INVERTED_FRONT = "stairs-inverted-front";
-    String STAIRS_INVERTED_LEFT = "stairs-inverted-left";
-    String STAIRS_INVERTED_RIGHT = "stairs-inverted-right";
-//    String WEDGE_INVERTED_BACK = "wedge-inverted-back";
-//    String WEDGE_INVERTED_FRONT = "wedge-inverted-front";
-//    String WEDGE_INVERTED_LEFT = "wedge-inverted-left";
-//    String WEDGE_INVERTED_RIGHT = "wedge-inverted-right";
-    String STAIRS_INNER_CORNER_FRONT = "stairs-inner-front";
-    String STAIRS_INNER_CORNER_LEFT = "stairs-inner-left";
-    String STAIRS_INNER_CORNER_RIGHT = "stairs-inner-right";
-    String STAIRS_INNER_CORNER_BACK = "stairs-inner-back";
-    String STAIRS_OUTER_CORNER_FRONT = "stairs-outer-front";
-    String STAIRS_OUTER_CORNER_INVERTED_FRONT = "stairs-outer-inverted-front";
-    String STAIRS_OUTER_CORNER_LEFT = "stairs-outer-left";
-    String STAIRS_OUTER_CORNER_INVERTED_LEFT = "stairs-outer-inverted-left";
-    String STAIRS_OUTER_CORNER_RIGHT = "stairs-outer-right";
-    String STAIRS_OUTER_CORNER_INVERTED_RIGHT = "stairs-outer-inverted-right";
-    String STAIRS_OUTER_CORNER_BACK = "stairs-outer-back";
-    String STAIRS_OUTER_CORNER_INVERTED_BACK = "stairs-outer-inverted-back";
-    String SQUARE_FRONT = "square-front";
-    String SQUARE_BACK = "square-back";
-    String SQUARE_LEFT = "square-left";
-    String SQUARE_RIGHT = "square-right";
-    String SQUARE_TOP = "square-top";
-    String SQUARE_BOTTOM = "square-bottom";
-//    String POLE = "pole";
 
 }

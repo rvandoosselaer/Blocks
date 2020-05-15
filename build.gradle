@@ -22,6 +22,7 @@ ext {
     protobufVersion = "[3.10,)"
     guavaVersion = "[28,)"
     minieVersion = "[1.6,)"
+    jacksonVersion = "[2.11,)"
 }
 
 repositories {
@@ -43,6 +44,7 @@ dependencies {
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
     implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
     implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 
     // logging
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
