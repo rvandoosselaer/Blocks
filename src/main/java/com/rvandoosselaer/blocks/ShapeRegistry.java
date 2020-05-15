@@ -4,6 +4,7 @@ import com.rvandoosselaer.blocks.shapes.Cube;
 import com.rvandoosselaer.blocks.shapes.Pole;
 import com.rvandoosselaer.blocks.shapes.Pyramid;
 import com.rvandoosselaer.blocks.shapes.RoundedCube;
+import com.rvandoosselaer.blocks.shapes.Slab;
 import com.rvandoosselaer.blocks.shapes.Wedge;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -104,6 +105,19 @@ public class ShapeRegistry {
         register(ShapeIds.ROUNDED_CUBE_EAST, new RoundedCube(Direction.EAST));
         register(ShapeIds.ROUNDED_CUBE_SOUTH, new RoundedCube(Direction.SOUTH));
         register(ShapeIds.ROUNDED_CUBE_WEST, new RoundedCube(Direction.WEST));
+
+        register(ShapeIds.SLAB, new Slab(0, 1f / 3f));
+        register(ShapeIds.SLAB_DOWN, new Slab(0, 1f / 3f, Direction.DOWN));
+        register(ShapeIds.SLAB_NORTH, new Slab(0, 1f / 3f, Direction.NORTH));
+        register(ShapeIds.SLAB_EAST, new Slab(0, 1f / 3f, Direction.EAST));
+        register(ShapeIds.SLAB_SOUTH, new Slab(0, 1f / 3f, Direction.SOUTH));
+        register(ShapeIds.SLAB_WEST, new Slab(0, 1f / 3f, Direction.WEST));
+        register(ShapeIds.DOUBLE_SLAB, new Slab(0, 2f / 3f));
+        register(ShapeIds.DOUBLE_SLAB_DOWN, new Slab(0, 2f / 3f, Direction.DOWN));
+        register(ShapeIds.DOUBLE_SLAB_NORTH, new Slab(0, 2f / 3f, Direction.NORTH));
+        register(ShapeIds.DOUBLE_SLAB_EAST, new Slab(0, 2f / 3f, Direction.EAST));
+        register(ShapeIds.DOUBLE_SLAB_SOUTH, new Slab(0, 2f / 3f, Direction.SOUTH));
+        register(ShapeIds.DOUBLE_SLAB_WEST, new Slab(0, 2f / 3f, Direction.WEST));
 
 //        register(ShapeIds.CUBE, new Cube());
 //        register(ShapeIds.SLAB, new Slab(0, 1f / 3f));

@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks;
 
+import com.rvandoosselaer.blocks.shapes.Slab;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

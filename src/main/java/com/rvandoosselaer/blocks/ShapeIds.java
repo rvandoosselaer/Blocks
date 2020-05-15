@@ -45,10 +45,23 @@ public interface ShapeIds {
     String ROUNDED_CUBE_SOUTH = "rounded_cube_south";
     String ROUNDED_CUBE_WEST = "rounded_cube_west";
 
-    String SLAB = "slab";
-    String SLAB_TOP = "slab-top";
-    String DOUBLE_SLAB = "double-slab";
-    String DOUBLE_SLAB_TOP = "double-slab-top";
+    String SLAB = "slab_up";
+    String SLAB_DOWN = "slab_down";
+    String SLAB_NORTH = "slab_north";
+    String SLAB_EAST = "slab_east";
+    String SLAB_SOUTH = "slab_south";
+    String SLAB_WEST = "slab_west";
+    String DOUBLE_SLAB = "double_slab_up";
+    String DOUBLE_SLAB_DOWN = "double_slab_down";
+    String DOUBLE_SLAB_NORTH = "double_slab_north";
+    String DOUBLE_SLAB_EAST = "double_slab_east";
+    String DOUBLE_SLAB_SOUTH = "double_slab_south";
+    String DOUBLE_SLAB_WEST = "double_slab_west";
+
+//    String SLAB = "slab";
+//    String SLAB_TOP = "slab-top";
+//    String DOUBLE_SLAB = "double-slab";
+//    String DOUBLE_SLAB_TOP = "double-slab-top";
     String PLATE = "plate";
     String STAIRS_BACK = "stairs-back";
     String STAIRS_FRONT = "stairs-front";

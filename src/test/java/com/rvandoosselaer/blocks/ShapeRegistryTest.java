@@ -1,6 +1,7 @@
 package com.rvandoosselaer.blocks;
 
 import com.jme3.asset.DesktopAssetManager;
+import com.rvandoosselaer.blocks.shapes.Slab;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
