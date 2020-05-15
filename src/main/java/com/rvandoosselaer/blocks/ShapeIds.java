@@ -38,6 +38,13 @@ public interface ShapeIds {
     String POLE_SOUTH = "pole_south";
     String POLE_WEST = "pole_west";
 
+    String ROUNDED_CUBE = "rounded_cube_up";
+    String ROUNDED_CUBE_DOWN = "rounded_cube_down";
+    String ROUNDED_CUBE_NORTH = "rounded_cube_north";
+    String ROUNDED_CUBE_EAST = "rounded_cube_east";
+    String ROUNDED_CUBE_SOUTH = "rounded_cube_south";
+    String ROUNDED_CUBE_WEST = "rounded_cube_west";
+
     String SLAB = "slab";
     String SLAB_TOP = "slab-top";
     String DOUBLE_SLAB = "double-slab";
@@ -51,7 +58,7 @@ public interface ShapeIds {
 //    String WEDGE_FRONT = "wedge-front";
 //    String WEDGE_LEFT = "wedge-left";
 //    String WEDGE_RIGHT = "wedge-right";
-    String ROUNDED_CUBE = "rounded-cube";
+//    String ROUNDED_CUBE = "rounded-cube";
     String STAIRS_INVERTED_BACK = "stairs-inverted-back";
     String STAIRS_INVERTED_FRONT = "stairs-inverted-front";
     String STAIRS_INVERTED_LEFT = "stairs-inverted-left";

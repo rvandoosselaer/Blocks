@@ -3,6 +3,7 @@ package com.rvandoosselaer.blocks;
 import com.rvandoosselaer.blocks.shapes.Cube;
 import com.rvandoosselaer.blocks.shapes.Pole;
 import com.rvandoosselaer.blocks.shapes.Pyramid;
+import com.rvandoosselaer.blocks.shapes.RoundedCube;
 import com.rvandoosselaer.blocks.shapes.Wedge;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +97,13 @@ public class ShapeRegistry {
         register(ShapeIds.POLE_EAST, new Pole(Direction.EAST, 0.15f));
         register(ShapeIds.POLE_SOUTH, new Pole(Direction.SOUTH, 0.15f));
         register(ShapeIds.POLE_WEST, new Pole(Direction.WEST, 0.15f));
+
+        register(ShapeIds.ROUNDED_CUBE, new RoundedCube());
+        register(ShapeIds.ROUNDED_CUBE_DOWN, new RoundedCube(Direction.DOWN));
+        register(ShapeIds.ROUNDED_CUBE_NORTH, new RoundedCube(Direction.NORTH));
+        register(ShapeIds.ROUNDED_CUBE_EAST, new RoundedCube(Direction.EAST));
+        register(ShapeIds.ROUNDED_CUBE_SOUTH, new RoundedCube(Direction.SOUTH));
+        register(ShapeIds.ROUNDED_CUBE_WEST, new RoundedCube(Direction.WEST));
 
 //        register(ShapeIds.CUBE, new Cube());
 //        register(ShapeIds.SLAB, new Slab(0, 1f / 3f));
