@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +46,15 @@ public class BlockRegistry {
         }
         return block;
     }
-    
+
+    public void register(@NonNull Block... blocks) {
+        Arrays.stream(blocks).forEach(this::register);
+    }
+
+    public void register(@NonNull Collection<Block> collection) {
+        collection.forEach(this::register);
+    }
+
     public boolean remove(@NonNull Block block) {
         return remove(block.getName());
     }

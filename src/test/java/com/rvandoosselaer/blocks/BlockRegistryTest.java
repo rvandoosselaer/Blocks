@@ -6,6 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -104,6 +107,31 @@ public class BlockRegistryTest {
         block = blockRegistry.get("birch_planks-stairs_north");
         assertNotNull(block);
         assertEquals("stairs_north", block.getShape());
+    }
+
+    @Test
+    public void testRegisterMultipleBlocks() {
+        BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
+
+        Block firstBlock = Block.create("a-very-custom-block", TypeIds.GRASS);
+        Block secondBlock = Block.create("another-very-custom-block", TypeIds.GRASS);
+        blockRegistry.register(firstBlock, secondBlock);
+
+        assertNotNull(blockRegistry.get("a-very-custom-block"));
+        assertNotNull(blockRegistry.get("another-very-custom-block"));
+
+        blockRegistry.remove(firstBlock);
+        blockRegistry.remove(secondBlock);
+
+        Collection<Block> collection = new HashSet<>();
+        collection.add(firstBlock);
+        collection.add(secondBlock);
+
+        blockRegistry.register(collection);
+
+        assertNotNull(blockRegistry.get("a-very-custom-block"));
+        assertNotNull(blockRegistry.get("another-very-custom-block"));
+
     }
 
     @AfterAll
