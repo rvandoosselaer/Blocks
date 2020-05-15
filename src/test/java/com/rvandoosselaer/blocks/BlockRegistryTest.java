@@ -77,7 +77,7 @@ public class BlockRegistryTest {
     }
 
     @Test
-    public void testLoadBlockFromYaml() {
+    public void testLoadBlockFromFile() {
         BlockRegistry blockRegistry = BlocksConfig.getInstance().getBlockRegistry();
 
         blockRegistry.clear();
@@ -98,6 +98,8 @@ public class BlockRegistryTest {
         assertTrue(block.isSolid());
         assertFalse(block.isTransparent());
         assertFalse(block.isUsingMultipleImages());
+
+        blockRegistry.load(BlockRegistryTest.class.getResourceAsStream("/blocks.json"));
 
         block = blockRegistry.get("birch_planks-stairs_north");
         assertNotNull(block);

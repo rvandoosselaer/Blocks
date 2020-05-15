@@ -6,6 +6,3 @@
   multiTexture: true
 
 - type: oak_log
-
-- type: birch_planks
-  shape: stairs_north
