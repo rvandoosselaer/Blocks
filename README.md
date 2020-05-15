@@ -46,6 +46,7 @@ Documentation can only take you so far, so make sure to take a look at the diffe
 
 ## Contributing
 If you have a bug or an idea, you can create a ticket for it [here.](https://github.com/rvandoosselaer/Blocks/issues)
+See the [CONTRIBUTING](CONTRIBUTING.md) file for details.
 
 ## License
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details
