@@ -64,8 +64,8 @@ public class WedgeTest {
                 .build();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
-        chunk.addBlock(1, 0, 0, block);
         chunk.addBlock(0, 0, 0, BlocksConfig.getInstance().getBlockRegistry().get(BlockIds.GRASS));
+        chunk.addBlock(1, 0, 0, block);
         chunk.createNode(BlocksConfig.getInstance().getChunkMeshGenerator());
 
         Mesh wedgeMesh = ((Geometry) chunk.getNode().getChild("birch_log")).getMesh();

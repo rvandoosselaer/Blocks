@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * A shape implementation for a pyramid.
+ * A shape implementation for a pyramid. The default direction of a pyramid is UP: the point will face the UP direction.
  *
  * @author rvandoosselaer
  */

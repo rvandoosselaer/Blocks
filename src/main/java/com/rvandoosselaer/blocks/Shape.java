@@ -69,40 +69,20 @@ public interface Shape {
      * @return the rotation to face the direction
      */
     static Quaternion getYawFromDirection(Direction direction) {
-        return getYawFromDirection(direction, Direction.SOUTH);
-    }
-
-    static Quaternion getYawFromDirection(Direction direction, Direction startDirection) {
-        if (direction == Direction.DOWN || direction == Direction.UP || startDirection == Direction.DOWN || startDirection == Direction.UP) {
-            throw new IllegalArgumentException("Unable to rotate from " + startDirection + " to " + direction + " using only yaw (y-axis) rotation!");
-        }
-        // logic:
-        // dot = 1 -> no rotation: we are facing in the same direction
-        // dot = -1 -> 180° (PI) rotation: we are facing in the opposite direction
-        // dot = 0 -> 90° or -90° (PI/2) rotation: we are facing in the perpendicular direction. Use the cross product
-        //                                         to find out if we need to rotate 90° or -90°.
-        float dot = direction.getVector().toVector3f().dot(startDirection.getVector().toVector3f());
-        if (dot >= 0.95f) {
-            return new Quaternion();
-        }
-
-        if (dot <= -0.95f) {
-            return new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y);
-        }
-
-        if (dot >= -0.05f && dot <= 0.05f) {
-            Vector3f cross = direction.getVector().toVector3f().cross(startDirection.getVector().toVector3f());
-            if (cross.y < 0) {
+        switch (direction) {
+            case NORTH:
+                return new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y);
+            case EAST:
+                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
+            case WEST:
                 return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y);
-            }
-            return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
+            default:
+                return new Quaternion();
         }
-
-        throw new IllegalArgumentException("Unable to determine yaw rotation from " + startDirection + " to " + direction);
     }
 
     /**
-     * Calculates the new direction of a face, based on the rotation of the shape. The north face of a shape that is
+     * Calculates the new direction of a face, based on the rotation of the shape. eg. The north face of a shape that is
      * rotated, is not facing north anymore.
      *
      * @param faceDirection  the direction of the face

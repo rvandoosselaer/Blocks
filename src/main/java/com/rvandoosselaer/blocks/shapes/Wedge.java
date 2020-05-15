@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks.shapes;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -15,13 +16,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * A shape implementation for a wedge.
+ * A shape implementation for a wedge. The default facing of a wedge is South: the sloping side (hypotenuse) will face
+ * south.
  *
  * @author rvandoosselaer
  */
 @ToString
 @RequiredArgsConstructor
 public class Wedge implements Shape {
+
+    private static final Quaternion PI_X = new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X);
+    private static final Quaternion PI_Y = new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y);
 
     private final Direction direction;
     private final boolean upsideDown;
@@ -32,11 +37,12 @@ public class Wedge implements Shape {
 
     @Override
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
-        // get the rotation of the wedge; a south facing wedge will have it's sloping side (hypotenuse) facing south
-        // when the shape is upside down (inverted), we need to perform 2 rotations. One for the direction and one to invert the shape
-        Quaternion rotation = Shape.getYawFromDirection(direction); //Shape.getRotationFromDirection(direction);
+        // when the shape is upside down (inverted), we need to perform 3 rotations. Two to invert the shape and one
+        // for the direction.
+        Quaternion rotation = Shape.getYawFromDirection(direction);
         if (upsideDown) {
-            rotation = Shape.getRotationFromDirection(Direction.DOWN).multLocal(Shape.getYawFromDirection(direction, Direction.NORTH));
+            Quaternion inverse = PI_X.mult(PI_Y);
+            rotation = inverse.multLocal(rotation.inverseLocal());
         }
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
@@ -44,19 +50,15 @@ public class Wedge implements Shape {
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
         createSouth(location, chunkMesh, rotation, blockScale, multipleImages);
-
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
             createWest(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
             createEast(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
             createNorth(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
             createDown(location, chunkMesh, rotation, blockScale, multipleImages);
         }
