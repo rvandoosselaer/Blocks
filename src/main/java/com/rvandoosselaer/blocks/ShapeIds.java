@@ -58,6 +58,13 @@ public interface ShapeIds {
     String DOUBLE_SLAB_SOUTH = "double_slab_south";
     String DOUBLE_SLAB_WEST = "double_slab_west";
 
+    String SQUARE = "square_up";
+    String SQUARE_DOWN = "square_down";
+    String SQUARE_NORTH = "square_north";
+    String SQUARE_EAST = "square_east";
+    String SQUARE_SOUTH = "square_south";
+    String SQUARE_WEST = "square_west";
+
 //    String SLAB = "slab";
 //    String SLAB_TOP = "slab-top";
 //    String DOUBLE_SLAB = "double-slab";

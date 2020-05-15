@@ -48,10 +48,10 @@ public class PyramidTest {
         int index4 = positions.indexOf(new Vector3f(0.5f, 0.5f, 0.5f));
 
         // test that those vertices exist in the mesh
-        assertNotEquals(index1, -1);
-        assertNotEquals(index2, -1);
-        assertNotEquals(index3, -1);
-        assertNotEquals(index4, -1);
+        assertNotEquals(-1, index1);
+        assertNotEquals(-1, index2);
+        assertNotEquals(-1, index3);
+        assertNotEquals(-1, index4);
     }
 
     @Test
@@ -70,12 +70,12 @@ public class PyramidTest {
 
         Mesh pyramidMesh = ((Geometry) chunk.getNode().getChild("birch_log")).getMesh();
         // the shared face between the cube and the triangle should not exist. The pyramid shape should have 4 triangles.
-        assertEquals(pyramidMesh.getTriangleCount(), 4);
+        assertEquals(4, pyramidMesh.getTriangleCount());
 
         // when the cube is removed, the pyramid should have all 6 triangles
         chunk.removeBlock(0, 1, 0);
         chunk.createNode(BlocksConfig.getInstance().getChunkMeshGenerator());
         pyramidMesh = ((Geometry) chunk.getNode().getChild("birch_log")).getMesh();
-        assertEquals(pyramidMesh.getTriangleCount(), 6);
+        assertEquals(6, pyramidMesh.getTriangleCount());
     }
 }
