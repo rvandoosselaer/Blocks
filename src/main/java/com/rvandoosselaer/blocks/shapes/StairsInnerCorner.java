@@ -1,4 +1,4 @@
-package com.rvandoosselaer.blocks;
+package com.rvandoosselaer.blocks.shapes;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix4f;
@@ -6,63 +6,85 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.Chunk;
+import com.rvandoosselaer.blocks.ChunkMesh;
+import com.rvandoosselaer.blocks.Direction;
+import com.rvandoosselaer.blocks.Shape;
 import com.simsilica.mathd.Vec3i;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * A shape implementation for an inner corner stair.
+ * A shape implementation for an inner corner stair. The default facing of a stair is South.
  *
  * @author rvandoosselaer
  */
 @ToString
 @RequiredArgsConstructor
-public class StairInnerCorner implements Shape {
+public class StairsInnerCorner implements Shape {
+
+    private static final Quaternion PI_X = new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X);
+    private static final Quaternion PI_Y = new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y);
 
     private final Direction direction;
+    private final boolean upsideDown;
+
+    public StairsInnerCorner() {
+        this(Direction.UP, false);
+    }
 
     @Override
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
-        // get the rotation of the stair
-        Quaternion rotation = new Quaternion().fromAngleAxis(rotationFromDirection(direction), Vector3f.UNIT_Y);
+        // when the shape is upside down (inverted), we need to perform 3 rotations. Two to invert the shape and one
+        // for the direction.
+        Quaternion rotation = Shape.getYawFromDirection(direction);
+        if (upsideDown) {
+            Quaternion inverse = PI_X.mult(PI_Y);
+            rotation = inverse.multLocal(rotation.inverseLocal());
+        }
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have 3 images or only one
+        // check if we have 3 textures or only one
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
-        createFrontFace(location, chunkMesh, rotation, blockScale, multipleImages);
-        if (chunk.isFaceVisible(location, Direction.WEST)) {
-            createLeftFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        createUp(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.SOUTH, direction))) {
+            createSouth(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.NORTH)) {
-            createBackFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
+            createWest(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.DOWN)) {
-            createBottomFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
+            createEast(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        createRightFace(location, chunkMesh, rotation, blockScale, multipleImages);
-        createTopFace(location, chunkMesh, rotation, blockScale, multipleImages);
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
+            createNorth(location, chunkMesh, rotation, blockScale, multipleImages);
+        }
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
+            createDown(location, chunkMesh, rotation, blockScale, multipleImages);
+        }
     }
 
-    private static void createTopFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createUp(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.333f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 1.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 1.000f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 1.000f, -0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 1.000f, -0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 1.000f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.667f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.667f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.667f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 1.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.667f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, -0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.500f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.500f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.167f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.167f, 0.500f)), location, blockScale));
         // Index:
         chunkMesh.getIndices().add(offset + 0);
         chunkMesh.getIndices().add(offset + 1);
@@ -168,27 +190,107 @@ public class StairInnerCorner implements Shape {
         }
     }
 
-    private static void createRightFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        int offset = chunkMesh.getPositions().size();
+        // # Positions:4
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.500f, 0.500f)), location, blockScale));
+        // Index:
+        chunkMesh.getIndices().add(offset + 0);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+        chunkMesh.getIndices().add(offset + 0);
+        chunkMesh.getIndices().add(offset + 3);
+        chunkMesh.getIndices().add(offset + 1);
+        if (!chunkMesh.isCollisionMesh()) {
+            // Normals:
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, -1.000f, 0.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, -1.000f, 0.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, -1.000f, 0.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, -1.000f, 0.000f)));
+            // Tangents:
+            Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.000f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 1.000f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.000f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.000f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.000f));
+            }
+        }
+    }
+
+    private static void createNorth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        int offset = chunkMesh.getPositions().size();
+        // # Positions:4
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.500f, -0.500f)), location, blockScale));
+        // Index:
+        chunkMesh.getIndices().add(offset + 0);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+        chunkMesh.getIndices().add(offset + 0);
+        chunkMesh.getIndices().add(offset + 3);
+        chunkMesh.getIndices().add(offset + 1);
+        if (!chunkMesh.isCollisionMesh()) {
+            // Normals:
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, 0.000f, -1.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, 0.000f, -1.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, 0.000f, -1.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.000f, 0.000f, -1.000f)));
+            // Tangents:
+            Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.000f, 0.000f, 0.000f, 1.000f)));
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
+            }
+        }
+    }
+
+    private static void createEast(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:18
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.000f, -0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, -0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, -0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 1.000f, -0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 1.000f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.333f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.667f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.667f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.667f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 1.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.667f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 1.000f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.500f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, -0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.167f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.500f, -0.167f)), location, blockScale));
         // Index:
         chunkMesh.getIndices().add(offset + 0);
         chunkMesh.getIndices().add(offset + 1);
@@ -280,49 +382,89 @@ public class StairInnerCorner implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
                 chunkMesh.getUvs().add(new Vector2f(0.667f, 1.000f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.329f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.329f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.440f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.440f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.662f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.662f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.440f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.440f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.440f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.662f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.551f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.662f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.667f));
             }
         }
     }
 
-    private static void createFrontFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+        int offset = chunkMesh.getPositions().size();
+        // # Positions:4
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.500f, -0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.500f, 0.500f)), location, blockScale));
+        // Index:
+        chunkMesh.getIndices().add(offset + 0);
+        chunkMesh.getIndices().add(offset + 1);
+        chunkMesh.getIndices().add(offset + 2);
+        chunkMesh.getIndices().add(offset + 0);
+        chunkMesh.getIndices().add(offset + 3);
+        chunkMesh.getIndices().add(offset + 1);
+        if (!chunkMesh.isCollisionMesh()) {
+            // Normals:
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.000f, 0.000f, 0.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.000f, 0.000f, 0.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.000f, 0.000f, 0.000f)));
+            chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.000f, 0.000f, 0.000f)));
+            // Tangents:
+            Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.000f, 0.000f, -1.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.000f, 0.000f, -1.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.000f, 0.000f, -1.000f, 1.000f)));
+            chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.000f, 0.000f, -1.000f, 1.000f)));
+            if (!multipleImages) {
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.000f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.000f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 1.000f));
+            } else {
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
+            }
+        }
+    }
+
+    private static void createSouth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:18
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.667f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 1.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 1.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.333f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.667f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.667f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 1.000f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.667f, -0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.667f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.000f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.667f, 0.500f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.333f, 0.167f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 1.000f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, -0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, -0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.167f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.500f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.167f, -0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.167f, 0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.500f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.167f, 0.167f, 0.500f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, -0.167f, 0.167f)), location, blockScale));
+        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.500f, -0.167f)), location, blockScale));
         // Index:
         chunkMesh.getIndices().add(offset + 0);
         chunkMesh.getIndices().add(offset + 1);
@@ -414,173 +556,26 @@ public class StairInnerCorner implements Shape {
                 chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
                 chunkMesh.getUvs().add(new Vector2f(1.000f, 1.000f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.439f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.439f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.328f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.439f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.661f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.661f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.439f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.661f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.328f));
-                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.550f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.439f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.661f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.667f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(0.667f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.333f));
+                chunkMesh.getUvs().add(new Vector2f(0.333f, 0.556f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.444f));
+                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.667f));
             }
         }
-    }
-
-    private static void createLeftFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
-        // calculate index offset, we use this to connect the triangles
-        int offset = chunkMesh.getPositions().size();
-        // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, 0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
-        // indices
-        chunkMesh.getIndices().add(offset);
-        chunkMesh.getIndices().add(offset + 1);
-        chunkMesh.getIndices().add(offset + 2);
-        chunkMesh.getIndices().add(offset + 1);
-        chunkMesh.getIndices().add(offset + 3);
-        chunkMesh.getIndices().add(offset + 2);
-
-        if (!chunkMesh.isCollisionMesh()) {
-            // normals and tangents
-            for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(rotation.mult(new Vector3f(-1.0f, 0.0f, 0.0f)));
-                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
-            }
-            // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-            }
-        }
-    }
-
-    private static void createBackFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
-        // calculate index offset, we use this to connect the triangles
-        int offset = chunkMesh.getPositions().size();
-        // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 1.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 1.0f, -0.5f)), location, blockScale));
-        // indices
-        chunkMesh.getIndices().add(offset);
-        chunkMesh.getIndices().add(offset + 1);
-        chunkMesh.getIndices().add(offset + 2);
-        chunkMesh.getIndices().add(offset + 1);
-        chunkMesh.getIndices().add(offset + 3);
-        chunkMesh.getIndices().add(offset + 2);
-
-        if (!chunkMesh.isCollisionMesh()) {
-            // normals and tangents
-            for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, 0.0f, -1.0f)));
-                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(-1.0f, 0.0f, 0.0f, 1.0f)));
-            }
-            // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-            }
-        }
-    }
-
-    private static void createBottomFace(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
-        // calculate index offset, we use this to connect the triangles
-        int offset = chunkMesh.getPositions().size();
-        // vertices
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, -0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, 0.0f, 0.5f)), location, blockScale));
-        chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, 0.0f, 0.5f)), location, blockScale));
-        // indices
-        chunkMesh.getIndices().add(offset);
-        chunkMesh.getIndices().add(offset + 1);
-        chunkMesh.getIndices().add(offset + 2);
-        chunkMesh.getIndices().add(offset + 1);
-        chunkMesh.getIndices().add(offset + 3);
-        chunkMesh.getIndices().add(offset + 2);
-
-        if (!chunkMesh.isCollisionMesh()) {
-            // normals and tangents
-            for (int i = 0; i < 4; i++) {
-                chunkMesh.getNormals().add(rotation.mult(new Vector3f(0.0f, -1.0f, 0.0f)));
-                Matrix4f rotationMatrix = rotation.toRotationMatrix(new Matrix4f());
-                chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
-            }
-            // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-            }
-        }
-    }
-
-    /**
-     * Returns the rotation around the y-axis for the given direction
-     *
-     * @param direction
-     * @return rotation in radians
-     */
-    private static float rotationFromDirection(Direction direction) {
-        switch (direction) {
-            case EAST:
-                return FastMath.HALF_PI;
-            case NORTH:
-                return FastMath.PI;
-            case WEST:
-                return -FastMath.HALF_PI;
-            default:
-                return 0;
-        }
-    }
-
-    /**
-     * Calculates the direction of a side of the stair, based on the rotation. A stair facing right, is rotated 90 degrees
-     * around the y-axis. The original left side of this wedge is now facing to the front.
-     *
-     * @param direction
-     * @return
-     */
-    private Direction getCorrectedDirection(Direction direction) {
-        Quaternion rotation = new Quaternion().fromAngleAxis(rotationFromDirection(this.direction), Vector3f.UNIT_Y);
-        Vector3f correctedDirection = rotation.mult(direction.getVector().toVector3f());
-
-        return Direction.fromVector(correctedDirection);
     }
 
 }

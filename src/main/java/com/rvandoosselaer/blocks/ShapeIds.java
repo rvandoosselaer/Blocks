@@ -74,6 +74,15 @@ public interface ShapeIds {
     String STAIRS_INVERTED_SOUTH = "stairs_inverted_south";
     String STAIRS_INVERTED_WEST = "stairs_inverted_west";
 
+    String STAIRS_INNER_CORNER_NORTH = "stairs_inner_corner_north";
+    String STAIRS_INNER_CORNER_EAST = "stairs_inner_corner_east";
+    String STAIRS_INNER_CORNER_SOUTH = "stairs_inner_corner_south";
+    String STAIRS_INNER_CORNER_WEST = "stairs_inner_corner_west";
+    String STAIRS_INVERTED_INNER_CORNER_NORTH = "stairs_inverted_inner_corner_north";
+    String STAIRS_INVERTED_INNER_CORNER_EAST = "stairs_inverted_inner_corner_east";
+    String STAIRS_INVERTED_INNER_CORNER_SOUTH = "stairs_inverted_inner_corner_south";
+    String STAIRS_INVERTED_INNER_CORNER_WEST = "stairs_inverted_inner_corner_west";
+
 //    String SLAB = "slab";
 //    String SLAB_TOP = "slab-top";
 //    String DOUBLE_SLAB = "double-slab";

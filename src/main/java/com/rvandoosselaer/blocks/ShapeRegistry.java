@@ -7,6 +7,7 @@ import com.rvandoosselaer.blocks.shapes.RoundedCube;
 import com.rvandoosselaer.blocks.shapes.Slab;
 import com.rvandoosselaer.blocks.shapes.Square;
 import com.rvandoosselaer.blocks.shapes.Stairs;
+import com.rvandoosselaer.blocks.shapes.StairsInnerCorner;
 import com.rvandoosselaer.blocks.shapes.Wedge;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -136,6 +137,15 @@ public class ShapeRegistry {
         register(ShapeIds.STAIRS_INVERTED_EAST, new Stairs(Direction.EAST, true));
         register(ShapeIds.STAIRS_INVERTED_SOUTH, new Stairs(Direction.SOUTH, true));
         register(ShapeIds.STAIRS_INVERTED_WEST, new Stairs(Direction.WEST, true));
+
+        register(ShapeIds.STAIRS_INNER_CORNER_NORTH, new StairsInnerCorner(Direction.NORTH, false));
+        register(ShapeIds.STAIRS_INNER_CORNER_EAST, new StairsInnerCorner(Direction.EAST, false));
+        register(ShapeIds.STAIRS_INNER_CORNER_SOUTH, new StairsInnerCorner(Direction.SOUTH, false));
+        register(ShapeIds.STAIRS_INNER_CORNER_WEST, new StairsInnerCorner(Direction.WEST, false));
+        register(ShapeIds.STAIRS_INVERTED_INNER_CORNER_NORTH, new StairsInnerCorner(Direction.NORTH, true));
+        register(ShapeIds.STAIRS_INVERTED_INNER_CORNER_EAST, new StairsInnerCorner(Direction.EAST, true));
+        register(ShapeIds.STAIRS_INVERTED_INNER_CORNER_SOUTH, new StairsInnerCorner(Direction.SOUTH, true));
+        register(ShapeIds.STAIRS_INVERTED_INNER_CORNER_WEST, new StairsInnerCorner(Direction.WEST, true));
 
 //        register(ShapeIds.CUBE, new Cube());
 //        register(ShapeIds.SLAB, new Slab(0, 1f / 3f));
