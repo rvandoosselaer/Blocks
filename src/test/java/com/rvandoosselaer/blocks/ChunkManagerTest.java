@@ -4,6 +4,7 @@ import com.jme3.asset.DesktopAssetManager;
 import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,6 +27,11 @@ public class ChunkManagerTest {
 
     @BeforeAll
     public static void setUp() {
+        BlocksConfig.initialize(new DesktopAssetManager(true));
+    }
+
+    @AfterEach
+    public void reset() {
         BlocksConfig.initialize(new DesktopAssetManager(true));
     }
 
