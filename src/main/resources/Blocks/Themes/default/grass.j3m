@@ -1,0 +1,19 @@
+Material grass-block : Blocks/MatDefs/LightingOverlayColor.j3md {
+
+    MaterialParameters {
+        Shininess: 0
+        UseMaterialColors: true
+        SteepParallax: true
+        ParallaxHeight: 0.05
+        Ambient: 1.0 1.0 1.0 1.0
+        Diffuse: 1.0 1.0 1.0 1.0
+        Specular: 0 0 0 1.0
+        VertexLighting: true
+        DiffuseMap: Flip Blocks/Themes/default/grass.png
+        NormalMap: Flip Blocks/Themes/default/grass-normal.png
+        ParallaxMap: Flip Blocks/Themes/default/grass-parallax.png
+        OverlayColor: 0.07603188 0.1837715 0.084361315 1.0
+        OverlayMap: Flip Blocks/Themes/default/grass-overlay.png
+    }
+
+}
