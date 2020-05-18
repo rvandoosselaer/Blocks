@@ -1,4 +1,5 @@
-Material normal-block : Common/MatDefs/Light/Lighting.j3md {
+Material normal-block : Blocks/MatDefs/LightingOverlayColor.j3md {
+
     MaterialParameters {
         Shininess: 0
         UseMaterialColors: true
@@ -9,4 +10,5 @@ Material normal-block : Common/MatDefs/Light/Lighting.j3md {
         Specular: 0 0 0 1.0
         VertexLighting: true
     }
+
 }
