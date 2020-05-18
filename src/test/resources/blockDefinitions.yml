@@ -1,0 +1,17 @@
+# Stairs - birch_planks
+- type: birch_planks
+  solid: true
+  transparent: false
+  multiTexture: false
+  shapes:
+    - stairs_north
+    - stairs_east
+    - stairs_south
+    - stairs_west
+    - stairs_inverted_north
+    - stairs_inverted_east
+    - stairs_inverted_south
+    - stairs_inverted_west
+
+# Invalid blockdefinition, will be skipped
+- type: grass

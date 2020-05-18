@@ -134,11 +134,11 @@ public class BlockRegistry {
         try {
             List<BlockDTO> blocks = objectMapper.readValue(inputStream, objectMapper.getTypeFactory().constructCollectionType(List.class, BlockDTO.class));
             if (log.isTraceEnabled()) {
-                log.trace("Loaded {} blocks from file.", blocks.size());
+                log.trace("Loaded {} blocks from inputstream.", blocks.size());
             }
             blocks.forEach(blockDTO -> register(Block.createFrom(blockDTO)));
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            log.error("Unable to read inputstream. Error: {}", e.getMessage(), e);
         }
     }
 
