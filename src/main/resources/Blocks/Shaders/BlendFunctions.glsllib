@@ -1,7 +1,20 @@
-vec3 blend_overlay(in vec3 firstColor, in vec3 secondColor) {
-    return vec3(
+vec4 blend_overlay(in vec4 firstColor, in vec4 secondColor) {
+    return vec4(
         firstColor.r < 0.5 ? (2.0 * firstColor.r * secondColor.r) : (1.0 - 2.0 * (1.0 - firstColor.r) * (1.0 - secondColor.r)),
         firstColor.g < 0.5 ? (2.0 * firstColor.g * secondColor.g) : (1.0 - 2.0 * (1.0 - firstColor.g) * (1.0 - secondColor.g)),
-        firstColor.b < 0.5 ? (2.0 * firstColor.b * secondColor.b) : (1.0 - 2.0 * (1.0 - firstColor.b) * (1.0 - secondColor.b))
+        firstColor.b < 0.5 ? (2.0 * firstColor.b * secondColor.b) : (1.0 - 2.0 * (1.0 - firstColor.b) * (1.0 - secondColor.b)),
+        firstColor.a < 0.5 ? (2.0 * firstColor.a * secondColor.a) : (1.0 - 2.0 * (1.0 - firstColor.a) * (1.0 - secondColor.a))
         );
+}
+
+vec4 blend_multiply(in vec4 firstColor, in vec4 secondColor) {
+    return firstColor * secondColor;
+}
+
+vec4 blend_screen(in vec4 firstColor, in vec4 secondColor) {
+    return 1 - (1 - firstColor) * (1 - secondColor);
+}
+
+vec4 blend_layer(in vec4 firstColor, in vec4 secondColor) {
+    return firstColor * firstColor.a + secondColor * (1.0 - firstColor.a);
 }

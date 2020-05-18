@@ -1,5 +1,6 @@
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 #import "Common/ShaderLib/MultiSample.glsllib"
+#import "Blocks/Shaders/BlendFunctions.glsllib"
 
 uniform float g_Time;
 uniform vec4 m_FadeColor;
@@ -24,11 +25,6 @@ uniform mat4 m_TextureProjMatrix;
 uniform vec3 m_CameraPosition;
 uniform float m_WaterHeight;
 uniform float m_ReflectionStrength;
-
-// an overlay function. Put the foreground color above the background color.
-vec4 layer(vec4 foreground, vec4 background) {
-    return foreground * foreground.a + background * (1.0 - foreground.a);
-}
 
 vec3 getPosition(in float depth, in vec2 uv){
     vec4 pos = vec4(uv, depth, 1.0) * 2.0 - 1.0;
@@ -116,7 +112,7 @@ void main(){
         #endif
 
         scene.a += m_ReflectionStrength;
-        scene = layer(vec4(reflection, m_ReflectionStrength), scene);
+        scene = mix(scene, vec4(reflection, 1.0), m_ReflectionStrength);
 
         // calculate the depth difference between the water and the scene (aka shore). When this is small, we are at
         // the shoreline.
@@ -126,16 +122,17 @@ void main(){
             // 0 = Shore start
             // 1 = Shore end / deep water
             // blend the shoreline color with the scene
-            vec4 color = mix(m_ShorelineColor, scene, shorelineMixFactor);
-            gl_FragColor = layer(color, scene);
+            gl_FragColor = mix(m_ShorelineColor, scene, shorelineMixFactor);
         } else {
             #ifdef FADE
                 // blend the scene with the fade color in the depth
                 vec4 color = mix(scene, m_FadeColor, depthMixFactor);
+                color = blend_overlay(color, scene);
             #else
                 vec4 color = scene;
             #endif
-            gl_FragColor = layer(color, scene);
+
+            gl_FragColor = color;
         }
 
     } else {
