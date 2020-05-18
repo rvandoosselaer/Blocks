@@ -11,6 +11,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * @author rvandoosselaer
@@ -25,6 +26,8 @@ public class LightingState extends BaseAppState {
     private Node node;
     private AmbientLight ambientLight;
     private DirectionalLight directionalLight;
+    @Setter
+    private boolean updateDirection;
 
     @Override
     protected void initialize(Application app) {
@@ -32,6 +35,9 @@ public class LightingState extends BaseAppState {
         app.getRenderManager().setSinglePassLightBatchSize(2);
 
         ambientLight = new AmbientLight(ambientLightColor);
+        if (updateDirection) {
+            setDirectionalLightDir(app.getCamera().getDirection());
+        }
         directionalLight = new DirectionalLight(directionalLightDir, directionalLightColor);
     }
 
@@ -51,6 +57,13 @@ public class LightingState extends BaseAppState {
     @Override
     protected void onDisable() {
         detachLights();
+    }
+
+    @Override
+    public void update(float tpf) {
+        if (updateDirection) {
+            setDirectionalLightDir(getApplication().getCamera().getDirection());
+        }
     }
 
     public void setAmbientLightColor(@NonNull ColorRGBA color) {
