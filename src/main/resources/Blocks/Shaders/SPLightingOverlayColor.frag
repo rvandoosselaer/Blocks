@@ -5,6 +5,7 @@
     #import "Common/ShaderLib/BlinnPhongLighting.glsllib"
     #import "Common/ShaderLib/Lighting.glsllib"
 #endif
+#import "Blocks/Shaders/BlendFunctions.glsllib"
 
 // fog - jayfella
 #ifdef USE_FOG
@@ -194,7 +195,8 @@ void main(){
     // all pixels that have an alpha value > 0 will blend with the overlay color
     #ifdef OVERLAYCOLOR
         float overlayFactor = texture2D(m_OverlayMap, newTexCoord).a;
-        diffuseColor.rgb = (1.0 - overlayFactor) * diffuseColor.rgb + overlayFactor * diffuseColor.rgb * m_OverlayColor.rgb;
+        vec3 blendedColor = blend_overlay(diffuseColor.rgb, m_OverlayColor.rgb);
+        diffuseColor.rgb = (1.0 - overlayFactor) * diffuseColor.rgb + overlayFactor * blendedColor;
     #endif
 
     #ifdef VERTEX_LIGHTING

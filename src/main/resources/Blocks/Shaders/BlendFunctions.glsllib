@@ -1,0 +1,7 @@
+vec3 blend_overlay(in vec3 firstColor, in vec3 secondColor) {
+    return vec3(
+        firstColor.r < 0.5 ? (2.0 * firstColor.r * secondColor.r) : (1.0 - 2.0 * (1.0 - firstColor.r) * (1.0 - secondColor.r)),
+        firstColor.g < 0.5 ? (2.0 * firstColor.g * secondColor.g) : (1.0 - 2.0 * (1.0 - firstColor.g) * (1.0 - secondColor.g)),
+        firstColor.b < 0.5 ? (2.0 * firstColor.b * secondColor.b) : (1.0 - 2.0 * (1.0 - firstColor.b) * (1.0 - secondColor.b))
+        );
+}
