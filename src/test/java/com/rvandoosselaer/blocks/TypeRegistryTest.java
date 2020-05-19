@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -127,6 +128,9 @@ public class TypeRegistryTest {
 
         assertEquals(w, diffuseMap.getImage().getWidth());
         assertEquals(h, diffuseMap.getImage().getHeight());
+
+        Texture overlayMap = material.getTextureParam("OverlayMap").getTextureValue();
+        assertNotNull(overlayMap);
     }
 
     @Test

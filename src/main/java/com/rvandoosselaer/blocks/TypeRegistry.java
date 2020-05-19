@@ -35,7 +35,7 @@ public class TypeRegistry {
     public static final BlocksTheme FAITHFUL_THEME = new BlocksTheme("Faithful", "Blocks/Themes/faithful/");
 
     private enum TextureType {
-        DIFFUSE, NORMAL, PARALLAX;
+        DIFFUSE, NORMAL, PARALLAX, OVERLAY;
     }
 
     private final ConcurrentMap<String, Material> registry = new ConcurrentHashMap<>();
@@ -240,6 +240,7 @@ public class TypeRegistry {
         material.setTexture("DiffuseMap", textures.getDiffuseMap());
         material.setTexture("NormalMap", textures.getNormalMap().orElse(null));
         material.setTexture("ParallaxMap", textures.getParallaxMap().orElse(null));
+        material.setTexture("OverlayMap", textures.getOverlayMap().orElse(null));
 
         return material;
     }
@@ -269,7 +270,10 @@ public class TypeRegistry {
         if (usingTheme()) {
             Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, theme);
             if (diffuseMap.isPresent()) {
-                return new TexturesWrapper(diffuseMap.get(), getTexture(type, TextureType.NORMAL, theme), getTexture(type, TextureType.PARALLAX, theme));
+                return new TexturesWrapper(diffuseMap.get(),
+                        getTexture(type, TextureType.NORMAL, theme),
+                        getTexture(type, TextureType.PARALLAX, theme),
+                        getTexture(type, TextureType.OVERLAY, theme));
             }
         }
 
@@ -277,7 +281,10 @@ public class TypeRegistry {
         if (!diffuseMap.isPresent()) {
             throw new AssetNotFoundException("Texture " + getTexturePath(type, TextureType.DIFFUSE, defaultTheme) + " not found!");
         }
-        return new TexturesWrapper(diffuseMap.get(), getTexture(type, TextureType.NORMAL, defaultTheme), getTexture(type, TextureType.PARALLAX, defaultTheme));
+        return new TexturesWrapper(diffuseMap.get(),
+                getTexture(type, TextureType.NORMAL, defaultTheme),
+                getTexture(type, TextureType.PARALLAX, defaultTheme),
+                getTexture(type, TextureType.OVERLAY, defaultTheme));
     }
 
     /**
@@ -409,6 +416,8 @@ public class TypeRegistry {
                 return type + "-normal" + fileExtension;
             case PARALLAX:
                 return type + "-parallax" + fileExtension;
+            case OVERLAY:
+                return type + "-overlay" + fileExtension;
             default:
                 return type + fileExtension;
         }
@@ -421,6 +430,7 @@ public class TypeRegistry {
         private final Texture diffuseMap;
         private final Optional<Texture> normalMap;
         private final Optional<Texture> parallaxMap;
+        private final Optional<Texture> overlayMap;
 
     }
 
