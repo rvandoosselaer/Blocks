@@ -9,9 +9,6 @@ Material water-still : Blocks/MatDefs/Fluid.j3md {
         Shininess: 96
         DiffuseMap: Flip WrapRepeat_S WrapRepeat_T Blocks/Themes/default/water.png
         NormalMap: Flip WrapRepeat_S WrapRepeat_T Blocks/Themes/default/water-normal.png
-        ParallaxMap: Flip WrapRepeat_S WrapRepeat_T Blocks/Themes/default/water-parallax.png
-        ParallaxHeight: 0.05
-        SteepParallax: true
 
         // custom
         WaveSpeed : 0
