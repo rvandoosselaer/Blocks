@@ -83,6 +83,8 @@ public class FluidFilter extends Filter {
     private float distortionSpeed = 3.0f;
     @Getter
     private boolean underwater;
+    @Getter
+    private boolean useBlendOverlay;
 
     public FluidFilter() {
         super("Fluid filter");
@@ -137,6 +139,7 @@ public class FluidFilter extends Filter {
         material.setTexture("ReflectionMap", reflectionPass.getRenderedTexture());
         material.setFloat("WaterHeight", waterHeight);
         material.setFloat("ReflectionStrength", reflectionStrength);
+        material.setBoolean("BlendOverlay", useBlendOverlay);
 
         fluidDepthBuffer = new FrameBuffer(w, h, 1);
         sceneDepthBuffer = new FrameBuffer(w, h, 1);
@@ -336,6 +339,13 @@ public class FluidFilter extends Filter {
         this.enableFading = enableFading;
         if (material != null) {
             material.setBoolean("EnableFading", enableFading);
+        }
+    }
+
+    public void setUseBlendOverlay(boolean useBlendOverlay) {
+        this.useBlendOverlay = useBlendOverlay;
+        if (material != null) {
+            material.setBoolean("BlendOverlay", useBlendOverlay);
         }
     }
 

@@ -127,7 +127,14 @@ void main(){
             #ifdef FADE
                 // blend the scene with the fade color in the depth
                 vec4 color = mix(scene, m_FadeColor, depthMixFactor);
-                color = blend_overlay(color, scene);
+
+                // blending the fade color to the scene
+                #ifdef BLEND_OVERLAY
+                    color = blend_overlay(color, scene);
+                #else
+                    color = blend_layer(color, scene);
+                #endif
+
             #else
                 vec4 color = scene;
             #endif

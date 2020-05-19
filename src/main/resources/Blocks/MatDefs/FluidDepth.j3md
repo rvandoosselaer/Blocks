@@ -54,6 +54,10 @@ MaterialDef WaterDepth Textured {
         // needed to calculate texture position
         Matrix4 TextureProjMatrix
         Vector3 CameraPosition
+
+        // blend mode to use for depth fading. By default colors are layered on top of each other, using this flag
+        // it can be switched to overlay mode
+        Boolean BlendOverlay
     }
 
     Technique {
@@ -69,6 +73,7 @@ MaterialDef WaterDepth Textured {
     	Defines {
     	    DISTORTION : UseDistortion
     	    FADE: EnableFading
+    	    BLEND_OVERLAY : BlendOverlay
     	}
     }
 

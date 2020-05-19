@@ -29,6 +29,7 @@ import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.Slider;
 import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.CursorEventControl;
 import com.simsilica.lemur.event.DragHandler;
@@ -240,27 +241,35 @@ public class FluidFilterTest extends SimpleApplication {
 
     private Container createFilterPanel() {
         Container container = new Container(new SpringGridLayout(Axis.Y, Axis.X));
+        ColorRGBA colorRGBA = ((TbtQuadBackgroundComponent) container.getBackground()).getColor();
+        colorRGBA.set(colorRGBA.r, colorRGBA.g, colorRGBA.b, 0.9f);
         Label title = container.addChild(new Label("FluidFilter", new ElementId("title")));
         DragHandler dragHandler = new DragHandler(input -> container);
         CursorEventControl.addListenersToSpatial(title, dragHandler);
 
+        container.addChild(new Label("Depth fading", new ElementId("title")));
         Container fade = container.addChild(createRow());
         Checkbox fadeCheckBox = fade.addChild(new Checkbox("Enable depth fading"));
         fadeCheckBox.setChecked(fluidFilter.isEnableFading());
         fadeCheckBox.addClickCommands(button -> fluidFilter.setEnableFading(fadeCheckBox.isChecked()));
-
         Container depthRow = container.addChild(createRow());
         depthRow.addChild(new Label("Fade depth: "));
         depthValue = depthRow.addChild(new Label(Float.toString(fluidFilter.getFadeDepth())));
         Slider depth = depthRow.addChild(createSlider(0.1f, 0, 100, fluidFilter.getFadeDepth()));
         depthReference = depth.getModel().createReference();
+        Container blendMode = container.addChild(createRow());
+        Checkbox blendModeCheckbox = blendMode.addChild(new Checkbox("Use overlay blend mode"));
+        blendModeCheckbox.setChecked(fluidFilter.isUseBlendOverlay());
+        blendModeCheckbox.addClickCommands(button -> fluidFilter.setUseBlendOverlay(blendModeCheckbox.isChecked()));
 
+        container.addChild(new Label("Shoreline", new ElementId("title")));
         Container shorelineRow = container.addChild(createRow());
         shorelineRow.addChild(new Label("Shoreline size: "));
         shorelineValue = shorelineRow.addChild(new Label(Float.toString(fluidFilter.getShorelineSize())));
         Slider shoreline = shorelineRow.addChild(createSlider(0.1f, 0, 20, fluidFilter.getShorelineSize()));
         shorelineReference = shoreline.getModel().createReference();
 
+        container.addChild(new Label("Distortion", new ElementId("title")));
         Container distortion = container.addChild(createRow());
         Checkbox distortionCheckBox = distortion.addChild(new Checkbox("Enable distortion"));
         distortionCheckBox.setChecked(fluidFilter.isDistortion());
@@ -296,8 +305,9 @@ public class FluidFilterTest extends SimpleApplication {
         Slider distSpeed = distortionSpeed.addChild(createSlider(0.1f, 0f, 10f, fluidFilter.getDistortionSpeed()));
         distSpeedReference = distSpeed.getModel().createReference();
 
+        container.addChild(new Label("Reflection", new ElementId("title")));
         Container reflectionStrength = container.addChild(createRow());
-        reflectionStrength.addChild(new Label("Reflection: "));
+        reflectionStrength.addChild(new Label("Strength: "));
         reflectionValue = reflectionStrength.addChild(new Label(Float.toString(fluidFilter.getReflectionStrength())));
         Slider reflection = reflectionStrength.addChild(createSlider(0.01f, 0, 1, fluidFilter.getReflectionStrength()));
         reflectionReference = reflection.getModel().createReference();
@@ -309,7 +319,7 @@ public class FluidFilterTest extends SimpleApplication {
         waterHeightReference = waterHeightSlider.getModel().createReference();
 
         Container reflectionTextureSize = container.addChild(createRow());
-        reflectionTextureSize.addChild(new Label("Reflection texture size: "));
+        reflectionTextureSize.addChild(new Label("Texture size: "));
         Label reflectionTextureSizeValue = reflectionTextureSize.addChild(new Label(Float.toString(fluidFilter.getReflectionMapSize())));
         Button minus = reflectionTextureSize.addChild(new Button(" - "));
         minus.addClickCommands(source -> {
@@ -328,7 +338,7 @@ public class FluidFilterTest extends SimpleApplication {
     }
 
     private Container createRow() {
-        return new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Even, FillMode.Even));
+        return new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.ForcedEven, FillMode.Even));
     }
 
     private Slider createSlider(float delta, float min, float max, float value) {
