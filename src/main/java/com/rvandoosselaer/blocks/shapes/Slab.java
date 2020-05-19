@@ -99,15 +99,15 @@ public class Slab implements Shape {
             }
             // uvs
             if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
             }
         }
     }
@@ -137,15 +137,15 @@ public class Slab implements Shape {
             }
             // uvs
             if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
             }
         }
     }
@@ -175,15 +175,15 @@ public class Slab implements Shape {
             }
             // uvs
             if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
             }
         }
     }
@@ -213,15 +213,15 @@ public class Slab implements Shape {
             }
             // uvs
             if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
             } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
+                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
             }
         }
     }
