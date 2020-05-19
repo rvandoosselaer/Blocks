@@ -88,6 +88,17 @@ public class ShapeRegistry {
         registerSquares();
 
         registerStairs();
+
+        registerPlates();
+    }
+
+    private void registerPlates() {
+        register(ShapeIds.PLATE, new Slab(0, 0.1f, Direction.UP));
+        register(ShapeIds.PLATE_DOWN, new Slab(0, 0.1f, Direction.DOWN));
+        register(ShapeIds.PLATE_NORTH, new Slab(0, 0.1f, Direction.NORTH));
+        register(ShapeIds.PLATE_EAST, new Slab(0, 0.1f, Direction.EAST));
+        register(ShapeIds.PLATE_SOUTH, new Slab(0, 0.1f, Direction.SOUTH));
+        register(ShapeIds.PLATE_WEST, new Slab(0, 0.1f, Direction.WEST));
     }
 
     private void registerStairs() {

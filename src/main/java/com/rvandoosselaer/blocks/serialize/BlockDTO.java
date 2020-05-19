@@ -1,5 +1,6 @@
 package com.rvandoosselaer.blocks.serialize;
 
+import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.ShapeIds;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class BlockDTO {
 
     public String getName() {
         if (name == null) {
-            return ShapeIds.CUBE.equals(shape) ? type : type + "-" + shape;
+            return BlockIds.getName(type, shape);
         }
         return name;
     }

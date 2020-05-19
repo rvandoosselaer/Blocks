@@ -3,7 +3,7 @@ package com.rvandoosselaer.blocks.serialize;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.rvandoosselaer.blocks.Block;
-import com.rvandoosselaer.blocks.ShapeIds;
+import com.rvandoosselaer.blocks.BlockIds;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +27,7 @@ public class BlockFactory {
         Collection<Block> blocks = new HashSet<>();
         for (String shape : blockDefinition.getShapes()) {
             Block block = Block.builder()
-                    .name(BlockFactory.getName(shape, blockDefinition.getType()))
+                    .name(BlockIds.getName(blockDefinition.getType(), shape))
                     .type(blockDefinition.getType())
                     .shape(shape)
                     .solid(blockDefinition.isSolid())
@@ -64,10 +64,6 @@ public class BlockFactory {
         }
 
         return Collections.emptySet();
-    }
-
-    private static String getName(String shape, String type) {
-        return ShapeIds.CUBE.equals(shape) ? type : type + "-" + shape;
     }
 
 }
