@@ -13,10 +13,10 @@ vec4 blend_multiply(in vec4 firstColor, in vec4 secondColor) {
 
 vec4 blend_screen(in vec4 firstColor, in vec4 secondColor) {
     return vec4(
-        1 - (1 - firstColor.r) * (1 - secondColor.r),
-        1 - (1 - firstColor.g) * (1 - secondColor.g),
-        1 - (1 - firstColor.b) * (1 - secondColor.b),
-        1 - (1 - firstColor.a) * (1 - secondColor.a)
+        1.0 - (1.0 - firstColor.r) * (1.0 - secondColor.r),
+        1.0 - (1.0 - firstColor.g) * (1.0 - secondColor.g),
+        1.0 - (1.0 - firstColor.b) * (1.0 - secondColor.b),
+        1.0 - (1.0 - firstColor.a) * (1.0 - secondColor.a)
     );
 }
 
