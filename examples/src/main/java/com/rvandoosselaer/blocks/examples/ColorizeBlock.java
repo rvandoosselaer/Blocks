@@ -10,7 +10,6 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.texture.Texture;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
@@ -69,20 +68,7 @@ public class ColorizeBlock extends SimpleApplication implements ActionListener {
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
-        Texture grassTexture = TypeRegistry.combineTextures(
-                assetManager.loadTexture("/test-overlay/grass_up.png"),
-                assetManager.loadTexture("/test-overlay/grass_side.png"),
-                assetManager.loadTexture("/test-overlay/grass_down.png")
-        );
-        Texture grassOverlayTexture = TypeRegistry.combineTextures(
-                assetManager.loadTexture("/test-overlay/full_overlay.png"),
-                assetManager.loadTexture("/test-overlay/grass_side-overlay.png"),
-                assetManager.loadTexture("/test-overlay/no_overlay.png")
-        );
         grassMaterial = typeRegistry.get(TypeIds.GRASS);
-        grassMaterial.setTexture("DiffuseMap", grassTexture);
-        grassMaterial.setTexture("OverlayMap", grassOverlayTexture);
-        grassMaterial.setColor("OverlayColor", ColorRGBA.randomColor());
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(new Vec3i(0, 0, 0), blockRegistry.get(BlockIds.GRASS));
