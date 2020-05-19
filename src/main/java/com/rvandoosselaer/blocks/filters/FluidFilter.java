@@ -72,9 +72,9 @@ public class FluidFilter extends Filter {
     @Getter
     private boolean distortion = true;
     @Getter
-    private float distortionStrengthX = 0.0015f;
+    private float distortionStrengthX = 0.0007f;
     @Getter
-    private float distortionStrengthY = 0.001f;
+    private float distortionStrengthY = 0.0005f;
     @Getter
     private float distortionAmplitudeX = 25f;
     @Getter

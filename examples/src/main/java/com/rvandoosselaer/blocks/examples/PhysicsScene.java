@@ -21,8 +21,10 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
+import com.jme3.util.SkyFactory;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
@@ -57,7 +59,7 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
         LogAdapter.initialize();
 
         PhysicsScene physicsScene = new PhysicsScene();
-        AppSettings settings = new AppSettings(true);
+        AppSettings settings = new AppSettings(false);
         settings.setRenderer(AppSettings.LWJGL_OPENGL32);
         physicsScene.setSettings(settings);
         physicsScene.start();
@@ -119,6 +121,9 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
 
         rootNode.attachChild(chunk.getNode());
 
+        Spatial sky = SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", SkyFactory.EnvMapType.CubeMap);
+        rootNode.attachChild(sky);
+
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
         cam.setLocation(new Vector3f(1, 10, 10));
@@ -139,6 +144,8 @@ public class PhysicsScene extends SimpleApplication implements ActionListener {
         PostProcessingState postProcessingState = getStateManager().getState(PostProcessingState.class);
         if (postProcessingState.getFilterPostProcessor() != null && postProcessingState.getFilterPostProcessor().getFilter(FluidFilter.class) == null) {
             FluidFilter fluidFilter = new FluidFilter();
+            fluidFilter.setWaterHeight(3);
+            fluidFilter.setFadeDepth(10);
             fluidFilter.addFluidGeometry((Geometry) chunk.getNode().getChild(TypeIds.WATER));
             postProcessingState.getFilterPostProcessor().addFilter(fluidFilter);
         }

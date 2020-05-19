@@ -12,6 +12,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.util.SkyFactory;
 import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlockIds;
 import com.rvandoosselaer.blocks.BlocksConfig;
@@ -81,6 +83,9 @@ public class ProceduralTerrain extends SimpleApplication {
         stateManager.getState(ChunkPagerState.class).getChunkPager().addListener(new PagerListenerOutput());
 
         hideCursor();
+
+        Spatial sky = SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", SkyFactory.EnvMapType.CubeMap);
+        rootNode.attachChild(sky);
 
         viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         flyCam.setMoveSpeed(10f);
