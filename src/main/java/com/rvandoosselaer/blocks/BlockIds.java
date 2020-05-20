@@ -54,7 +54,7 @@ public interface BlockIds {
     String WINDOW = getName(TypeIds.WINDOW, ShapeIds.CUBE);
 
     static String getName(String type, String shape) {
-        return type + "-" + shape;
+        return ShapeIds.CUBE.equals(shape) ? type : type + "-" + shape;
     }
 
 }
