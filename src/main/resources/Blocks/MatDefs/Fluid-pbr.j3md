@@ -135,9 +135,6 @@ MaterialDef PBR Lighting {
         // texture scroll speed
         Float TextureScrollSpeedX
         Float TextureScrollSpeedY
-
-        // offset to the y-coordinate
-        Float OffsetY
     }
 
     Technique {

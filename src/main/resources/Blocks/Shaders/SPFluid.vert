@@ -24,7 +24,6 @@ uniform float m_WaveSize;
 uniform float m_TextureScrollSpeedX;
 uniform float m_TextureScrollSpeedY;
 varying vec2 texCoordAni;
-uniform float m_OffsetY;
 // end
 
 uniform vec4 m_Ambient;
@@ -104,13 +103,6 @@ void main(){
    // adapt vertices position to simulate waves
    //
    modelSpacePos.y += cos(modelSpacePos.z * m_WaveSize + (m_WaveSpeed * g_Time)) * m_WaveHeight * sin(modelSpacePos.x * m_WaveSize + (m_WaveSpeed * g_Time));
-   //
-
-   //
-   // add an offset to the y-coordinate, to have a 'better' fluid effect. The block itself should behave like a cube,
-   // it's only a visual aid. That's why it's done in the shader.
-   //
-   modelSpacePos.y += m_OffsetY;
    //
 
    //
