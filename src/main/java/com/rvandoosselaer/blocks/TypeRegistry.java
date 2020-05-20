@@ -184,25 +184,29 @@ public class TypeRegistry {
      * @return the material of the block type
      */
     private Material getMaterial(String name) {
-        // don't use .orElse() ! The parameter in .orElse() is evaluated even if the optional is present
-        return loadMaterial(name).orElseGet(() -> setTextures(name, load(DEFAULT_BLOCK_MATERIAL)));
-    }
-
-    /**
-     * Retrieves the material for the block type in the current theme. When a theme isn't specified, the default theme
-     * is used.
-     *
-     * @param name block type (grass, rock, ...)
-     * @return an optional of the Material
-     */
-    private Optional<Material> loadMaterial(String name) {
         if (usingTheme()) {
-            // when using a theme, fallback to loading the material in the default theme when not found
-            Optional<Material> optionalMaterial = loadMaterial(name, theme);
-            return optionalMaterial.isPresent() ? optionalMaterial : loadMaterial(name, defaultTheme);
+            Optional<Material> optionalThemeMaterial = loadMaterial(name, theme);
+            if (optionalThemeMaterial.isPresent()) {
+                return optionalThemeMaterial.get();
+            }
+
+            Optional<TexturesWrapper> optionalThemeTextures = getTextures(name, theme);
+            if (optionalThemeTextures.isPresent()) {
+                return setTextures(optionalThemeTextures.get(), load(DEFAULT_BLOCK_MATERIAL));
+            }
         }
 
-        return loadMaterial(name, defaultTheme);
+        Optional<Material> optionalDefaultThemeMaterial = loadMaterial(name, defaultTheme);
+        if (optionalDefaultThemeMaterial.isPresent()) {
+            return optionalDefaultThemeMaterial.get();
+        }
+
+        Optional<TexturesWrapper> optionalDefaultThemeTextures = getTextures(name, defaultTheme);
+        if (!optionalDefaultThemeTextures.isPresent()) {
+            throw new AssetNotFoundException("Texture " + getTexturePath(name, TextureType.DIFFUSE, defaultTheme) + " not found!");
+        }
+
+        return setTextures(optionalDefaultThemeTextures.get(), load(DEFAULT_BLOCK_MATERIAL));
     }
 
     /**
@@ -229,14 +233,13 @@ public class TypeRegistry {
     }
 
     /**
-     * Set the textures on the material based on the current theme or default theme.
+     * Set the textures in the TexturesWrapper on the material.
      *
-     * @param type     block type
-     * @param material associated with the block type
-     * @return material with updated textures
+     * @param textures
+     * @param material
+     * @return the material with the textures applied
      */
-    private Material setTextures(String type, Material material) {
-        TexturesWrapper textures = getTexturesOrDefault(type);
+    private Material setTextures(TexturesWrapper textures, Material material) {
         material.setTexture("DiffuseMap", textures.getDiffuseMap());
         material.setTexture("NormalMap", textures.getNormalMap().orElse(null));
         material.setTexture("ParallaxMap", textures.getParallaxMap().orElse(null));
@@ -260,31 +263,20 @@ public class TypeRegistry {
     }
 
     /**
-     * Retrieves the textures for the block type in the current theme. When a theme isn't specified, the default theme
-     * is used.
+     * Retrieves the textures for the block type in the given theme.
      *
-     * @param type block type (grass, rock, ...)
-     * @return a TextureWrapper object holding the different textures of the block
+     * @param type
+     * @param theme
+     * @return an optional of the textures
      */
-    private TexturesWrapper getTexturesOrDefault(String type) {
-        if (usingTheme()) {
-            Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, theme);
-            if (diffuseMap.isPresent()) {
-                return new TexturesWrapper(diffuseMap.get(),
-                        getTexture(type, TextureType.NORMAL, theme),
-                        getTexture(type, TextureType.PARALLAX, theme),
-                        getTexture(type, TextureType.OVERLAY, theme));
-            }
-        }
+    private Optional<TexturesWrapper> getTextures(String type, BlocksTheme theme) {
+        Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, theme);
+        // map the value if present, or return an empty optional
+        return diffuseMap.map(texture -> new TexturesWrapper(texture,
+                getTexture(type, TextureType.NORMAL, theme),
+                getTexture(type, TextureType.PARALLAX, theme),
+                getTexture(type, TextureType.OVERLAY, theme)));
 
-        Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, defaultTheme);
-        if (!diffuseMap.isPresent()) {
-            throw new AssetNotFoundException("Texture " + getTexturePath(type, TextureType.DIFFUSE, defaultTheme) + " not found!");
-        }
-        return new TexturesWrapper(diffuseMap.get(),
-                getTexture(type, TextureType.NORMAL, defaultTheme),
-                getTexture(type, TextureType.PARALLAX, defaultTheme),
-                getTexture(type, TextureType.OVERLAY, defaultTheme));
     }
 
     /**
