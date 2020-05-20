@@ -85,9 +85,9 @@ public interface Shape {
      * Calculates the new direction of a face, based on the rotation of the shape. eg. The north face of a shape that is
      * rotated, is not facing north anymore.
      *
-     * @param faceDirection  the direction of the face
+     * @param faceDirection  the original direction of the face
      * @param shapeDirection the direction of the shape
-     * @return the new face direction
+     * @return the new direction of the face based on the direction of the shape
      */
     static Direction getFaceDirection(Direction faceDirection, Direction shapeDirection) {
         Quaternion shapeRotation = getRotationFromDirection(shapeDirection);
