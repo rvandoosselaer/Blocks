@@ -6,6 +6,7 @@ import com.rvandoosselaer.blocks.shapes.Pyramid;
 import com.rvandoosselaer.blocks.shapes.RoundedCube;
 import com.rvandoosselaer.blocks.shapes.Slab;
 import com.rvandoosselaer.blocks.shapes.Square;
+import com.rvandoosselaer.blocks.shapes.SquareCuboid;
 import com.rvandoosselaer.blocks.shapes.Stairs;
 import com.rvandoosselaer.blocks.shapes.StairsInnerCorner;
 import com.rvandoosselaer.blocks.shapes.StairsOuterCorner;
@@ -90,6 +91,12 @@ public class ShapeRegistry {
         registerStairs();
 
         registerPlates();
+
+        registerCuboids();
+    }
+
+    private void registerCuboids() {
+        register(ShapeIds.SQUARE_CUBOID_NINE_TENTHS, new SquareCuboid(0, 0.9f));
     }
 
     private void registerPlates() {

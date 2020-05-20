@@ -119,4 +119,11 @@ public interface ShapeIds {
             STAIRS_INVERTED_OUTER_CORNER_NORTH, STAIRS_INVERTED_OUTER_CORNER_EAST, STAIRS_INVERTED_OUTER_CORNER_SOUTH,
             STAIRS_INVERTED_OUTER_CORNER_WEST};
 
+    /**
+     * This is a special shape. Although it is not a cube, it is considered as a cube in the visible face check
+     * algorithm of a chunk. Blocks with this shape that are next to each other will not render the shared face between
+     * them, even if the 'shared' faces are not connected.
+     */
+    String SQUARE_CUBOID_NINE_TENTHS = "square_cuboid_nine_tenths_up";
+
 }

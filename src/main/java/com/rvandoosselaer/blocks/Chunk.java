@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
@@ -396,10 +398,22 @@ public class Chunk {
      * The default behaviour states that the face of a block is visible when:
      * - the neighbour block is not set
      * - the neighbour block is transparent and the asking block is not transparent
-     * - neighbour block is not a cube
      * - the neighbour block are leaves and the asking block are also leaves
+     * - neighbour block is not a cube
      */
     private static class DefaultFaceVisibleFunction implements BiFunction<Block, Block, Boolean> {
+
+        private final Set<String> cubeShapes = new HashSet<>();
+
+        public DefaultFaceVisibleFunction() {
+            cubeShapes.add(ShapeIds.CUBE);
+            cubeShapes.add(ShapeIds.CUBE_DOWN);
+            cubeShapes.add(ShapeIds.CUBE_NORTH);
+            cubeShapes.add(ShapeIds.CUBE_EAST);
+            cubeShapes.add(ShapeIds.CUBE_SOUTH);
+            cubeShapes.add(ShapeIds.CUBE_WEST);
+            cubeShapes.add(ShapeIds.SQUARE_CUBOID_NINE_TENTHS);
+        }
 
         @Override
         public Boolean apply(Block block, Block neighbour) {
@@ -409,10 +423,10 @@ public class Chunk {
             if (neighbour.isTransparent() && !block.isTransparent()) {
                 return true;
             }
-            if (!ShapeIds.CUBE.equals(neighbour.getShape())) {
+            if (block.getName().contains("leaves") && neighbour.getName().contains("leaves")) {
                 return true;
             }
-            if (block.getName().contains("leaves") && neighbour.getName().contains("leaves")) {
+            if (!cubeShapes.contains(neighbour.getShape())) {
                 return true;
             }
             return false;
