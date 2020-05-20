@@ -14,7 +14,6 @@ Material water-still : Blocks/MatDefs/Fluid.j3md {
         WaveSize : 0
         TextureScrollSpeedX : 0
         TextureScrollSpeedY : 0
-        OffsetY: -0.1
     }
 
     AdditionalRenderState {

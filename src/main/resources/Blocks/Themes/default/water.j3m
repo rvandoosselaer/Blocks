@@ -16,7 +16,6 @@ Material water : Blocks/MatDefs/Fluid.j3md {
         WaveSize : 10
         TextureScrollSpeedX : 0.05
         TextureScrollSpeedY : 0.01
-        OffsetY: -0.1
     }
 
     AdditionalRenderState {
