@@ -3,8 +3,8 @@ Material water : Blocks/MatDefs/Fluid.j3md {
     MaterialParameters {
         VertexLighting: false
         UseMaterialColors: true
-        Ambient: 1 1 1 1.0
-        Diffuse: 1 1 1 1.0
+        Ambient: 0.145 0.421 0.548 1.0
+        Diffuse: 0.145 0.421 0.548 1.0
         Specular: 0.3 0.3 0.3 1.0
         Shininess: 96
         DiffuseMap: Flip WrapRepeat_S WrapRepeat_T Blocks/Themes/default/water.png
