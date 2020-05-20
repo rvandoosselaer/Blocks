@@ -41,22 +41,22 @@ public class Cube implements Shape {
         // get the rotation of the shape based on the direction
         Quaternion rotation = Shape.getRotationFromDirection(direction);
 
-        if (chunk.isFaceVisible(location, Direction.UP)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.UP, direction))) {
             createUp(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.DOWN)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
             createDown(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.WEST)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
             createWest(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.EAST)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
             createEast(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.SOUTH)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.SOUTH, direction))) {
             createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Direction.NORTH)) {
+        if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
             createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
         }
     }
