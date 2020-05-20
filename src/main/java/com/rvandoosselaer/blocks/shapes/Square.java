@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * A shape implementation for a plane square in a given direction. The default square has a direction UP.
+ * A shape implementation for a square plane in a given direction. The default square plane has a direction UP.
  *
  * @author rvandoosselaer
  */
