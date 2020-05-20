@@ -96,4 +96,19 @@ public interface Shape {
         return Direction.fromVector(newFaceDirection);
     }
 
+    /**
+     * Calculates the new yaw direction (rotation around the y-axis) of a face, based on the yaw rotation of the shape.
+     * This should be used for shapes that have a fixed upwards position.
+     *
+     * @param faceDirection  the original direction of the face
+     * @param shapeDirection the direction of the shape
+     * @return the new direction of the face based on the direction of the shape
+     */
+    static Direction getYawFaceDirection(Direction faceDirection, Direction shapeDirection) {
+        Quaternion shapeRotation = getYawFromDirection(shapeDirection);
+        Vector3f newFaceDirection = shapeRotation.mult(faceDirection.getVector().toVector3f());
+
+        return Direction.fromVector(newFaceDirection);
+    }
+
 }
