@@ -4,6 +4,16 @@ package com.rvandoosselaer.blocks;
  * Contains all the keys of the default cube shape blocks that are registered in the {@link BlockRegistry}. Use these
  * keys to retrieve the blocks from the {@link BlockRegistry#get(String)}. For non-default shapes, use
  * the {@link #getName(String type, String shape)} method to get the name (id) of the block.
+ * The convention is that the name of the block is a concatenation of the type and shape with a dash or hyphen in
+ * between. When the shape of the block is the default shape (ShapeIds.CUBE) the shape can be left out in the name.
+ *
+ * Some examples:
+ * - block (type: grass, shape: cube)
+ *   name: grass
+ * - block (type: dirt, shape: cube_west)
+ *   name: dirt-cube_west
+ * - block (type: mossy_cobblestone, shape: stairs_inverted_inner_corner_east)
+ *   name: mossy_cobblestone-stairs_inverted_inner_corner_east
  *
  * @author: rvandoosselaer
  */
@@ -11,47 +21,47 @@ public interface BlockIds {
 
     String NONE = "";
     
-    String BIRCH_LOG = getName(TypeIds.BIRCH_LOG, ShapeIds.CUBE);
-    String BIRCH_PLANKS = getName(TypeIds.BIRCH_PLANKS, ShapeIds.CUBE);
-    String BIRCH_LEAVES = getName(TypeIds.BIRCH_LEAVES, ShapeIds.CUBE);
+    String BIRCH_LOG = TypeIds.BIRCH_LOG;
+    String BIRCH_PLANKS = TypeIds.BIRCH_PLANKS;
+    String BIRCH_LEAVES = TypeIds.BIRCH_LEAVES;
     
-    String BRICKS = getName(TypeIds.BRICKS, ShapeIds.CUBE);
+    String BRICKS = TypeIds.BRICKS;
     
-    String COBBLESTONE = getName(TypeIds.COBBLESTONE, ShapeIds.CUBE);
-    String MOSSY_COBBLESTONE = getName(TypeIds.MOSSY_COBBLESTONE, ShapeIds.CUBE);
+    String COBBLESTONE = TypeIds.COBBLESTONE;
+    String MOSSY_COBBLESTONE = TypeIds.MOSSY_COBBLESTONE;
     
-    String DIRT = getName(TypeIds.DIRT, ShapeIds.CUBE);
+    String DIRT = TypeIds.DIRT;
     
-    String GRAVEL = getName(TypeIds.GRAVEL, ShapeIds.CUBE);
+    String GRAVEL = TypeIds.GRAVEL;
     
-    String GRASS = getName(TypeIds.GRASS, ShapeIds.CUBE);
-    String GRASS_SNOW = getName(TypeIds.GRASS_SNOW, ShapeIds.CUBE);
+    String GRASS = TypeIds.GRASS;
+    String GRASS_SNOW = TypeIds.GRASS_SNOW;
 
-    String PALM_TREE_LOG = getName(TypeIds.PALM_TREE_LOG, ShapeIds.CUBE);
-    String PALM_TREE_PLANKS = getName(TypeIds.PALM_TREE_PLANKS, ShapeIds.CUBE);
-    String PALM_TREE_LEAVES = getName(TypeIds.PALM_TREE_LEAVES, ShapeIds.CUBE);
+    String PALM_TREE_LOG = TypeIds.PALM_TREE_LOG;
+    String PALM_TREE_PLANKS = TypeIds.PALM_TREE_PLANKS;
+    String PALM_TREE_LEAVES = TypeIds.PALM_TREE_LEAVES;
 
-    String ROCK = getName(TypeIds.ROCK, ShapeIds.CUBE);
+    String ROCK = TypeIds.ROCK;
 
-    String OAK_LOG = getName(TypeIds.OAK_LOG, ShapeIds.CUBE);
-    String OAK_PLANKS = getName(TypeIds.OAK_PLANKS, ShapeIds.CUBE);
-    String OAK_LEAVES = getName(TypeIds.OAK_LEAVES, ShapeIds.CUBE);
+    String OAK_LOG = TypeIds.OAK_LOG;
+    String OAK_PLANKS = TypeIds.OAK_PLANKS;
+    String OAK_LEAVES = TypeIds.OAK_LEAVES;
 
-    String SAND = getName(TypeIds.SAND, ShapeIds.CUBE);
+    String SAND = TypeIds.SAND;
     
-    String SNOW = getName(TypeIds.SNOW, ShapeIds.CUBE);
+    String SNOW = TypeIds.SNOW;
 
-    String SPRUCE_LOG = getName(TypeIds.SPRUCE_LOG, ShapeIds.CUBE);
-    String SPRUCE_PLANKS = getName(TypeIds.SPRUCE_PLANKS, ShapeIds.CUBE);
-    String SPRUCE_LEAVES = getName(TypeIds.SPRUCE_LEAVES, ShapeIds.CUBE);
+    String SPRUCE_LOG = TypeIds.SPRUCE_LOG;
+    String SPRUCE_PLANKS = TypeIds.SPRUCE_PLANKS;
+    String SPRUCE_LEAVES = TypeIds.SPRUCE_LEAVES;
 
-    String STONE_BRICKS = getName(TypeIds.STONE_BRICKS, ShapeIds.CUBE);
-    String MOSSY_STONE_BRICKS = getName(TypeIds.MOSSY_STONE_BRICKS, ShapeIds.CUBE);
+    String STONE_BRICKS = TypeIds.STONE_BRICKS;
+    String MOSSY_STONE_BRICKS = TypeIds.MOSSY_STONE_BRICKS;
 
-    String WATER = getName(TypeIds.WATER, ShapeIds.CUBE);
-    String WATER_STILL = getName(TypeIds.WATER_STILL, ShapeIds.CUBE);
+    String WATER = TypeIds.WATER;
+    String WATER_STILL = TypeIds.WATER_STILL;
 
-    String WINDOW = getName(TypeIds.WINDOW, ShapeIds.CUBE);
+    String WINDOW = TypeIds.WINDOW;
 
     static String getName(String type, String shape) {
         return ShapeIds.CUBE.equals(shape) ? type : type + "-" + shape;

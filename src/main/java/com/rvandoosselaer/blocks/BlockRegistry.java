@@ -131,8 +131,8 @@ public class BlockRegistry {
     }
 
     private void registerWaterBlocks() {
-        Block water = new Block(BlockIds.getName(TypeIds.WATER, ShapeIds.CUBE), ShapeIds.CUBE, TypeIds.WATER, false, true, false);
-        Block waterStill = new Block(BlockIds.getName(TypeIds.WATER_STILL, ShapeIds.CUBE), ShapeIds.CUBE, TypeIds.WATER_STILL, false, true, false);
+        Block water = new Block(BlockIds.WATER, ShapeIds.SQUARE_CUBOID_NINE_TENTHS, TypeIds.WATER, false, true, false);
+        Block waterStill = new Block(BlockIds.WATER_STILL, ShapeIds.SQUARE_CUBOID_NINE_TENTHS, TypeIds.WATER_STILL, false, true, false);
         register(water, waterStill);
     }
 
