@@ -50,16 +50,16 @@ public class Wedge implements Shape {
         boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
 
         createSouth(location, chunkMesh, rotation, blockScale, multipleImages);
-        if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(Direction.WEST, direction))) {
+        if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(upsideDown ? Direction.EAST : Direction.WEST, direction))) {
             createWest(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(Direction.EAST, direction))) {
+        if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(upsideDown ? Direction.WEST : Direction.EAST, direction))) {
             createEast(location, chunkMesh, rotation, blockScale, multipleImages);
         }
         if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(Direction.NORTH, direction))) {
             createNorth(location, chunkMesh, rotation, blockScale, multipleImages);
         }
-        if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(Direction.DOWN, direction))) {
+        if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(upsideDown ? Direction.UP : Direction.DOWN, direction))) {
             createDown(location, chunkMesh, rotation, blockScale, multipleImages);
         }
     }
