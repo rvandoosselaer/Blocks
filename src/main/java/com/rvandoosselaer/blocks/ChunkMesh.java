@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class ChunkMesh {
         for (Vector3f vec : list) {
             buf.put(vec.x).put(vec.y).put(vec.z);
         }
-        buf.flip();
+        flipBuffer(buf);
         return buf;
     }
 
@@ -82,7 +83,7 @@ public class ChunkMesh {
         for (Vector2f vec : list) {
             buf.put(vec.x).put(vec.y);
         }
-        buf.flip();
+        flipBuffer(buf);
         return buf;
     }
 
@@ -91,7 +92,7 @@ public class ChunkMesh {
         for (int i : list) {
             buf.put(i);
         }
-        buf.flip();
+        flipBuffer(buf);
         return buf;
     }
 
@@ -100,8 +101,15 @@ public class ChunkMesh {
         for (Vector4f vec : list) {
             buf.put(vec.x).put(vec.y).put(vec.z).put(vec.w);
         }
-        buf.flip();
+        flipBuffer(buf);
         return buf;
+    }
+
+    private static void flipBuffer(Buffer buffer) {
+        // Since JDK 9, ByteBuffer class overrides some methods and their return type in the Buffer class. To
+        // ensure compatibility with JDK 8, calling the 'flipBuffer' method forces using the
+        // JDK 8 Buffer's methods signature, and avoids explicit casts.
+        buffer.flip();
     }
 
 }
