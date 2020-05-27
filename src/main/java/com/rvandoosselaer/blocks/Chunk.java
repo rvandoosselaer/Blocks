@@ -48,17 +48,15 @@ public class Chunk {
     @Setter
     private ChunkResolver chunkResolver;
 
-    private Chunk() {
+    public Chunk(@NonNull Vec3i location) {
+        setLocation(location);
+        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
+        setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
+        update();
     }
 
     public static Chunk createAt(@NonNull Vec3i location) {
-        Chunk chunk = new Chunk();
-        chunk.setLocation(location);
-        Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
-        chunk.setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
-        chunk.update();
-
-        return chunk;
+        return new Chunk(location);
     }
 
     /**
