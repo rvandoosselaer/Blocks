@@ -41,12 +41,12 @@ Blocks is build with modularity and reuse in mind. If a part of the framework do
 The lifecycle of the Blocks framework is managed by AppState objects. This way the Blocks framework can easily and safely be plugged into the StateManager of jMonkeyEngine.
 
 ## Documentation
-General documentation can be found on the [wiki](https://github.com/rvandoosselaer/Blocks/wiki). The javadoc of the latest stable version can be found at the [gh-pages.](https://rvandoosselaer.github.io/Blocks/1.5.0/javadoc/)
+General documentation can be found on the [wiki](https://github.com/rvandoosselaer/Blocks/wiki). The javadoc of the latest stable version can be found at the [gh-pages.](https://rvandoosselaer.github.io/Blocks/1.5.1/javadoc/)
 Documentation can only take you so far, so make sure to take a look at the different [examples](https://github.com/rvandoosselaer/Blocks/tree/master/examples/src/main/java/com/rvandoosselaer/blocks/examples).
 
 ## Contributing
 If you have a bug or an idea, you can create a ticket for it [here.](https://github.com/rvandoosselaer/Blocks/issues)
-See the [CONTRIBUTING](CONTRIBUTING.md) file for details.
+See the [CONTRIBUTING](CONTRIBUTING.md) file for more details.
 
 ## License
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details
