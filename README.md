@@ -45,7 +45,7 @@ General documentation can be found on the [wiki](https://github.com/rvandoossela
 Documentation can only take you so far, so make sure to take a look at the different [examples](https://github.com/rvandoosselaer/Blocks/tree/master/examples/src/main/java/com/rvandoosselaer/blocks/examples).
 
 ## Questions?
-Make sure to check out the [FAQ](https://github.com/rvandoosselaer/Blocks/wiki/FAQ) page on the wiki. There is also a [Blocks thread](https://hub.jmonkeyengine.org/t/blocks/42465) on the jMonkeyEngine hub forum. Or you can just create your own.
+Make sure to check out the [FAQ](https://github.com/rvandoosselaer/Blocks/wiki/FAQ) page on the wiki. There is also a [Blocks topic](https://hub.jmonkeyengine.org/t/blocks/42465) on the jMonkeyEngine hub forum. Or just create your own topic.
 
 ## Contributing
 If you have a bug or an idea, you can create a ticket for it [here.](https://github.com/rvandoosselaer/Blocks/issues)
