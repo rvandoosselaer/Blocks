@@ -44,7 +44,7 @@ The lifecycle of the Blocks framework is managed by AppState objects. This way t
 General documentation can be found on the [wiki](https://github.com/rvandoosselaer/Blocks/wiki). The javadoc of the latest stable version can be found at the [gh-pages.](https://rvandoosselaer.github.io/Blocks/1.5.1/javadoc/)
 Documentation can only take you so far, so make sure to take a look at the different [examples](https://github.com/rvandoosselaer/Blocks/tree/master/examples/src/main/java/com/rvandoosselaer/blocks/examples).
 
-## Questions?
+## Getting help
 Make sure to check out the [FAQ](https://github.com/rvandoosselaer/Blocks/wiki/FAQ) page on the wiki. There is also a [Blocks topic](https://hub.jmonkeyengine.org/t/blocks/42465) on the jMonkeyEngine hub forum. Or just create your own topic.
 
 ## Contributing
