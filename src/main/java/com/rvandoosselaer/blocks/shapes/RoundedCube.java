@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * A shape implementation for a cube. Only 4 vertices are used per face, 2 vertices are shared. A face is only added
- * to the resulting mesh if the face is visible. eg. When there is a block above this block, the top face will not be
- * added to the mesh.
- * The default cube has a Direction.UP.
+ * A shape implementation for a rounded cube. The default rounded cube has a Direction.UP.
  *
  * @author rvandoosselaer
  */
