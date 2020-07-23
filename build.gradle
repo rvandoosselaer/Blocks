@@ -21,7 +21,7 @@ ext {
     caffeineVersion = "[2.8,)"
     protobufVersion = "[3.10,)"
     guavaVersion = "[28,)"
-    minieVersion = "[1.7,)"
+    minieVersion = "[2.0,)"
     jacksonVersion = "[2.11,)"
 }
 
