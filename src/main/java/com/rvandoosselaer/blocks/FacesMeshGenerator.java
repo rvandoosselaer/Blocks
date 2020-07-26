@@ -9,7 +9,6 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.util.mikktspace.MikkTSpaceImpl;
 import com.jme3.util.mikktspace.MikktspaceTangentGenerator;
 import com.simsilica.mathd.Vec3i;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,15 +27,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @ToString(onlyExplicitlyIncluded = true)
-@RequiredArgsConstructor
 public class FacesMeshGenerator implements ChunkMeshGenerator {
-
-    private final ShapeRegistry shapeRegistry;
-    private final TypeRegistry typeRegistry;
 
     @Override
     public Node createNode(Chunk chunk) {
         long start = System.nanoTime();
+        ShapeRegistry shapeRegistry = BlocksConfig.getInstance().getShapeRegistry();
 
         // create the node of the chunk
         Vec3i chunkLocation = chunk.getLocation();
@@ -85,6 +81,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
     @Override
     public Mesh createCollisionMesh(Chunk chunk) {
         long start = System.nanoTime();
+        ShapeRegistry shapeRegistry = BlocksConfig.getInstance().getShapeRegistry();
 
         // create the collision mesh
         ChunkMesh collisionMesh = new ChunkMesh(true);
@@ -119,6 +116,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
     @Override
     public void createAndSetNodeAndCollisionMesh(Chunk chunk) {
         long start = System.nanoTime();
+        ShapeRegistry shapeRegistry = BlocksConfig.getInstance().getShapeRegistry();
 
         // create the node of the chunk
         Vec3i chunkLocation = chunk.getLocation();
@@ -181,6 +179,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
             generateTangents(mesh);
         }
         Geometry geometry = new Geometry(type, mesh);
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
         geometry.setMaterial(typeRegistry.get(type));
         geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
