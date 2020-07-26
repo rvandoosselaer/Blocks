@@ -48,7 +48,7 @@ public class BlocksConfig {
         instance.setShapeRegistry(new ShapeRegistry());
         instance.setBlockRegistry(new BlockRegistry());
         instance.setTypeRegistry(new TypeRegistry(assetManager));
-        instance.setChunkMeshGenerator(new FacesMeshGenerator(instance.getShapeRegistry(), instance.getTypeRegistry()));
+        instance.setChunkMeshGenerator(new FacesMeshGenerator());
     }
 
     public static BlocksConfig getInstance() {
