@@ -21,7 +21,7 @@ import java.util.function.BiFunction;
  * methods.
  * Each time the data structure of the chunk changes (when blocks are added or removed), the {@link #update()} method
  * should be called to reevaluate the {@link #isFull()} and {@link #isEmpty()} flags.
- * Make sure to call the {@link #clean()} method to properly dispose of the chunk.
+ * Make sure to call the {@link #cleanup()} method to properly dispose of the chunk.
  *
  * @author rvandoosselaer
  */
@@ -46,7 +46,7 @@ public class Chunk {
     @Setter
     private Mesh collisionMesh;
     @Setter
-    private BiFunction<Block, Block, Boolean> faceVisibleFunction = new DefaultFaceVisibleFunction();
+    private static BiFunction<Block, Block, Boolean> faceVisibleFunction = new DefaultFaceVisibleFunction();
     @Setter
     private ChunkResolver chunkResolver;
 
@@ -215,7 +215,6 @@ public class Chunk {
         this.location = null;
         this.worldLocation = null;
         this.chunkResolver = null;
-        this.faceVisibleFunction = null;
     }
 
     /**
