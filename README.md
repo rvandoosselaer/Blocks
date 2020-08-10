@@ -22,7 +22,7 @@ Don't like the look and feel of the blocks? You can easily change the default te
 
 ### Endless terrain
 
-Blocks comes with a fully fledged pager implementation that will load the blocks around the player, blocks that are out of sight will be unloaded to safe resources.
+Blocks comes with a fully fledged pager implementation that will load the blocks around the player, blocks that are out of sight will be unloaded to save resources.
 
 ### Physics support
 
