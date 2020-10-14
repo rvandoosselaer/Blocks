@@ -18,7 +18,7 @@ This will make your creations feel even more vibrant!
 
 ### Theming and PBR support
 
-Don't like the look and feel of the blocks? You can easily change the default textures by creating and using a different theme. You can even supply your own custom jMonkeyEngine material files.
+Don't like the look and feel of the blocks? You can easily change the default textures by creating and using a different theme. You can even supply your own custom jMonkeyEngine material files. Even physically based rendering (or PBR) of blocks is supported by default.
 
 ### Endless terrain
 
@@ -45,7 +45,7 @@ General documentation can be found on the [wiki](https://github.com/rvandoossela
 Documentation can only take you so far, so make sure to take a look at the different [examples](https://github.com/rvandoosselaer/Blocks/tree/master/examples/src/main/java/com/rvandoosselaer/blocks/examples).
 
 ## Getting help
-Make sure to check out the [FAQ](https://github.com/rvandoosselaer/Blocks/wiki/FAQ) page on the wiki. There is also a [Blocks topic](https://hub.jmonkeyengine.org/t/blocks/42465) on the jMonkeyEngine hub forum. Or just create your own topic.
+Make sure to check out the [FAQ](https://github.com/rvandoosselaer/Blocks/wiki/FAQ) page on the wiki. There is also a [Blocks topic](https://hub.jmonkeyengine.org/t/blocks/42465) on the jMonkeyEngine forum. Or just create your own topic.
 
 ## Contributing
 If you have a bug or an idea, you can create a ticket for it [here.](https://github.com/rvandoosselaer/Blocks/issues)
