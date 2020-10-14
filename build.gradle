@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.rvandoosselaer"
-version = "1.6.3-SNAPSHOT"
+version = "1.6.3"
 // The artifact ID defaults to the project name configured in settings.gradle
 
 sourceCompatibility = 1.8
@@ -125,7 +125,7 @@ bintray {
         licenses = ['BSD 3-Clause']
         vcsUrl = 'https://github.com/rvandoosselaer/Blocks.git'
         version {
-            name = '1.6.3-SNAPSHOT'
+            name = '1.6.3'
             released = new Date()
         }
     }
