@@ -33,7 +33,7 @@ public class PhysicsChunkPager extends Pager<PhysicsRigidBody> {
 
     @Override
     protected PhysicsRigidBody createPage(Chunk chunk) {
-        if (chunk == null || chunk.getCollisionMesh() == null || physicsSpace == null) {
+        if (chunk == null || chunk.getCollisionMesh() == null || chunk.getCollisionMesh().getTriangleCount() < 1 || physicsSpace == null) {
             return null;
         }
 
