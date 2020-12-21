@@ -37,6 +37,10 @@ public class BlocksConfig {
     }
 
     public static void initialize(AssetManager assetManager) {
+        initialize(assetManager, true);
+    }
+
+    public static void initialize(AssetManager assetManager, boolean registerDefaults) {
         if (log.isTraceEnabled()) {
             log.trace("Initialize {}", BlocksConfig.class.getSimpleName());
         }
@@ -45,9 +49,9 @@ public class BlocksConfig {
         instance.setBlockScale(1f);
         instance.setGrid(new Vec3i(9, 5, 9));
         instance.setPhysicsGrid(new Vec3i(5, 3, 5));
-        instance.setShapeRegistry(new ShapeRegistry());
-        instance.setBlockRegistry(new BlockRegistry());
-        instance.setTypeRegistry(new TypeRegistry(assetManager));
+        instance.setShapeRegistry(new ShapeRegistry(registerDefaults));
+        instance.setBlockRegistry(new BlockRegistry(registerDefaults));
+        instance.setTypeRegistry(new TypeRegistry(assetManager, null, registerDefaults));
         instance.setChunkMeshGenerator(new FacesMeshGenerator());
     }
 
