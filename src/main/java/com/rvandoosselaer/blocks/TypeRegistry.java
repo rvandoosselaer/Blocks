@@ -45,15 +45,27 @@ public class TypeRegistry {
     @Getter
     private BlocksTheme defaultTheme = new BlocksTheme("Soartex Fanver", "Blocks/Themes/default/");
 
+    /**
+     * Will register default materials
+     */
     public TypeRegistry(@NonNull AssetManager assetManager) {
-        this(assetManager, null);
+        this(assetManager, null, true);
     }
 
+    /**
+     * Will register default materials
+     */
     public TypeRegistry(@NonNull AssetManager assetManager, BlocksTheme theme) {
+        this(assetManager, theme, true);
+    }
+
+    public TypeRegistry(@NonNull AssetManager assetManager, BlocksTheme theme, boolean registerDefaultMaterials) {
         this.assetManager = assetManager;
         this.theme = theme;
 
-        registerDefaultMaterials();
+        if (registerDefaultMaterials) {
+            registerDefaultMaterials();
+        }
     }
 
     public Material register(@NonNull String name) {

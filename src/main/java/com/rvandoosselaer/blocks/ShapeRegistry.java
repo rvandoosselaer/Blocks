@@ -30,8 +30,17 @@ public class ShapeRegistry {
 
     private final ConcurrentMap<String, Shape> shapeRegistry = new ConcurrentHashMap<>();
 
+    /**
+     * Will register default shapes
+     */
     public ShapeRegistry() {
-        registerDefaultShapes();
+        this(true);
+    }
+
+    public ShapeRegistry(boolean registerDefaultShapes) {
+        if (registerDefaultShapes) {
+            registerDefaultShapes();
+        }
     }
 
     public Shape register(@NonNull String name, Shape shape) {

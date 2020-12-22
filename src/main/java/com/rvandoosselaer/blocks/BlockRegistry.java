@@ -29,8 +29,17 @@ public class BlockRegistry {
     private final ConcurrentMap<String, Block> registry = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
 
+    /**
+     * Will register default blocks
+     */
     public BlockRegistry() {
-        registerDefaultBlocks();
+        this(true);
+    }
+
+    public BlockRegistry(boolean registerDefaultBlocks) {
+        if (registerDefaultBlocks) {
+            registerDefaultBlocks();
+        }
     }
 
     public Block register(@NonNull Block block) {
