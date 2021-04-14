@@ -122,6 +122,14 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
         Vec3i chunkLocation = chunk.getLocation();
         Node node = new Node("Chunk - " + chunkLocation);
 
+        Block[] blocks = chunk.getBlocks();
+        if (blocks == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Cancelling chunk {} collision mesh creation", chunk);
+            }
+            return;
+        }
+
         // create the map holding all the meshes of the chunk and the collision mesh
         Map<String, ChunkMesh> meshMap = new HashMap<>();
         ChunkMesh collisionMesh = new ChunkMesh(true);
@@ -129,7 +137,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
         // the first block location is (0, 0, 0)
         Vec3i blockLocation = new Vec3i(0, 0, 0);
 
-        for (Block block : chunk.getBlocks()) {
+        for (Block block : blocks) {
             // check if there is a block
             if (block != null) {
                 // create a mesh for each different block type
