@@ -5,6 +5,13 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.simsilica.mathd.Vec3i;
 
+import static com.rvandoosselaer.blocks.Direction.DOWN;
+import static com.rvandoosselaer.blocks.Direction.EAST;
+import static com.rvandoosselaer.blocks.Direction.NORTH;
+import static com.rvandoosselaer.blocks.Direction.SOUTH;
+import static com.rvandoosselaer.blocks.Direction.UP;
+import static com.rvandoosselaer.blocks.Direction.WEST;
+
 /**
  * The interface describing the shape of a {@link Block} element. The {@link #add(Vec3i, Chunk, ChunkMesh)} method is
  * called for each block in the chunk when the mesh is constructed using the {@link ChunkMeshGenerator}.
@@ -12,6 +19,23 @@ import com.simsilica.mathd.Vec3i;
  * @author rvandoosselaer
  */
 public interface Shape {
+
+    // Static constants as these operations are costly and heavily used during chunk mesh generation
+    Quaternion ROTATION_DOWN = new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X);
+    Quaternion ROTATION_EAST = new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Z);
+    Quaternion ROTATION_WEST = new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Z);
+    Quaternion ROTATION_NORTH = new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X);
+    Quaternion ROTATION_SOUTH = new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X);
+    Quaternion ROTATION_UP = new Quaternion();
+
+    Quaternion YAW_NORTH = new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y);
+    Quaternion YAW_EAST = new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
+    Quaternion YAW_WEST = new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y);
+    Quaternion YAW_UP = new Quaternion();
+
+    // Precomputed face directions
+    int DIRECTIONS_SIZE = Direction.values().length;
+    Direction[] FACES_DIR = {UP,DOWN,WEST,EAST,SOUTH,NORTH,DOWN,UP,EAST,WEST,NORTH,SOUTH,WEST,WEST,DOWN,UP,WEST,WEST,EAST,EAST,UP,DOWN,EAST,EAST,SOUTH,NORTH,SOUTH,SOUTH,DOWN,UP,NORTH,SOUTH,NORTH,NORTH,UP,DOWN};
 
     /**
      * Adds the shape at the location in the chunk to the chunk mesh.
@@ -46,17 +70,17 @@ public interface Shape {
     static Quaternion getRotationFromDirection(Direction direction) {
         switch (direction) {
             case DOWN:
-                return new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_X);
+                return ROTATION_DOWN;
             case EAST:
-                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Z);
+                return ROTATION_EAST;
             case WEST:
-                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Z);
+                return ROTATION_WEST;
             case NORTH:
-                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X);
+                return ROTATION_NORTH;
             case SOUTH:
-                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X);
+                return ROTATION_SOUTH;
             default:
-                return new Quaternion();
+                return ROTATION_UP;
         }
     }
 
@@ -71,13 +95,13 @@ public interface Shape {
     static Quaternion getYawFromDirection(Direction direction) {
         switch (direction) {
             case NORTH:
-                return new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y);
+                return YAW_NORTH;
             case EAST:
-                return new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
+                return YAW_EAST;
             case WEST:
-                return new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y);
+                return YAW_WEST;
             default:
-                return new Quaternion();
+                return YAW_UP;
         }
     }
 
@@ -90,10 +114,7 @@ public interface Shape {
      * @return the new direction of the face based on the direction of the shape
      */
     static Direction getFaceDirection(Direction faceDirection, Direction shapeDirection) {
-        Quaternion shapeRotation = getRotationFromDirection(shapeDirection);
-        Vector3f newFaceDirection = shapeRotation.mult(faceDirection.getVector().toVector3f());
-
-        return Direction.fromVector(newFaceDirection);
+        return FACES_DIR[faceDirection.ordinal() * DIRECTIONS_SIZE + shapeDirection.ordinal()];
     }
 
     /**
