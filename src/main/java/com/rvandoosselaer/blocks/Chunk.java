@@ -115,7 +115,7 @@ public class Chunk {
      */
     public Block getBlock(int x, int y, int z) {
         if (isInsideChunk(x, y, z)) {
-            return this.blocks == null ? null : this.blocks[calculateIndex(x, y, z)];
+            return this.blocks[calculateIndex(x, y, z)];
         }
 
         log.warn("Block location ({}, {}, {}) is outside of the chunk boundaries!", x, y, z);
@@ -209,16 +209,12 @@ public class Chunk {
     }
 
     public void cleanup() {
-        if (log.isTraceEnabled()) {
-            log.info("cleanup " + this.worldLocation);
-        }
         this.blocks = null;
         this.node = null;
         this.collisionMesh = null;
+        this.location = null;
+        this.worldLocation = null;
         this.chunkResolver = null;
-
-        // location and worldLocation should not be set to null because other
-        // threads need non-null values in order to finish gracefully (e.g. FacesMeshGenerator)
     }
 
     /**
