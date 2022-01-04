@@ -12,21 +12,22 @@ version = "1.7.0-SNAPSHOT"
 sourceCompatibility = 1.8
 
 ext {
-    jmeVersion = "[3.3,)"
-    lombokVersion = "[1.18,)"
-    slf4jVersion = "[1.8,)"
+    jmeVersion = "[3.4,)"
+    lombokVersion = "1.18.22"
+    slf4jVersion = "[1.9,)"
     simMathVersion = "[1.4,)"
-    junitVersion = "[5.4.0,)"
-    mockitoVersion = "[3.1,)"
+    junitVersion = "[5.8.0,)"
+    mockitoVersion = "[4.2,)"
     caffeineVersion = "2.8.8"
-    protobufVersion = "[3.10,)"
-    guavaVersion = "[28,)"
-    minieVersion = "[3.0,)"
-    jacksonVersion = "[2.11,)"
+    protobufVersion = "[4.0,)"
+    guavaVersion = "[31,)"
+    minieVersion = "[4.6,)"
+    jacksonVersion = "[2.13,)"
 }
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {

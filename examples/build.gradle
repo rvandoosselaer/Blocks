@@ -12,9 +12,7 @@ ext {
 
 repositories {
     jcenter()
-    maven {
-        url  "https://dl.bintray.com/stephengold/org.jmonkeyengine"
-    }
+    mavenCentral()
 }
 
 dependencies {
