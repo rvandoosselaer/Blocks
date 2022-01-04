@@ -41,7 +41,7 @@ public class Stairs implements Shape {
         Quaternion rotation = Shape.getYawFromDirection(direction);
         if (upsideDown) {
             Quaternion inverse = PI_X.mult(PI_Y);
-            rotation = inverse.multLocal(rotation.inverseLocal());
+            rotation = inverse.multLocal(rotation.inverse());
         }
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
