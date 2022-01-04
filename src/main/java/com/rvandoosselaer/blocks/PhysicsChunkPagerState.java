@@ -4,6 +4,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.Vector3f;
+
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
  *
  * @author rvandoosselaer
  */
+@Getter
 @RequiredArgsConstructor
 public class PhysicsChunkPagerState extends BaseAppState {
 
