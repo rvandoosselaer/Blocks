@@ -31,14 +31,16 @@ public enum Direction {
 
     public static Direction fromVector(@NonNull Vector3f vector3f) {
         return Arrays.stream(Direction.values())
-                .filter(direction -> {
-                    // we cannot use the vector.equals(other) since we will have rounding issues.
-                    // a vector(0, 0.99, 0) should also return Direction.TOP. We use the dot product to compare the 2 vectors
-                    float dotProduct = vector3f.normalize().dot(direction.getVector().toVector3f());
-                    return dotProduct > 0.95f;
-                })
+                .filter(direction -> isVectorPointingInDirection(vector3f, direction))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unable to find direction from vector: " + vector3f));
+    }
+
+    private static boolean isVectorPointingInDirection(Vector3f vector3f, Direction direction) {
+        // we cannot use the vector.equals(other) since we will have rounding issues.
+        // a vector(0, 0.99, 0) should also return Direction.TOP. We use the dot product to compare the 2 vectors
+        float dotProduct = vector3f.normalize().dot(direction.getVector().toVector3f());
+        return dotProduct > 0.95f;
     }
 
     public Direction opposite() {
