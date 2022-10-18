@@ -47,7 +47,6 @@ public class Cylinder implements Shape {
         this.direction = direction;
         this.topRadius = FastMath.clamp(FastMath.abs(topRadius), 0, 0.5f);
         this.bottomRadius = FastMath.clamp(FastMath.abs(bottomRadius), 0, 0.5f);
-        ;
         this.radialSamples = Math.max(radialSamples, 3);
     }
 
