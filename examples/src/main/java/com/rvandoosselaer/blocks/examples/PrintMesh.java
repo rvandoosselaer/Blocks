@@ -17,16 +17,13 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.mikktspace.MikkTSpaceImpl;
 import com.jme3.util.mikktspace.MikktspaceTangentGenerator;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+import com.simsilica.util.LogAdapter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * An application to load and print out mesh information.
@@ -43,7 +40,7 @@ public class PrintMesh extends SimpleApplication {
     private boolean flipV = true;
 
     public static void main(String[] args) {
-        forwardJULToSlf4j();
+        LogAdapter.initialize();
 
         PrintMesh printMesh = new PrintMesh();
         printMesh.start();
@@ -309,17 +306,6 @@ public class PrintMesh extends SimpleApplication {
         for (Vector2f uv : uvsMap.values()) {
             System.out.println(String.format(Locale.ROOT, line, uv.x, uv.y));
         }
-    }
-
-    public static void forwardJULToSlf4j() {
-        // enable all JUL levels
-        Logger rootLogger = LogManager.getLogManager().getLogger("");
-        rootLogger.setLevel(Level.ALL);
-
-        // disable all rootLogger handlers
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        // Adds a SLF4JBridgeHandler instance to jul's root logger
-        SLF4JBridgeHandler.install();
     }
 
 }

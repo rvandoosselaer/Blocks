@@ -4,14 +4,13 @@ plugins {
 
 ext {
     sio2Version = "[1.3,)"
-    jmeFastNoise = "[1.,)"
     log4j2Version = "[2.11,)"
     jacksonVersion = "[2.9,)"
     commonsLang3Version = "[3.9,)"
 }
 
 repositories {
-    jcenter()
+    maven { url 'https://jitpack.io' }
     mavenCentral()
 }
 
@@ -35,9 +34,7 @@ dependencies {
     implementation "com.simsilica:sim-math:${simMathVersion}"
     implementation "com.simsilica:sio2:${sio2Version}"
     implementation "com.simsilica:lemur-proto:+"
-    implementation ("com.jayfella:jme-fastnoise:${jmeFastNoise}") {
-        exclude group: "org.jmonkeyengine", module: "jme3-lwjgl3"
-    }
+    implementation "com.github.myworldllc:jme-fastnoise-jayfella-github:-SNAPSHOT"
 
     // logging
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"

@@ -26,7 +26,6 @@ ext {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -102,32 +101,6 @@ task javadocJar(type: Jar) {
     archiveClassifier = 'javadoc'
 }
 
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}
-
 javadoc {
     failOnError = false
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_APIKEY')
-    publications = ['MyPublication']
-    pkg {
-        repo = 'rvandoosselaer'
-        name = rootProject.getName()
-        licenses = ['BSD 3-Clause']
-        vcsUrl = 'https://github.com/rvandoosselaer/Blocks.git'
-        version {
-            name = '1.7.0-SNAPSHOT'
-            released = new Date()
-        }
-    }
 }
