@@ -1,6 +1,7 @@
 package com.rvandoosselaer.blocks;
 
 import com.rvandoosselaer.blocks.shapes.Cube;
+import com.rvandoosselaer.blocks.shapes.Cylinder;
 import com.rvandoosselaer.blocks.shapes.Pole;
 import com.rvandoosselaer.blocks.shapes.Pyramid;
 import com.rvandoosselaer.blocks.shapes.RoundedCube;
@@ -102,6 +103,14 @@ public class ShapeRegistry {
         registerPlates();
 
         registerCuboids();
+
+        //register(ShapeIds.CYLINDER_NORTH, new Cylinder(Direction.NORTH, 0.5f));
+        register(ShapeIds.CYLINDER_UP, new Cylinder(Direction.UP, 0.5f));
+        register(ShapeIds.CYLINDER_DOWN, new Cylinder(Direction.DOWN, 0.5f));
+        register(ShapeIds.CYLINDER_NORTH, new Cylinder(Direction.NORTH, 0.5f));
+        register(ShapeIds.CYLINDER_SOUTH, new Cylinder(Direction.SOUTH, 0.5f));
+        register(ShapeIds.CYLINDER_EAST, new Cylinder(Direction.EAST, 0.5f));
+        register(ShapeIds.CYLINDER_WEST, new Cylinder(Direction.WEST, 0.5f));
     }
 
     private void registerCuboids() {

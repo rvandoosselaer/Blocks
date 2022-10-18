@@ -126,4 +126,11 @@ public interface ShapeIds {
      */
     String SQUARE_CUBOID_NINE_TENTHS = "square_cuboid_nine_tenths_up";
 
+    String CYLINDER_UP = "cylinder_up";
+    String CYLINDER_DOWN = "cylinder_down";
+    String CYLINDER_NORTH = "cylinder_north";
+    String CYLINDER_SOUTH = "cylinder_south";
+    String CYLINDER_EAST = "cylinder_east";
+    String CYLINDER_WEST = "cylinder_west";
+    String[] ALL_CYLINDERS = { CYLINDER_UP, CYLINDER_DOWN, CYLINDER_NORTH, CYLINDER_SOUTH, CYLINDER_EAST, CYLINDER_WEST };
 }

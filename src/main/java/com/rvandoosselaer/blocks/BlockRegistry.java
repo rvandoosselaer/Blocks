@@ -155,10 +155,11 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
                 .addShapes(ShapeIds.ALL_PLATES)
-                .addShapes(ShapeIds.ALL_STAIRS);
+                .addShapes(ShapeIds.ALL_STAIRS)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(stoneBrickDef));
 
-        BlockDefinition mossyStoneBrickDef = new BlockDefinition(TypeIds.STONE_BRICKS, true, false, false)
+        BlockDefinition mossyStoneBrickDef = new BlockDefinition(TypeIds.MOSSY_STONE_BRICKS, true, false, false)
                 .addShapes(ShapeIds.CUBE)
                 .addShapes(ShapeIds.ALL_PYRAMIDS)
                 .addShapes(ShapeIds.ALL_WEDGES)
@@ -167,7 +168,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
                 .addShapes(ShapeIds.ALL_PLATES)
-                .addShapes(ShapeIds.ALL_STAIRS);
+                .addShapes(ShapeIds.ALL_STAIRS)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(mossyStoneBrickDef));
     }
 
@@ -180,7 +182,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_ROUNDED_CUBES)
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
-                .addShapes(ShapeIds.ALL_PLATES);
+                .addShapes(ShapeIds.ALL_PLATES)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(spruceLogDef));
 
         BlockDefinition sprucePlankDef = new BlockDefinition(TypeIds.SPRUCE_PLANKS, true, false, false)
@@ -236,7 +239,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_ROUNDED_CUBES)
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
-                .addShapes(ShapeIds.ALL_PLATES);
+                .addShapes(ShapeIds.ALL_PLATES)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(oakLogDef));
 
         BlockDefinition oakPlankDef = new BlockDefinition(TypeIds.OAK_PLANKS, true, false, false)
@@ -265,7 +269,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
                 .addShapes(ShapeIds.ALL_PLATES)
-                .addShapes(ShapeIds.ALL_STAIRS);
+                .addShapes(ShapeIds.ALL_STAIRS)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(rockDef));
     }
 
@@ -278,7 +283,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_ROUNDED_CUBES)
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
-                .addShapes(ShapeIds.ALL_PLATES);
+                .addShapes(ShapeIds.ALL_PLATES)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(palmTreeLogDef));
 
         BlockDefinition palmTreePlankDef = new BlockDefinition(TypeIds.PALM_TREE_PLANKS, true, false, false)
@@ -351,7 +357,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
                 .addShapes(ShapeIds.ALL_PLATES)
-                .addShapes(ShapeIds.ALL_STAIRS);
+                .addShapes(ShapeIds.ALL_STAIRS)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(cobbleStoneDef));
 
         BlockDefinition mossyCobbleStoneDef = new BlockDefinition(TypeIds.MOSSY_COBBLESTONE, true, false, false)
@@ -363,7 +370,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
                 .addShapes(ShapeIds.ALL_PLATES)
-                .addShapes(ShapeIds.ALL_STAIRS);
+                .addShapes(ShapeIds.ALL_STAIRS)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(mossyCobbleStoneDef));
     }
 
@@ -377,7 +385,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
                 .addShapes(ShapeIds.ALL_PLATES)
-                .addShapes(ShapeIds.ALL_STAIRS);
+                .addShapes(ShapeIds.ALL_STAIRS)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(brickDef));
     }
 
@@ -390,7 +399,8 @@ public class BlockRegistry {
                 .addShapes(ShapeIds.ALL_ROUNDED_CUBES)
                 .addShapes(ShapeIds.ALL_SLABS)
                 .addShapes(ShapeIds.ALL_DOUBLE_SLABS)
-                .addShapes(ShapeIds.ALL_PLATES);
+                .addShapes(ShapeIds.ALL_PLATES)
+                .addShapes(ShapeIds.ALL_CYLINDERS);
         register(BlockFactory.create(birchLogDef));
 
         BlockDefinition birchPlankDef = new BlockDefinition(TypeIds.BIRCH_PLANKS, true, false, false)
