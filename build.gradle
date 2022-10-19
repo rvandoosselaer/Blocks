@@ -1,12 +1,10 @@
 plugins {
     id 'idea'
     id 'java-library'
-    id 'maven-publish'
-    id 'com.jfrog.bintray' version "1.8.4"
 }
 
 group = "com.rvandoosselaer"
-version = "1.7.0"
+version = "1.7.1-SNAPSHOT"
 // The artifact ID defaults to the project name configured in settings.gradle
 
 sourceCompatibility = 1.8
@@ -14,7 +12,7 @@ sourceCompatibility = 1.8
 ext {
     jmeVersion = "[3.4,)"
     lombokVersion = "1.18.22"
-    slf4jVersion = "[1.9,)"
+    slf4jVersion = "2.0.3"
     simMathVersion = "[1.4,)"
     junitVersion = "[5.8.0,)"
     mockitoVersion = "[4.2,)"
@@ -40,6 +38,7 @@ dependencies {
     // utilities
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    // api exposes the library to consumers
     api "com.simsilica:sim-math:${simMathVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
     implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
