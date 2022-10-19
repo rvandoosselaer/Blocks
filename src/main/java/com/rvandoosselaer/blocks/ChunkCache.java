@@ -13,6 +13,10 @@ import java.util.Optional;
 
 /**
  * An in memory threadsafe chunk cache implementation.
+ * Terminology:
+ * eviction means removal due to the policy
+ * invalidation means manual removal by the caller
+ * removal occurs as a consequence of invalidation or eviction
  *
  * @author: rvandoosselaer
  */
@@ -34,10 +38,12 @@ public class ChunkCache implements ChunkResolver {
         return Optional.ofNullable(cache.getIfPresent(location));
     }
 
+    // explicit removal
     public void evict(@NonNull Vec3i location) {
         cache.invalidate(location);
     }
 
+    // explicit removal
     public void evictAll() {
         cache.invalidateAll();
     }
@@ -62,15 +68,16 @@ public class ChunkCache implements ChunkResolver {
     }
 
     private static Cache<Vec3i, Chunk> createCache(int cacheSize) {
-        Vec3i gridSize = BlocksConfig.getInstance().getGrid();
-        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
-
-        if (cacheSize > 0 && cacheSize < minimumSize) {
-            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
-        }
+//        Vec3i gridSize = BlocksConfig.getInstance().getGrid();
+//        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
+//
+//        if (cacheSize > 0 && cacheSize < minimumSize) {
+//            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
+//        }
 
         return Caffeine.newBuilder()
-                .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
+//                .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
+                .maximumSize(cacheSize)
                 .removalListener(new ChunkCacheRemovalListener())
                 .build();
     }
@@ -79,8 +86,12 @@ public class ChunkCache implements ChunkResolver {
 
         @Override
         public void onRemoval(@Nullable Vec3i location, @Nullable Chunk chunk, @org.checkerframework.checker.nullness.qual.NonNull RemovalCause cause) {
+            if (log.isTraceEnabled()) {
+                log.trace("Chunk[{}] removed from the cache because: {}", location, cause);
+            }
+
             if (chunk != null && chunk.getNode() != null && chunk.getNode().getParent() != null) {
-                log.warn("{} is evicted from the cache, but it's node is still attached to parent {}.", chunk, chunk.getNode().getParent());
+                log.warn("Chunk[{}] is removed from cache, but it's node is still attached to parent: {}", location, chunk.getNode().getParent());
             }
 
             if (chunk != null) {

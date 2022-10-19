@@ -82,7 +82,7 @@ public class BlockRegistry {
     }
 
     public Block get(@NonNull String name) {
-        if (BlockIds.NONE.equals(name)) {
+        if (BlockIds.EMPTY.equals(name)) {
             return null;
         }
 

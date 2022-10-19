@@ -16,7 +16,7 @@ ext {
     simMathVersion = "[1.4,)"
     junitVersion = "[5.8.0,)"
     mockitoVersion = "[4.2,)"
-    caffeineVersion = "2.8.8"
+    caffeineVersion = "2.9.3"
     protobufVersion = "[4.0,)"
     guavaVersion = "[31,)"
     minieVersion = "[4.6,)"

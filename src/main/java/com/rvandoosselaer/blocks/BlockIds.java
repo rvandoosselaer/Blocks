@@ -20,6 +20,7 @@ package com.rvandoosselaer.blocks;
 public interface BlockIds {
 
     String NONE = "";
+    String EMPTY = "";
     
     String BIRCH_LOG = TypeIds.BIRCH_LOG;
     String BIRCH_PLANKS = TypeIds.BIRCH_PLANKS;

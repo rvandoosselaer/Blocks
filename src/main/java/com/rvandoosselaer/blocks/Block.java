@@ -3,10 +3,9 @@ package com.rvandoosselaer.blocks;
 import com.rvandoosselaer.blocks.serialize.BlockDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -17,8 +16,7 @@ import lombok.ToString;
  *
  * @author rvandoosselaer
  */
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,7 +50,7 @@ public class Block {
     private boolean solid;
 
     /**
-     * Creates a cube shape, non transparent, solid block using a single image.
+     * Creates a cube shape, non-transparent, solid block using a single image.
      *
      * @param name
      * @param type
@@ -70,7 +68,7 @@ public class Block {
     }
 
     /**
-     * Creates a cube shape, non transparent, solid block.
+     * Creates a cube shape, non-transparent, solid block.
      *
      * @param name
      * @param type

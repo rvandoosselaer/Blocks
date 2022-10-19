@@ -4,16 +4,16 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.simsilica.mathd.Vec3i;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 /**
@@ -33,7 +33,6 @@ public class Chunk {
     // a one dimensional array is quicker to lookup blocks then a 3n array
     @Setter
     private Block[] blocks;
-    @Setter(AccessLevel.PRIVATE)
     @ToString.Include
     private Vec3i location;
     private Vector3f worldLocation;
@@ -51,9 +50,11 @@ public class Chunk {
     private ChunkResolver chunkResolver;
 
     public Chunk(@NonNull Vec3i location) {
-        setLocation(location);
+        this.location = location;
+//        setLocation(location);
         Vec3i chunkSize = BlocksConfig.getInstance().getChunkSize();
-        setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
+//        setBlocks(new Block[chunkSize.x * chunkSize.y * chunkSize.z]);
+        this.blocks = new Block[chunkSize.x * chunkSize.y * chunkSize.z];
         update();
     }
 
@@ -182,7 +183,8 @@ public class Chunk {
      * changed.
      */
     public void update() {
-        long start = System.nanoTime();
+//        long start = System.nanoTime();
+        Instant start = Instant.now();
         boolean empty = true;
         boolean full = true;
 
@@ -204,8 +206,10 @@ public class Chunk {
         this.full = full;
 
         if (log.isTraceEnabled()) {
-            log.trace("Updating {}} values took {}ms", this, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+//            log.trace("Updating {} values took {}ms", this, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+            log.trace("Updating {} values took {}ms", this, Duration.between(start, Instant.now()).toMillis());
         }
+
     }
 
     public void cleanup() {

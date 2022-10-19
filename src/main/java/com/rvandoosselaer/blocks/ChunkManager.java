@@ -80,7 +80,7 @@ public class ChunkManager {
     /**
      * The ChunkManager triggers mesh updates on adjacent chunks when they are added or updated. This is because the
      * face checking algorithm takes neighbouring chunks in to account. It is possible however that a chunk is rendered
-     * while it's neighbour was not yet available, resulting in a to detailed mesh. That's why we trigger the mesh update
+     * while it's neighbour was not yet available, resulting in a too detailed mesh. That's why we trigger the mesh update
      * again when the neighbour is available. We should take care however to not get into an infinite loop: Chunk A
      * triggers chunk B, chunk B triggers chunk A, chunk A trigger chunk B again...
      * That's why we keep a registry of chunk update triggers to keep track of who updated who. This registry is checked

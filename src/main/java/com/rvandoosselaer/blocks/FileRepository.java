@@ -213,7 +213,7 @@ public class FileRepository implements ChunkRepository {
                 .addSize(size.y)
                 .addSize(size.z)
                 .addAllBlocks(Arrays.stream(chunk.getBlocks())
-                        .map(block -> block != null ? block.getName() : BlockIds.NONE)
+                        .map(block -> block != null ? block.getName() : BlockIds.EMPTY)
                         .collect(Collectors.toList()))
                 .build();
     }

@@ -3,20 +3,16 @@ package com.rvandoosselaer.blocks;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * A Blocks theme.
  *
  * @author rvandoosselaer
  */
-@Getter
-@Setter
+@Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlocksTheme {
