@@ -6,14 +6,19 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
+import com.rvandoosselaer.blocks.TextureCoordinates;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.mathd.Vec3i;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.Function;
 
 /**
  * A shape implementation for a wedge. The default facing of a wedge is South: the sloping side (hypotenuse) will face
@@ -46,25 +51,27 @@ public class Wedge implements Shape {
         }
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have 3 textures or only one
-        boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        Block block = chunk.getBlock(location.x, location.y, location.z);
+        String typeName = block.getType();
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        Function<Direction, TextureCoordinates> textureCoordinatesFunction = typeRegistry.get(typeName).getTextureCoordinatesFunction();
 
-        createSouth(location, chunkMesh, rotation, blockScale, multipleImages);
+        createSouth(location, chunkMesh, rotation, blockScale, textureCoordinatesFunction);
         if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(upsideDown ? Direction.EAST : Direction.WEST, direction))) {
-            createWest(location, chunkMesh, rotation, blockScale, multipleImages);
+            createWest(location, chunkMesh, rotation, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(upsideDown ? Direction.WEST : Direction.EAST, direction))) {
-            createEast(location, chunkMesh, rotation, blockScale, multipleImages);
+            createEast(location, chunkMesh, rotation, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(Direction.NORTH, direction))) {
-            createNorth(location, chunkMesh, rotation, blockScale, multipleImages);
+            createNorth(location, chunkMesh, rotation, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getYawFaceDirection(upsideDown ? Direction.UP : Direction.DOWN, direction))) {
-            createDown(location, chunkMesh, rotation, blockScale, multipleImages);
+            createDown(location, chunkMesh, rotation, blockScale, textureCoordinatesFunction);
         }
     }
 
-    private static void createDown(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -88,21 +95,15 @@ public class Wedge implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.DOWN);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createNorth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createNorth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -126,21 +127,15 @@ public class Wedge implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.NORTH);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
         }
     }
 
-    private static void createEast(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createEast(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -160,19 +155,14 @@ public class Wedge implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, -1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.EAST);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createWest(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset;
         // calculate index offset, we use this to connect the triangles
         offset = chunkMesh.getPositions().size();
@@ -193,19 +183,14 @@ public class Wedge implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.333f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.WEST);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createSouth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, boolean multipleImages) {
+    private static void createSouth(Vec3i location, ChunkMesh chunkMesh, Quaternion rotation, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -229,17 +214,13 @@ public class Wedge implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, -0.7071068f, 0.7071068f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.666f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.666f));
-            }
+            // the hypotenuse of the wedge is by default facing south but we want to use the texture that is facing up
+            // to get a 'slice-through' effect
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.UP);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
         }
     }
 

@@ -5,14 +5,19 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
+import com.rvandoosselaer.blocks.TextureCoordinates;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.mathd.Vec3i;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.Function;
 
 /**
  * A shape implementation for a pyramid. The default direction of a pyramid is UP: the point will face the UP direction.
@@ -33,20 +38,22 @@ public class Pyramid implements Shape {
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have only one texture
-        boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        Block block = chunk.getBlock(location.x, location.y, location.z);
+        String typeName = block.getType();
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        Function<Direction, TextureCoordinates> textureCoordinatesFunction = typeRegistry.get(typeName).getTextureCoordinatesFunction();
         Quaternion rotation = Shape.getRotationFromDirection(direction);
 
-        createWest(location, rotation, chunkMesh, blockScale, multipleImages);
-        createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
-        createEast(location, rotation, chunkMesh, blockScale, multipleImages);
-        createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
+        createWest(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
+        createNorth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
+        createEast(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
+        createSouth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
-            createDown(location, rotation, chunkMesh, blockScale, multipleImages);
+            createDown(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
     }
 
-    private static void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // vertices
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
@@ -69,21 +76,15 @@ public class Pyramid implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.DOWN);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // vertices
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, 0.5f)), location, blockScale));
@@ -101,19 +102,15 @@ public class Pyramid implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.SOUTH);
+            float middleX = ((textureCoordinates.getMax().x - textureCoordinates.getMin().x) / 2) + textureCoordinates.getMin().x;
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(middleX, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // vertices
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.5f, -0.5f, -0.5f)), location, blockScale));
@@ -131,19 +128,15 @@ public class Pyramid implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.EAST);
+            float middleX = ((textureCoordinates.getMax().x - textureCoordinates.getMin().x) / 2) + textureCoordinates.getMin().x;
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(middleX, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // vertices
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, -0.5f)), location, blockScale));
@@ -161,19 +154,15 @@ public class Pyramid implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, -1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.NORTH);
+            float middleX = ((textureCoordinates.getMax().x - textureCoordinates.getMin().x) / 2) + textureCoordinates.getMin().x;
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(middleX, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // vertices
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.5f, -0.5f, 0.5f)), location, blockScale));
@@ -191,16 +180,11 @@ public class Pyramid implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, -1.0f, -1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.5f, 5f / 6f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-            }
-
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.WEST);
+            float middleX = ((textureCoordinates.getMax().x - textureCoordinates.getMin().x) / 2) + textureCoordinates.getMin().x;
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(middleX, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
         }
     }
 

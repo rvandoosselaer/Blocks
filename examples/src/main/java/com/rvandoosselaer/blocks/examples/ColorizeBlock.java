@@ -68,7 +68,7 @@ public class ColorizeBlock extends SimpleApplication implements ActionListener {
         ChunkMeshGenerator meshGenerator = BlocksConfig.getInstance().getChunkMeshGenerator();
 
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
-        grassMaterial = typeRegistry.get(TypeIds.GRASS);
+        grassMaterial = typeRegistry.get(TypeIds.GRASS).getMaterial();
 
         Chunk chunk = Chunk.createAt(new Vec3i(0, 0, 0));
         chunk.addBlock(new Vec3i(0, 0, 0), blockRegistry.get(BlockIds.GRASS));

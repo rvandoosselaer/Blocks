@@ -180,7 +180,7 @@ public class FacesMeshGenerator implements ChunkMeshGenerator {
         }
         Geometry geometry = new Geometry(type, mesh);
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
-        geometry.setMaterial(typeRegistry.get(type));
+        geometry.setMaterial(typeRegistry.get(type).getMaterial());
         geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         if (geometry.getMaterial().getAdditionalRenderState().getBlendMode() == RenderState.BlendMode.Alpha) {
             if (log.isTraceEnabled()) {

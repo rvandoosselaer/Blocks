@@ -24,6 +24,7 @@ import com.rvandoosselaer.blocks.BlockRegistry;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMeshGenerator;
+import com.rvandoosselaer.blocks.Type;
 import com.rvandoosselaer.blocks.TypeIds;
 import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.lemur.Axis;
@@ -109,8 +110,7 @@ public class PBRBlock extends SimpleApplication {
         BlocksConfig.initialize(assetManager);
 
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
-        typeRegistry.register(TypeIds.WATER, assetManager.loadMaterial("water-pbr/water.j3m"));
-        waterMaterial = typeRegistry.get(TypeIds.WATER);
+        typeRegistry.register(TypeIds.WATER, new Type(TypeIds.WATER, assetManager.loadMaterial("water-pbr/water.j3m")));
 
         chunk = createChunk();
 

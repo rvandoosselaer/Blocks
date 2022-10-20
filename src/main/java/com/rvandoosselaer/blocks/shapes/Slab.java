@@ -6,14 +6,19 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
+import com.rvandoosselaer.blocks.TextureCoordinates;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.mathd.Vec3i;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Function;
 
 /**
  * A shape implementation for a slab. A slab is actual a cube shape with a controllable y (height) value. If you specify
@@ -49,32 +54,34 @@ public class Slab implements Shape {
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have 3 textures or only one
-        boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        Block block = chunk.getBlock(location.x, location.y, location.z);
+        String typeName = block.getType();
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        Function<Direction, TextureCoordinates> textureCoordinatesFunction = typeRegistry.get(typeName).getTextureCoordinatesFunction();
         // get the rotation of the shape based on the direction
         Quaternion rotation = Shape.getRotationFromDirection(direction);
 
         if (endY < 1 || chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.UP, direction))) {
-            createUp(location, rotation, chunkMesh, blockScale, multipleImages);
+            createUp(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (startY > 0 || chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
-            createDown(location, rotation, chunkMesh, blockScale, multipleImages);
+            createDown(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
-            createWest(location, rotation, chunkMesh, blockScale, multipleImages);
+            createWest(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
-            createEast(location, rotation, chunkMesh, blockScale, multipleImages);
+            createEast(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.SOUTH, direction))) {
-            createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
+            createSouth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
-            createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
+            createNorth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
     }
 
-    protected void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    protected void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -98,21 +105,16 @@ public class Slab implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(-1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.NORTH);
+            float numberOfTextures = 1 / (textureCoordinates.getMax().y - textureCoordinates.getMin().y);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
         }
     }
 
-    protected void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    protected void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -136,21 +138,16 @@ public class Slab implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.SOUTH);
+            float numberOfTextures = 1 / (textureCoordinates.getMax().y - textureCoordinates.getMin().y);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
         }
     }
 
-    protected void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    protected void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -174,21 +171,16 @@ public class Slab implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, -1.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.EAST);
+            float numberOfTextures = 1 / (textureCoordinates.getMax().y - textureCoordinates.getMin().y);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
         }
     }
 
-    protected void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    protected void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -212,21 +204,16 @@ public class Slab implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, endY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, startY + 0.5f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, endY + 0.5f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(1f / 3f, 2f / 3f))));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.WEST);
+            float numberOfTextures = 1 / (textureCoordinates.getMax().y - textureCoordinates.getMin().y);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(startY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, mapValueToRange(endY + 0.5f, new Vector2f(0, 1), new Vector2f(0, 1 / numberOfTextures))));
         }
     }
 
-    protected void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    protected void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -250,21 +237,15 @@ public class Slab implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1f / 3f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.DOWN);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
         }
     }
 
-    protected void createUp(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    protected void createUp(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         // calculate index offset, we use this to connect the triangles
         int offset = chunkMesh.getPositions().size();
         // vertices
@@ -288,17 +269,11 @@ public class Slab implements Shape {
                 chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)));
             }
             // uvs
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 0.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 0.0f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 1.0f));
-                chunkMesh.getUvs().add(new Vector2f(1.0f, 2f / 3f));
-                chunkMesh.getUvs().add(new Vector2f(0.0f, 2f / 3f));
-            }
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.UP);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y));
         }
     }
 

@@ -4,14 +4,19 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
+import com.rvandoosselaer.blocks.TextureCoordinates;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.mathd.Vec3i;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.util.function.Function;
 
 /**
  * A shape implementation for a cylinder. The default direction of a cylinder is UP. A direction of NORTH/EAST/SOUTH/WEST will
@@ -54,8 +59,16 @@ public class Cylinder implements Shape {
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have 3 textures or only one
-        boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+
+        Block block = chunk.getBlock(location.x, location.y, location.z);
+        String typeName = block.getType();
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        Function<Direction, TextureCoordinates> textureCoordinatesFunction = typeRegistry.get(typeName).getTextureCoordinatesFunction();
+        TextureCoordinates textureCoordinatesUp = textureCoordinatesFunction.apply(Direction.UP);
+        TextureCoordinates textureCoordinatesDown = textureCoordinatesFunction.apply(Direction.DOWN);
+        TextureCoordinates textureCoordinatesSide = textureCoordinatesFunction.apply(Direction.NORTH);
+        float numberOfTexturesY = 1 / (textureCoordinatesUp.getMax().y - textureCoordinatesUp.getMin().y);
+
         // get the rotation of the shape based on the direction
         // we use the jme implementation of a cylinder shape, this shape is by default rotated Direction.SOUTH: horizontal
         // and pointing to the camera.
@@ -126,7 +139,7 @@ public class Cylinder implements Shape {
                 // Texture
                 // The X is the angular position of the point.
                 float uvX = (float) circlePoint / radialSamples;
-                float uvY = multipleImages ? height / 2 + currentHeight / 3 : height / 2 + currentHeight;
+                float uvY = (height / 2 + currentHeight / numberOfTexturesY) - textureCoordinatesFunction.apply(Direction.NORTH).getMax().y;
 
                 chunkMesh.getUvs().add(new Vector2f(uvX, uvY));
             }
@@ -143,7 +156,7 @@ public class Cylinder implements Shape {
             chunkMesh.getNormals().add(Shape.createVertex(rotation.mult(new Vector3f(0, 0, -1)), location, blockScale));
 
             float uvX = (float) circlePoint / radialSamples;
-            float uvY = multipleImages ? bottomRadius / (bottomRadius + (height / 3) + topRadius) : bottomRadius / (bottomRadius + topRadius);
+            float uvY = bottomRadius / (bottomRadius + (height / numberOfTexturesY) + topRadius);
             chunkMesh.getUvs().add(new Vector2f(uvX, uvY));
         }
         // Top
@@ -157,19 +170,18 @@ public class Cylinder implements Shape {
             chunkMesh.getNormals().add(Shape.createVertex(rotation.mult(new Vector3f(0, 0, 1)), location, blockScale));
 
             float uvX = (float) circlePoint / radialSamples;
-            float uvY = multipleImages ? (bottomRadius + (height / 3)) / (bottomRadius + (height / 3) + topRadius) : (bottomRadius) / (bottomRadius + topRadius);
+            float uvY = (bottomRadius + (height / numberOfTexturesY)) / (bottomRadius + (height / numberOfTexturesY) + topRadius);
             chunkMesh.getUvs().add(new Vector2f(uvX, uvY));
         }
         // Add the centers of the caps.
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0, 0, -height / 2)), location, blockScale));
         chunkMesh.getNormals().add(Shape.createVertex(rotation.mult(new Vector3f(0, 0, -1)), location, blockScale));
-//            chunkMesh.getUvs().add(new Vector2f(0.5f, 0));
-        chunkMesh.getUvs().add(multipleImages ? new Vector2f(0.5f, 1 / 6f) : new Vector2f(0.5f, 0));
+        float oneThirdY = 1 / (numberOfTexturesY * 3);
+        chunkMesh.getUvs().add(new Vector2f(0.5f, textureCoordinatesFunction.apply(Direction.DOWN).getMin().y + oneThirdY));
 
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0, 0, height / 2)), location, blockScale));
         chunkMesh.getNormals().add(Shape.createVertex(rotation.mult(new Vector3f(0, 0, 1)), location, blockScale));
-        //chunkMesh.getUvs().add(new Vector2f(0.5f, 1f));
-        chunkMesh.getUvs().add(multipleImages ? new Vector2f(0.5f, 5 / 6f) : new Vector2f(0.5f, 1f));
+        chunkMesh.getUvs().add(new Vector2f(0.5f, textureCoordinatesFunction.apply(Direction.UP).getMin().y));
 
         // Add the triangles indexes.
         for (int axisSample = 0; axisSample < axisSamples - 1; axisSample++) {

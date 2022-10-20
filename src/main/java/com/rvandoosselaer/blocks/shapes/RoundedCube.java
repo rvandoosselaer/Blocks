@@ -5,14 +5,19 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
+import com.rvandoosselaer.blocks.TextureCoordinates;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.mathd.Vec3i;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.Function;
 
 /**
  * A shape implementation for a rounded cube. The default rounded cube has a Direction.UP.
@@ -33,32 +38,34 @@ public class RoundedCube implements Shape {
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have 3 textures or only one
-        boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        Block block = chunk.getBlock(location.x, location.y, location.z);
+        String typeName = block.getType();
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        Function<Direction, TextureCoordinates> textureCoordinatesFunction = typeRegistry.get(typeName).getTextureCoordinatesFunction();
         // get the rotation of the shape based on the direction
         Quaternion rotation = Shape.getRotationFromDirection(direction);
 
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.UP, direction))) {
-            createUp(location, rotation, chunkMesh, blockScale, multipleImages);
+            createUp(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
-            createDown(location, rotation, chunkMesh, blockScale, multipleImages);
+            createDown(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
-            createWest(location, rotation, chunkMesh, blockScale, multipleImages);
+            createWest(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
-            createEast(location, rotation, chunkMesh, blockScale, multipleImages);
+            createEast(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.SOUTH, direction))) {
-            createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
+            createSouth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
-            createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
+            createNorth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
     }
 
-    private static void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createNorth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.450f, 0.450f, -0.500f)), location, blockScale));
@@ -168,45 +175,28 @@ public class RoundedCube implements Shape {
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, 0.000f, -0.303f, 1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, 0.000f, 0.303f, 1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.924f, 0.000f, 0.383f, 1.000f)));
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.036f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.345f));
-            }
+            // uv
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.NORTH);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y + 0.036f));
         }
     }
 
-    private static void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createSouth(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.450f, 0.450f, 0.500f)), location, blockScale));
@@ -316,45 +306,28 @@ public class RoundedCube implements Shape {
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.924f, 0.000f, -0.383f, -1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, 0.000f, -0.303f, -1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, 0.000f, 0.303f, -1.000f)));
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.667f));
-            }
+            // uv
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.SOUTH);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y));
         }
     }
 
-    private static void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createEast(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(0.500f, 0.450f, -0.450f)), location, blockScale));
@@ -464,45 +437,28 @@ public class RoundedCube implements Shape {
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(-0.303f, 0.000f, -0.953f, -1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.303f, 0.000f, -0.953f, -1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.383f, 0.000f, -0.924f, -1.000f)));
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.036f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.345f));
-            }
+            // uv
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.EAST);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y + 0.036f));
         }
     }
 
-    private static void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createWest(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.500f, 0.450f, 0.450f)), location, blockScale));
@@ -612,45 +568,28 @@ public class RoundedCube implements Shape {
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(-0.383f, 0.000f, -0.924f, 1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.303f, 0.000f, -0.953f, 1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.383f, 0.000f, -0.924f, 1.000f)));
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.036f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.345f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.336f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.664f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.655f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.345f));
-            }
+            // uv
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.WEST);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y + 0.036f));
         }
     }
 
-    private static void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createDown(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.450f, -0.500f, 0.450f)), location, blockScale));
@@ -760,45 +699,28 @@ public class RoundedCube implements Shape {
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, 0.303f, 0.000f, 1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.924f, 0.383f, 0.000f, 1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, -0.303f, 0.000f, 1.000f)));
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.012f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.002f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.012f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.321f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.331f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.012f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.002f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.321f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.331f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.321f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.321f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.333f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.012f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-            }
+
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.DOWN);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y));
         }
     }
 
-    private static void createUp(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, boolean multipleImages) {
+    private static void createUp(Vec3i location, Quaternion rotation, ChunkMesh chunkMesh, float blockScale, Function<Direction, TextureCoordinates> textureCoordinatesFunction) {
         int offset = chunkMesh.getPositions().size();
         // # Positions:16
         chunkMesh.getPositions().add(Shape.createVertex(rotation.mult(new Vector3f(-0.450f, 0.500f, -0.450f)), location, blockScale));
@@ -908,41 +830,24 @@ public class RoundedCube implements Shape {
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, 0.303f, 0.000f, -1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.924f, -0.383f, 0.000f, -1.000f)));
             chunkMesh.getTangents().add(rotationMatrix.mult(new Vector4f(0.953f, -0.303f, 0.000f, -1.000f)));
-            if (!multipleImages) {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.007f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.993f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.036f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.964f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.000f));
-            } else {
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.988f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.679f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.988f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.679f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.669f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 0.667f));
-                chunkMesh.getUvs().add(new Vector2f(0.007f, 0.998f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.988f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.669f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.679f));
-                chunkMesh.getUvs().add(new Vector2f(0.993f, 0.998f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(0.000f, 0.679f));
-                chunkMesh.getUvs().add(new Vector2f(0.036f, 1.000f));
-                chunkMesh.getUvs().add(new Vector2f(1.000f, 0.988f));
-                chunkMesh.getUvs().add(new Vector2f(0.964f, 0.667f));
-            }
+            // uv
+            TextureCoordinates textureCoordinates = textureCoordinatesFunction.apply(Direction.UP);
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMin().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMin().y + 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.007f, textureCoordinates.getMax().y - 0.007f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x, textureCoordinates.getMin().y + 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMin().x + 0.036f, textureCoordinates.getMax().y));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x, textureCoordinates.getMax().y - 0.036f));
+            chunkMesh.getUvs().add(new Vector2f(textureCoordinates.getMax().x - 0.036f, textureCoordinates.getMin().y));
         }
 
     }

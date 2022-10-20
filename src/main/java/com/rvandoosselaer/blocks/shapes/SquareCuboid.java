@@ -1,14 +1,19 @@
 package com.rvandoosselaer.blocks.shapes;
 
 import com.jme3.math.Quaternion;
+import com.rvandoosselaer.blocks.Block;
 import com.rvandoosselaer.blocks.BlocksConfig;
 import com.rvandoosselaer.blocks.Chunk;
 import com.rvandoosselaer.blocks.ChunkMesh;
 import com.rvandoosselaer.blocks.Direction;
 import com.rvandoosselaer.blocks.Shape;
+import com.rvandoosselaer.blocks.TextureCoordinates;
+import com.rvandoosselaer.blocks.TypeRegistry;
 import com.simsilica.mathd.Vec3i;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Function;
 
 /**
  * A shape implementation for a square cuboid. A square cuboid is a cube shape with a controllable y (height) value just
@@ -31,28 +36,30 @@ public class SquareCuboid extends Slab {
     public void add(Vec3i location, Chunk chunk, ChunkMesh chunkMesh) {
         // get the block scale, we multiply it with the vertex positions
         float blockScale = BlocksConfig.getInstance().getBlockScale();
-        // check if we have 3 textures or only one
-        boolean multipleImages = chunk.getBlock(location.x, location.y, location.z).isUsingMultipleImages();
+        Block block = chunk.getBlock(location.x, location.y, location.z);
+        String typeName = block.getType();
+        TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
+        Function<Direction, TextureCoordinates> textureCoordinatesFunction = typeRegistry.get(typeName).getTextureCoordinatesFunction();
         // get the rotation of the shape based on the direction
         Quaternion rotation = Shape.getRotationFromDirection(direction);
 
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.UP, direction))) {
-            createUp(location, rotation, chunkMesh, blockScale, multipleImages);
+            createUp(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.DOWN, direction))) {
-            createDown(location, rotation, chunkMesh, blockScale, multipleImages);
+            createDown(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.WEST, direction))) {
-            createWest(location, rotation, chunkMesh, blockScale, multipleImages);
+            createWest(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.EAST, direction))) {
-            createEast(location, rotation, chunkMesh, blockScale, multipleImages);
+            createEast(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.SOUTH, direction))) {
-            createSouth(location, rotation, chunkMesh, blockScale, multipleImages);
+            createSouth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
         if (chunk.isFaceVisible(location, Shape.getFaceDirection(Direction.NORTH, direction))) {
-            createNorth(location, rotation, chunkMesh, blockScale, multipleImages);
+            createNorth(location, rotation, chunkMesh, blockScale, textureCoordinatesFunction);
         }
     }
 

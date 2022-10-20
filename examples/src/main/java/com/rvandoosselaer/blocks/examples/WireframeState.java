@@ -7,6 +7,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.RenderState;
 import com.rvandoosselaer.blocks.BlocksConfig;
+import com.rvandoosselaer.blocks.Type;
 import com.rvandoosselaer.blocks.TypeRegistry;
 
 /**
@@ -50,6 +51,7 @@ public class WireframeState extends BaseAppState implements ActionListener {
             TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
             typeRegistry.getAll().stream()
                     .map(typeRegistry::get)
+                    .map(Type::getMaterial)
                     .forEach(material -> {
                         material.getAdditionalRenderState().setWireframe(!isWireframe);
                         material.getAdditionalRenderState().setFaceCullMode(!isWireframe ? RenderState.FaceCullMode.Off : RenderState.FaceCullMode.Back);

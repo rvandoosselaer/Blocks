@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.rvandoosselaer" level="debug" additivity="false">
+    <logger name="com.rvandoosselaer" level="trace" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

@@ -6,7 +6,6 @@ import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
 import com.jme3.texture.image.ColorSpace;
-import jme3tools.optimize.TextureAtlas;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -38,7 +40,7 @@ public class TypeRegistry {
         DIFFUSE, NORMAL, PARALLAX, OVERLAY;
     }
 
-    private final ConcurrentMap<String, Material> registry = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Type> registry = new ConcurrentHashMap<>();
     private final AssetManager assetManager;
     @Getter
     private BlocksTheme theme;
@@ -68,35 +70,35 @@ public class TypeRegistry {
         }
     }
 
-    public Material register(@NonNull String name) {
-        return register(name, getMaterial(name));
+    public Type register(@NonNull String name) {
+        return register(name, getType(name));
     }
 
-    public Material register(@NonNull String name, @NonNull Material material) {
+    public Type register(@NonNull String name, @NonNull Type type) {
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Invalid type name " + name + " specified.");
+            throw new IllegalArgumentException(String.format("Invalid type name %s specified.", name));
         }
 
-        registry.put(name, material);
+        registry.put(name, type);
         if (log.isTraceEnabled()) {
-            log.trace("Registered type {} -> {}", name, material);
+            log.trace("Registered type {} -> {}", name, type);
         }
-        return material;
+        return type;
     }
 
-    public Material get(String name) {
-        Material material = registry.get(name);
-        if (material == null) {
+    public Type get(String name) {
+        Type type = registry.get(name);
+        if (type == null) {
             log.warn("No type found for name {}", name);
         }
-        return material;
+        return type;
     }
 
     public boolean remove(@NonNull String name) {
         if (registry.containsKey(name)) {
-            Material material = registry.remove(name);
+            Type type = registry.remove(name);
             if (log.isTraceEnabled()) {
-                log.trace("Removed type {} -> {}", name, material);
+                log.trace("Removed type {} -> {}", name, type);
             }
             return true;
         }
@@ -161,33 +163,6 @@ public class TypeRegistry {
         reload();
     }
 
-    public static Texture combineTextures(Texture topTexture, Texture sideTexture, Texture bottomTexture) {
-        boolean widthEqual = assertValuesAreEqual(topTexture.getImage().getWidth(), sideTexture.getImage().getWidth(), bottomTexture.getImage().getWidth());
-        boolean heightEqual = assertValuesAreEqual(topTexture.getImage().getHeight(), sideTexture.getImage().getHeight(), bottomTexture.getImage().getHeight());
-
-        if (!widthEqual || !heightEqual) {
-            String message = String.format("Textures (%s, %s, %s) have different sizes! The widths and heights of the textures should be equal.",
-                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
-            throw new IllegalArgumentException(message);
-        }
-
-        boolean colorSpacesEqual = assertColorSpacesAreEqual(topTexture.getImage().getColorSpace(), sideTexture.getImage().getColorSpace(), bottomTexture.getImage().getColorSpace());
-        if (!colorSpacesEqual) {
-            String message = String.format("Textures (%s, %s, %s) have different colorspaces! Colorspaces of the textures should be equal.",
-                    topTexture.getKey(), sideTexture.getKey(), bottomTexture.getKey());
-            throw new IllegalArgumentException(message);
-        }
-
-        TextureAtlas textureAtlas = new TextureAtlas(topTexture.getImage().getWidth(), topTexture.getImage().getHeight() * 3);
-        textureAtlas.addTexture(bottomTexture, "main");
-        textureAtlas.addTexture(sideTexture, "main");
-        textureAtlas.addTexture(topTexture, "main");
-
-        Texture texture = textureAtlas.getAtlasTexture("main");
-        texture.getImage().setColorSpace(topTexture.getImage().getColorSpace());
-        return texture;
-    }
-
     /**
      * Retrieves a material for the block type. When a material file isn't found, the default material will be used and
      * the textures found in the theme or default theme folder will be added to the material.
@@ -195,30 +170,32 @@ public class TypeRegistry {
      * @param name block type (grass, rock, ...)
      * @return the material of the block type
      */
-    private Material getMaterial(String name) {
+    private Type getType(String name) {
         if (usingTheme()) {
             Optional<Material> optionalThemeMaterial = loadMaterial(name, theme);
             if (optionalThemeMaterial.isPresent()) {
-                return optionalThemeMaterial.get();
+                return new Type(name, optionalThemeMaterial.get());
             }
 
-            Optional<TexturesWrapper> optionalThemeTextures = getTextures(name, theme);
+            Optional<TextureUtilWrapper> optionalThemeTextures = getTextures(name, theme);
             if (optionalThemeTextures.isPresent()) {
-                return setTextures(optionalThemeTextures.get(), load(DEFAULT_BLOCK_MATERIAL));
+                Material material = setTexturesOnMaterial(optionalThemeTextures.get(), load(DEFAULT_BLOCK_MATERIAL));
+                return new Type(name, material, optionalThemeTextures.get().diffuseMap.createTextureCoordinatesFunction());
             }
         }
 
         Optional<Material> optionalDefaultThemeMaterial = loadMaterial(name, defaultTheme);
         if (optionalDefaultThemeMaterial.isPresent()) {
-            return optionalDefaultThemeMaterial.get();
+            return new Type(name, optionalDefaultThemeMaterial.get());
         }
 
-        Optional<TexturesWrapper> optionalDefaultThemeTextures = getTextures(name, defaultTheme);
+        Optional<TextureUtilWrapper> optionalDefaultThemeTextures = getTextures(name, defaultTheme);
         if (!optionalDefaultThemeTextures.isPresent()) {
             throw new AssetNotFoundException("Texture " + getTexturePath(name, TextureType.DIFFUSE, defaultTheme) + " not found!");
         }
 
-        return setTextures(optionalDefaultThemeTextures.get(), load(DEFAULT_BLOCK_MATERIAL));
+        Material material = setTexturesOnMaterial(optionalDefaultThemeTextures.get(), load(DEFAULT_BLOCK_MATERIAL));
+        return new Type(name, material, optionalDefaultThemeTextures.get().diffuseMap.createTextureCoordinatesFunction());
     }
 
     /**
@@ -244,18 +221,11 @@ public class TypeRegistry {
         return empty();
     }
 
-    /**
-     * Set the textures in the TexturesWrapper on the material.
-     *
-     * @param textures
-     * @param material
-     * @return the material with the textures applied
-     */
-    private Material setTextures(TexturesWrapper textures, Material material) {
-        material.setTexture("DiffuseMap", textures.getDiffuseMap());
-        material.setTexture("NormalMap", textures.getNormalMap().orElse(null));
-        material.setTexture("ParallaxMap", textures.getParallaxMap().orElse(null));
-        material.setTexture("OverlayMap", textures.getOverlayMap().orElse(null));
+    private Material setTexturesOnMaterial(TextureUtilWrapper textureUtilWrapper, Material material) {
+        material.setTexture("DiffuseMap", textureUtilWrapper.getDiffuseMap().getTexture());
+        material.setTexture("NormalMap", textureUtilWrapper.getNormalMap().map(TextureUtil::getTexture).orElse(null));
+        material.setTexture("ParallaxMap", textureUtilWrapper.getParallaxMap().map(TextureUtil::getTexture).orElse(null));
+        material.setTexture("OverlayMap", textureUtilWrapper.getOverlayMap().map(TextureUtil::getTexture).orElse(null));
 
         return material;
     }
@@ -281,68 +251,104 @@ public class TypeRegistry {
      * @param theme
      * @return an optional of the textures
      */
-    private Optional<TexturesWrapper> getTextures(String type, BlocksTheme theme) {
-        Optional<Texture> diffuseMap = getTexture(type, TextureType.DIFFUSE, theme);
+    private Optional<TextureUtilWrapper> getTextures(String type, BlocksTheme theme) {
+        Optional<TextureUtil> diffuseMap = getTexture(type, TextureType.DIFFUSE, theme);
         // map the value if present, or return an empty optional
-        return diffuseMap.map(texture -> new TexturesWrapper(texture,
+        return diffuseMap.map(textureUtil -> new TextureUtilWrapper(textureUtil,
                 getTexture(type, TextureType.NORMAL, theme),
                 getTexture(type, TextureType.PARALLAX, theme),
                 getTexture(type, TextureType.OVERLAY, theme)));
-
     }
 
     /**
+     * Load the default texture like 'dirt.png'. If this texture isn't found, try to load the specific textures
+     * (dirt_up.png, dirt_down.png, ...) and combine them into one.
+     *
      * @param type        block type (grass, rock, ...)
      * @param textureType kind of texture (diffuse, normal, parallax)
      * @param theme
      * @return an optional of the texture
      */
-    private Optional<Texture> getTexture(String type, TextureType textureType, BlocksTheme theme) {
-        String texture = getTexturePath(type, textureType, theme);
+    private Optional<TextureUtil> getTexture(String type, TextureType textureType, BlocksTheme theme) {
+        Optional<Texture> defaultTexture = loadTexture(new TextureKey(getDefaultTexturePath(type, textureType, theme)));
+        Optional<Texture> upTexture = loadTexture(new TextureKey(getUpTexturePath(type, textureType, theme)));
+        Optional<Texture> downTexture = loadTexture(new TextureKey(getDownTexturePath(type, textureType, theme)));
+        Optional<Texture> northTexture = loadTexture(new TextureKey(getNorthTexturePath(type, textureType, theme)));
+        Optional<Texture> eastTexture = loadTexture(new TextureKey(getEastTexturePath(type, textureType, theme)));
+        Optional<Texture> southTexture = loadTexture(new TextureKey(getSouthTexturePath(type, textureType, theme)));
+        Optional<Texture> westTexture = loadTexture(new TextureKey(getWestTexturePath(type, textureType, theme)));
+
+        // check sizes match
+        List<Integer> textureWidthList = Stream.of(defaultTexture, upTexture, downTexture, northTexture, eastTexture, southTexture, westTexture)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(texture -> texture.getImage().getWidth()).collect(Collectors.toList());
+        boolean widthEqual = assertValuesAreEqual(textureWidthList);
+        List<Integer> textureHeightList = Stream.of(defaultTexture, upTexture, downTexture, northTexture, eastTexture, southTexture, westTexture)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(texture -> texture.getImage().getHeight()).collect(Collectors.toList());
+        boolean heightEqual = assertValuesAreEqual(textureHeightList);
+
+        if (!widthEqual || !heightEqual) {
+            throw new IllegalArgumentException(String.format("Textures of type %s have different sizes! The widths and heights of the textures should be equal.", type));
+        }
+
+        // check color space matches
+        List<ColorSpace> colorSpaceList = Stream.of(defaultTexture, upTexture, downTexture, northTexture, eastTexture, southTexture, westTexture)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(texture -> texture.getImage().getColorSpace())
+                .collect(Collectors.toList());
+        boolean colorSpacesEqual = assertColorSpacesAreEqual(colorSpaceList);
+        if (!colorSpacesEqual) {
+            throw new IllegalArgumentException(String.format("Textures of type %s have different colorspaces! Colorspaces of the textures should be equal.", type));
+        }
+
+        boolean nonePresent = Stream.of(defaultTexture, upTexture, downTexture, northTexture, eastTexture, southTexture, westTexture)
+                .noneMatch(Optional::isPresent);
+        if (nonePresent) {
+            return Optional.empty();
+        }
+        boolean missingDefault = Stream.of(upTexture, downTexture, northTexture, eastTexture, southTexture, westTexture)
+                .filter(Optional::isPresent)
+                .count() < 6 && !defaultTexture.isPresent();
+        if (missingDefault) {
+            log.warn("No default texture is set for type {} .", type);
+        }
+
+        TextureUtil textureUtil = defaultTexture.map(TextureUtil::new).orElse(new TextureUtil());
+        upTexture.ifPresent(texture -> textureUtil.addTexture(Direction.UP, texture));
+        downTexture.ifPresent(texture -> textureUtil.addTexture(Direction.DOWN, texture));
+        northTexture.ifPresent(texture -> textureUtil.addTexture(Direction.NORTH, texture));
+        eastTexture.ifPresent(texture -> textureUtil.addTexture(Direction.EAST, texture));
+        southTexture.ifPresent(texture -> textureUtil.addTexture(Direction.SOUTH, texture));
+        westTexture.ifPresent(texture -> textureUtil.addTexture(Direction.WEST, texture));
+
+        return Optional.of(textureUtil);
+    }
+
+    private Optional<Texture> loadTexture(TextureKey textureKey) {
         try {
             if (log.isTraceEnabled()) {
-                log.trace("Loading {}", texture);
+                log.trace("Loading {}", textureKey);
             }
-            return of(assetManager.loadTexture(new TextureKey(texture)));
+            return Optional.of(assetManager.loadTexture(textureKey));
         } catch (AssetNotFoundException e) {
             if (log.isTraceEnabled()) {
-                log.trace("Texture {} not found in theme {}", texture, theme);
+                log.trace("Texture {} not found", textureKey);
             }
         }
 
-        return getCombinedTexture(type, textureType, theme);
+        return Optional.empty();
     }
 
-    private Optional<Texture> getCombinedTexture(String type, TextureType textureType, BlocksTheme theme) {
-        String topTexturePath = getTopTexturePath(type, textureType, theme);
-        String sideTexturePath = getSideTexturePath(type, textureType, theme);
-        String bottomTexturePath = getBottomTexturePath(type, textureType, theme);
-        try {
-            if (log.isTraceEnabled()) {
-                log.trace("Loading {}, {}, {}", topTexturePath, sideTexturePath, bottomTexturePath);
-            }
-            Texture topTexture = assetManager.loadTexture(new TextureKey(topTexturePath));
-            Texture sideTexture = assetManager.loadTexture(new TextureKey(sideTexturePath));
-            Texture bottomTexture = assetManager.loadTexture(new TextureKey(bottomTexturePath));
-
-            return of(combineTextures(topTexture, sideTexture, bottomTexture));
-        } catch (AssetNotFoundException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("Texture {} not found in theme {}", e.getMessage(), theme);
-            }
-        } catch (IllegalArgumentException e) {
-            log.warn(e.getMessage());
-        }
-
-        return empty();
-    }
-
-    private static boolean assertValuesAreEqual(int... values) {
-        if (values.length == 0) {
+    private static boolean assertValuesAreEqual(List<Integer> values) {
+        if (values.isEmpty()) {
             return true;
         }
 
-        int checkValue = values[0];
+        int checkValue = values.get(0);
         for (int i : values) {
             if (i != checkValue) {
                 return false;
@@ -352,12 +358,12 @@ public class TypeRegistry {
         return true;
     }
 
-    private static boolean assertColorSpacesAreEqual(ColorSpace... colorSpaces) {
-        if (colorSpaces.length == 0) {
+    private static boolean assertColorSpacesAreEqual(List<ColorSpace> colorSpaces) {
+        if (colorSpaces.isEmpty()) {
             return true;
         }
 
-        ColorSpace colorSpace = colorSpaces[0];
+        ColorSpace colorSpace = colorSpaces.get(0);
         for (ColorSpace c : colorSpaces) {
             if (colorSpace != c) {
                 return false;
@@ -367,16 +373,32 @@ public class TypeRegistry {
         return true;
     }
 
-    private String getTopTexturePath(String type, TextureType textureType, BlocksTheme theme) {
-        return getTexturePath(type + "_top", textureType, theme);
+    private String getDefaultTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type, textureType, theme);
     }
 
-    private String getSideTexturePath(String type, TextureType textureType, BlocksTheme theme) {
-        return getTexturePath(type + "_side", textureType, theme);
+    private String getUpTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_up", textureType, theme);
     }
 
-    private String getBottomTexturePath(String type, TextureType textureType, BlocksTheme theme) {
-        return getTexturePath(type + "_bottom", textureType, theme);
+    private String getDownTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_down", textureType, theme);
+    }
+
+    private String getNorthTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_north", textureType, theme);
+    }
+
+    private String getEastTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_east", textureType, theme);
+    }
+
+    private String getSouthTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_south", textureType, theme);
+    }
+
+    private String getWestTexturePath(String type, TextureType textureType, BlocksTheme theme) {
+        return getTexturePath(type + "_west", textureType, theme);
     }
 
     /**
@@ -429,12 +451,12 @@ public class TypeRegistry {
 
     @Getter
     @RequiredArgsConstructor
-    private static class TexturesWrapper {
+    private static class TextureUtilWrapper {
 
-        private final Texture diffuseMap;
-        private final Optional<Texture> normalMap;
-        private final Optional<Texture> parallaxMap;
-        private final Optional<Texture> overlayMap;
+        private final TextureUtil diffuseMap;
+        private final Optional<TextureUtil> normalMap;
+        private final Optional<TextureUtil> parallaxMap;
+        private final Optional<TextureUtil> overlayMap;
 
     }
 
