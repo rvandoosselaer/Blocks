@@ -15,10 +15,11 @@ import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.mathd.Vec3i;
 import com.simsilica.util.LogAdapter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * An application that renders a single block.
- *
+ * <p>
  * Default key mappings:
  * print camera position:            c
  * print direct memory information:  m
@@ -27,6 +28,7 @@ import com.simsilica.util.LogAdapter;
  *
  * @author rvandoosselaer
  */
+@Slf4j
 public class SingleBlock extends SimpleApplication {
 
     public static void main(String[] args) {

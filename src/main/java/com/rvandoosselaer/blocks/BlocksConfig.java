@@ -23,8 +23,8 @@ public class BlocksConfig {
 
     private Vec3i chunkSize;
     private float blockScale;
-//    private Vec3i grid;
-//    private Vec3i physicsGrid;
+    private Vec3i grid;
+    private Vec3i physicsGrid;
     private ShapeRegistry shapeRegistry;
     private BlockRegistry blockRegistry;
     private TypeRegistry typeRegistry;
@@ -45,8 +45,8 @@ public class BlocksConfig {
         instance = new BlocksConfig(assetManager);
         instance.setChunkSize(new Vec3i(32, 32, 32));
         instance.setBlockScale(1f);
-//        instance.setGrid(new Vec3i(9, 5, 9));
-//        instance.setPhysicsGrid(new Vec3i(5, 3, 5));
+        instance.setGrid(new Vec3i(9, 5, 9));
+        instance.setPhysicsGrid(new Vec3i(5, 3, 5));
         instance.setShapeRegistry(new ShapeRegistry(registerDefaults));
         instance.setBlockRegistry(new BlockRegistry(registerDefaults));
         instance.setTypeRegistry(new TypeRegistry(assetManager, null, registerDefaults));
@@ -58,50 +58,48 @@ public class BlocksConfig {
     }
 
     public void setChunkSize(@NonNull Vec3i chunkSize) {
-        if (chunkSize.x <= 0 || chunkSize.y <= 0 || chunkSize.z <= 0) {
-            throw new IllegalArgumentException(String.format("Invalid chunk size specified: %s", chunkSize));
-        }
+        assertChunkSize(chunkSize);
         this.chunkSize = chunkSize;
     }
 
     public void setBlockScale(float blockScale) {
         if (blockScale <= 0) {
-            throw new IllegalArgumentException(String.format("Invalid block scale specified: %f", blockScale));
+            throw new IllegalArgumentException("Invalid block scale specified: " + blockScale + ".");
         }
         this.blockScale = blockScale;
     }
 
-    //    public void setGrid(@NonNull Vec3i grid) {
-//        assertGrid(grid);
-//        this.grid = grid;
-//    }
+    public void setGrid(@NonNull Vec3i grid) {
+        assertGrid(grid);
+        this.grid = grid;
+    }
 
-//    public void setPhysicsGrid(@NonNull Vec3i physicsGrid) {
-//        assertGrid(physicsGrid);
-//        this.physicsGrid = physicsGrid;
-//    }
+    public void setPhysicsGrid(@NonNull Vec3i physicsGrid) {
+        assertGrid(physicsGrid);
+        this.physicsGrid = physicsGrid;
+    }
 
-//    private static void assertChunkSize(@NonNull Vec3i chunkSize) {
-//        if (chunkSize.x <= 0 || chunkSize.y <= 0 || chunkSize.z <= 0) {
-//            throw new IllegalArgumentException("Invalid chunk size specified: " + chunkSize + ".");
-//        }
-//    }
+    private static void assertChunkSize(@NonNull Vec3i chunkSize) {
+        if (chunkSize.x <= 0 || chunkSize.y <= 0 || chunkSize.z <= 0) {
+            throw new IllegalArgumentException("Invalid chunk size specified: " + chunkSize + ".");
+        }
+    }
 
-//    private static void assertGrid(@NonNull Vec3i physicsGrid) {
-//        assertGridHasUnevenValues(physicsGrid);
-//        assertGridHasPositiveValues(physicsGrid);
-//    }
+    private static void assertGrid(@NonNull Vec3i physicsGrid) {
+        assertGridHasUnevenValues(physicsGrid);
+        assertGridHasPositiveValues(physicsGrid);
+    }
 
-//    private static void assertGridHasUnevenValues(@NonNull Vec3i grid) {
-//        if ((grid.x - 1) % 2 != 0 || (grid.y - 1) % 2 != 0 || (grid.z - 1) % 2 != 0) {
-//            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be a power of 2 + 1.");
-//        }
-//    }
+    private static void assertGridHasUnevenValues(@NonNull Vec3i grid) {
+        if ((grid.x - 1) % 2 != 0 || (grid.y - 1) % 2 != 0 || (grid.z - 1) % 2 != 0) {
+            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be a power of 2 + 1.");
+        }
+    }
 
-//    private static void assertGridHasPositiveValues(@NonNull Vec3i grid) {
-//        if (grid.x < 1 || grid.y < 1 || grid.z < 1) {
-//            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be greater then 0.");
-//        }
-//    }
+    private static void assertGridHasPositiveValues(@NonNull Vec3i grid) {
+        if (grid.x < 1 || grid.y < 1 || grid.z < 1) {
+            throw new IllegalArgumentException("Invalid grid size specified: " + grid + ". Grid values should be greater then 0.");
+        }
+    }
 
 }

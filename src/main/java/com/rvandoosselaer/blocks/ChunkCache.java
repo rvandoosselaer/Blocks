@@ -68,16 +68,16 @@ public class ChunkCache implements ChunkResolver {
     }
 
     private static Cache<Vec3i, Chunk> createCache(int cacheSize) {
-//        Vec3i gridSize = BlocksConfig.getInstance().getGrid();
-//        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
-//
-//        if (cacheSize > 0 && cacheSize < minimumSize) {
-//            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
-//        }
+        Vec3i gridSize = BlocksConfig.getInstance().getGrid();
+        int minimumSize = gridSize.x * gridSize.y * gridSize.z;
+
+        if (cacheSize > 0 && cacheSize < minimumSize) {
+            log.warn("The cache size of {} is lower then the recommended minimum size of {}.", cacheSize, minimumSize);
+        }
 
         return Caffeine.newBuilder()
-//                .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
-                .maximumSize(cacheSize)
+                .maximumSize(cacheSize > 0 ? cacheSize : minimumSize)
+//                .maximumSize(cacheSize)
                 .removalListener(new ChunkCacheRemovalListener())
                 .build();
     }
