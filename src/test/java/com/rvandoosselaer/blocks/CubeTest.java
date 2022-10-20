@@ -53,8 +53,8 @@ public class CubeTest {
 
         // uv coordinates of the top image
         Set<Vector2f> upFaceUvs = new HashSet<>();
-        upFaceUvs.add(new Vector2f(1.0f, 1.0f));
-        upFaceUvs.add(new Vector2f(0.0f, 1.0f));
+        upFaceUvs.add(new Vector2f(1.0f, 0.333f));
+        upFaceUvs.add(new Vector2f(0.0f, 0.333f));
         upFaceUvs.add(new Vector2f(1.0f, 0.667f));
         upFaceUvs.add(new Vector2f(0.0f, 0.667f));
 

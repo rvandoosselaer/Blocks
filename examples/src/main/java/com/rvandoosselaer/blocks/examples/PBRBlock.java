@@ -111,6 +111,7 @@ public class PBRBlock extends SimpleApplication {
 
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
         typeRegistry.register(TypeIds.WATER, new Type(TypeIds.WATER, assetManager.loadMaterial("water-pbr/water.j3m")));
+        waterMaterial = typeRegistry.get(TypeIds.WATER).getMaterial();
 
         chunk = createChunk();
 

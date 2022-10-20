@@ -52,9 +52,9 @@ public class TypeRegistryTest {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
 
         Material newMaterial = new Material(BlocksConfig.getInstance().getAssetManager(), "/Common/MatDefs/Misc/Unshaded.j3md");
-        typeRegistry.register(TypeIds.GRASS, newMaterial);
+        typeRegistry.register(TypeIds.GRASS, new Type(TypeIds.GRASS, newMaterial));
 
-        assertEquals(typeRegistry.get(TypeIds.GRASS), newMaterial);
+        assertEquals(typeRegistry.get(TypeIds.GRASS).getMaterial(), newMaterial);
     }
 
     @Test
@@ -62,12 +62,12 @@ public class TypeRegistryTest {
     public void testRegisterTypeUsingTheme() {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
 
-        Material defaultMaterial = typeRegistry.get(TypeIds.GRASS);
+        Material defaultMaterial = typeRegistry.get(TypeIds.GRASS).getMaterial();
 
         BlocksTheme blocksTheme = new BlocksTheme("my-new-theme", "/my-new-theme");
         typeRegistry.setTheme(blocksTheme);
 
-        Material newMaterial = typeRegistry.get(TypeIds.GRASS);
+        Material newMaterial = typeRegistry.get(TypeIds.GRASS).getMaterial();
         assertNotEquals(defaultMaterial.getName(), newMaterial.getName());
     }
 
@@ -76,12 +76,12 @@ public class TypeRegistryTest {
     public void testFallbackTypeInDefaultTheme() {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
 
-        Material defaultMaterial = typeRegistry.get(TypeIds.DIRT);
+        Material defaultMaterial = typeRegistry.get(TypeIds.DIRT).getMaterial();
 
         BlocksTheme blocksTheme = new BlocksTheme("my-new-theme", "/my-new-theme");
         typeRegistry.setTheme(blocksTheme);
 
-        assertEquals(defaultMaterial.getName(), typeRegistry.get(TypeIds.DIRT).getName());
+        assertEquals(defaultMaterial.getName(), typeRegistry.get(TypeIds.DIRT).getMaterial().getName());
     }
 
     @Test
@@ -89,16 +89,16 @@ public class TypeRegistryTest {
     public void testRegisterTypeWithImage() {
         TypeRegistry typeRegistry = BlocksConfig.getInstance().getTypeRegistry();
 
-        Material defaultSandMaterial = typeRegistry.get(TypeIds.SAND);
-        Material defaultRockMaterial = typeRegistry.get(TypeIds.ROCK);
+        Material defaultSandMaterial = typeRegistry.get(TypeIds.SAND).getMaterial();
+        Material defaultRockMaterial = typeRegistry.get(TypeIds.ROCK).getMaterial();
         Texture sandDiffuseTexture = defaultSandMaterial.getTextureParam("DiffuseMap").getTextureValue();
         Texture rockDiffuseTexture = defaultRockMaterial.getTextureParam("DiffuseMap").getTextureValue();
 
         BlocksTheme blocksTheme = new BlocksTheme("my-new-theme", "/my-new-theme");
         typeRegistry.setTheme(blocksTheme);
 
-        Material newSandMaterial = typeRegistry.get(TypeIds.SAND);
-        Material newRockMaterial = typeRegistry.get(TypeIds.ROCK);
+        Material newSandMaterial = typeRegistry.get(TypeIds.SAND).getMaterial();
+        Material newRockMaterial = typeRegistry.get(TypeIds.ROCK).getMaterial();
         Texture newSandDiffuseTexture = newSandMaterial.getTextureParam("DiffuseMap").getTextureValue();
         Texture newRockDiffuseTexture = newRockMaterial.getTextureParam("DiffuseMap").getTextureValue();
 
@@ -116,14 +116,14 @@ public class TypeRegistryTest {
 
         typeRegistry.register("custom");
 
-        Texture top = BlocksConfig.getInstance().getAssetManager().loadTexture("/my-new-theme/custom_top.png");
-        Texture side = BlocksConfig.getInstance().getAssetManager().loadTexture("/my-new-theme/custom_side.png");
-        Texture bottom = BlocksConfig.getInstance().getAssetManager().loadTexture("/my-new-theme/custom_bottom.png");
+        Texture up = BlocksConfig.getInstance().getAssetManager().loadTexture("/my-new-theme/custom_up.png");
+        Texture side = BlocksConfig.getInstance().getAssetManager().loadTexture("/my-new-theme/custom.png");
+        Texture down = BlocksConfig.getInstance().getAssetManager().loadTexture("/my-new-theme/custom_down.png");
 
-        int w = top.getImage().getWidth();
-        int h = top.getImage().getHeight() + side.getImage().getHeight() + bottom.getImage().getHeight();
+        int w = up.getImage().getWidth();
+        int h = up.getImage().getHeight() + side.getImage().getHeight() + down.getImage().getHeight();
 
-        Material material = typeRegistry.get("custom");
+        Material material = typeRegistry.get("custom").getMaterial();
         Texture diffuseMap = material.getTextureParam("DiffuseMap").getTextureValue();
 
         assertEquals(w, diffuseMap.getImage().getWidth());
