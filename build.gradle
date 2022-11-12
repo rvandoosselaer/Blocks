@@ -1,6 +1,7 @@
 plugins {
     id 'idea'
     id 'java-library'
+    id 'maven-publish'
 }
 
 group = "com.rvandoosselaer"
@@ -102,4 +103,14 @@ task javadocJar(type: Jar) {
 
 javadoc {
     failOnError = false
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
 }
