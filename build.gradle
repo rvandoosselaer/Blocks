@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.rvandoosselaer"
-version = "1.7.1"
+version = "1.7.2-SNAPSHOT"
 // The artifact ID defaults to the project name configured in settings.gradle
 
 sourceCompatibility = 1.8
