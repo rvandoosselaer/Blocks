@@ -2,11 +2,10 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version "1.8.4"
 }
 
 group = "com.rvandoosselaer"
-version = "1.7.1-SNAPSHOT"
+version = "1.7.1"
 // The artifact ID defaults to the project name configured in settings.gradle
 
 sourceCompatibility = 1.8
@@ -103,4 +102,14 @@ task javadocJar(type: Jar) {
 
 javadoc {
     failOnError = false
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
 }
