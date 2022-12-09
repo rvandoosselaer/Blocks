@@ -39,7 +39,7 @@ import lombok.RequiredArgsConstructor;
  * toggle wireframe:                 p
  * toggle profiler:                  F6
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public class EndlessRunner extends SimpleApplication {
 

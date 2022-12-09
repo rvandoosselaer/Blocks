@@ -11,7 +11,7 @@ import com.rvandoosselaer.blocks.Type;
 import com.rvandoosselaer.blocks.TypeRegistry;
 
 /**
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public class WireframeState extends BaseAppState implements ActionListener {
 

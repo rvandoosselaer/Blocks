@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * Applications can register a {@link ChunkManagerListener} to the ChunkManager to get notified when a chunk is
  * available in the cache or when a chunk is updated.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 @Slf4j
 public class ChunkManager {

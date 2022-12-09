@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * An application state to handle the lifecycle of a ChunkManager.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 @Getter
 @RequiredArgsConstructor

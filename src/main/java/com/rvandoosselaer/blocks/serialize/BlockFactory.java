@@ -16,7 +16,7 @@ import java.util.HashSet;
 /**
  * A factory class that produces blocks from a BlockDefinition.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 @Slf4j
 public class BlockFactory {

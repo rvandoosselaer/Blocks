@@ -15,7 +15,7 @@ package com.rvandoosselaer.blocks;
  * - block (type: mossy_cobblestone, shape: stairs_inverted_inner_corner_east)
  *   name: mossy_cobblestone-stairs_inverted_inner_corner_east
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public interface BlockIds {
 

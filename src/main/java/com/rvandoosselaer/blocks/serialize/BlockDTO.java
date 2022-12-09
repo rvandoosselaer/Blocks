@@ -10,7 +10,7 @@ import lombok.Setter;
 /**
  * A POJO for deserializing a block from file.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 @Getter
 @Setter
