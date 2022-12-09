@@ -18,7 +18,7 @@ import java.util.Optional;
  * invalidation means manual removal by the caller
  * removal occurs as a consequence of invalidation or eviction
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 @Slf4j
 public class ChunkCache implements ChunkResolver {

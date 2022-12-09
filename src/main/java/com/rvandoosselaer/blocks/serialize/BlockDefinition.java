@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * A POJO describing the parameters for creating a collection of blocks.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 @Getter
 @Setter

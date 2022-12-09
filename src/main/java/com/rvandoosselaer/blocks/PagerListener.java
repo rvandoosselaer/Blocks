@@ -6,7 +6,7 @@ import com.simsilica.mathd.Vec3i;
  * A listener that can be registered to the {@link Pager}. Use this to get notified when pages are attached, detached
  * or updated.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public interface PagerListener<T> {
 

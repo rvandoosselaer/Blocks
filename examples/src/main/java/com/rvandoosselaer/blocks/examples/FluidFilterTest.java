@@ -47,7 +47,7 @@ import com.simsilica.util.LogAdapter;
  * toggle wireframe:                 p
  * toggle profiler:                  F6
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public class FluidFilterTest extends SimpleApplication {
 

@@ -4,7 +4,7 @@ package com.rvandoosselaer.blocks;
  * Contains all the keys of the types that are registered in the {@link TypeRegistry}. Use these keys to retrieve the
  * types from the {@link TypeRegistry#get(String)}.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public interface TypeIds {
 

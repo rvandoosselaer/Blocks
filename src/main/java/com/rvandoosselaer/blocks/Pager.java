@@ -22,13 +22,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * An abstract implementation of a 3D pager. Based on the given center location ({@link #setLocation(Vector3f)} the pages
+ * An abstract implementation of a 3D pager. Based on the given center location ({@code setLocation()} the pages
  * around this center page in the grid are calculated. Each call to {@link #update()} will:
  * - detach one page that is outside the grid, if available
  * - attach one new page that is inside the grid, if available
  * - update a page inside the grid, if one is available.
  * Implementing classes need to implement the methods to create, attach and detach pages.
- * The boundaries of the grid can be set by setting {@link #setGridLowerBounds(Vec3i)} and {@link #setGridUpperBounds(Vec3i)}.
+ * The boundaries of the grid can be set by setting {@code setLocation()} and {@code setLocation()}.
  *
  * @author rvandoosselaer
  */

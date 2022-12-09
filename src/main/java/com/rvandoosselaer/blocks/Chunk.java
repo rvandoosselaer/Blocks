@@ -20,7 +20,7 @@ import java.util.function.BiFunction;
  * A chunk holds an array of {@link Block} elements. Blocks can be retrieved, added or removed using the appropriate
  * methods.
  * Each time the data structure of the chunk changes (when blocks are added or removed), the {@link #update()} method
- * should be called to reevaluate the {@link #isFull()} and {@link #isEmpty()} flags.
+ * should be called to reevaluate the {@code isFull()} and {@code isEmpty()} flags.
  * Make sure to call the {@link #cleanup()} method to properly dispose of the chunk.
  *
  * @author rvandoosselaer
@@ -179,7 +179,7 @@ public class Chunk {
     }
 
     /**
-     * Updates the {@link #isEmpty()} and {@link #isFull()} values. This should be called whenever the block data has
+     * Updates the {@code isEmpty()} and {@code isFull()} values. This should be called whenever the block data has
      * changed.
      */
     public void update() {

@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * A service to retrieve chunks.
  *
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public interface ChunkResolver {
 

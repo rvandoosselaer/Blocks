@@ -29,7 +29,7 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * @author: rvandoosselaer
+ * @author rvandoosselaer
  */
 public class FluidFilter extends Filter {
 
